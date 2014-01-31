@@ -10,6 +10,17 @@ Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromoso
 Detection of these abnormalities is typically done through karyoptying, or through dedicated approaches like array-CGH.
 This project will attempt to infer these events using RNA-Seq data. Since changes in gene expression linked to these large-scale chromosomal abnormalities are not expected to be simple, we will employ a range of approaches (TBD, but most likely including some sort of machine learning or clustering approaches) to predict these events. 
 
+Data Sets
+---------
+
+The main data sets are:
+
+- RNA-Seq data from patients with AML
+- Karyotype information detailing large-scale chromosomal abnormalities
+- arrayCGH and/or SNP-array data from the same patients
+
+The goal is to use the second two data sets as 'ground truth' by which to validate methods developed for the first data set.
+
 Group Composition
 -----------------
 
