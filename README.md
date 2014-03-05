@@ -11,6 +11,7 @@ Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromoso
 The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of approaches to predict these events, including:
 
 - unsupervised and supervised clustering of RNA-seq data
+- principle component analysis
 - machine learning
 
 Data Sets
@@ -27,7 +28,7 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 
 - [RNAseq GAF 2.0 normalized RPKM](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz) (RNA-Seq RPKM data)
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
-
+- [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
 Group Composition
 -----------------
