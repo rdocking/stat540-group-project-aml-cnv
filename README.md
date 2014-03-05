@@ -32,6 +32,26 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
 - [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
+Analysis Details
+----------------
+
+### Data Summary and Tidying
+
+- Summarize the available data files
+- Re-generate some of the analyses performed in the TCGA paper
+
+### Unsupervised and supervised clustering of RNA-seq data
+
+*Rebecca, Carmen, please add details*
+
+### Principle component analysis
+
+- Use PCA to infer sub-groups present within the RNA expression data (*Note: this might be pretty similar to the unsupervised clustering above*)
+
+### Machine learning
+
+*Emily, Lauren, Fatemeh, please add details*
+
 Group Composition
 -----------------
 
