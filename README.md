@@ -8,7 +8,7 @@ Project Description
 
 Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or dedicated approaches such as array-CGH. However, these methods are technically limiting: karyotyping has low resolution, and array-based methods are limited to what is probed on the array, and thus, structural variants such as insertions or gene fusions cannot be captured. 
 
-The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of machine learning approaches to predict these events, including principal component analysis, and unsupervised clustering of RNA-seq data.
+The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of machine learning approaches to predict these events including principal component analysis and unsupervised clustering.
 
 The main rationale for using RNA-Seq, rather than the more-straightforward array-based and karyotyping approaches, is to increase the clinical utility of RNA-Seq based diagnostic testing in AML. For a clinical test to be useful in guiding AML treatment, the results need to be rapidly available. Additionally, additional tests add to the time and expense of diagnosis. The larger goal of the [AML Personalized Medicine Project](http://bccancerfoundation.com/blog/november-21-2011/personalized-medicine-project-pmp) is to provide better diagnostic tests for AML using next-generation sequencing technologies. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
 
@@ -48,7 +48,7 @@ The idea for applying machine learning methods can be divided in two steps:
 - Principal Component Analysis (PCA): Use PCA to infer sub-groups present within the RNA expression data
 
 - Clustering (Unsupervised): We can use Independent Component Analysis (ICA) for extracting the biological significant dimensions from RNA-seq data. ICA assumes non-Gaussian expression variation and models the Micorarray observations as linear combination of its component. The components are chosen to be as independent as possible. 
-	- Recreate Figure 4A: "Unsupervised RNA expression patterns"
+	- Recreate Figure 4A: "Unsupervised RNA expression patterns" with RNA abundance heatmaps and sample annotations, including AML FAB subtype
 	
 - Classification (supervised): We can apply Linear discriminant analysis or SVM  for classification of the data.
 
