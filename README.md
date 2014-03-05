@@ -40,24 +40,19 @@ Analysis Details
 - Summarize the available data files
 - Re-generate some of the analyses performed in the TCGA paper
 
-### Unsupervised and supervised clustering of RNA-seq data
-
-*Rebecca, Carmen, please add details*
-
-### Principle component analysis
-
-- Use PCA to infer sub-groups present within the RNA expression data (*Note: this might be pretty similar to the unsupervised clustering above*)
-
 ### Machine learning
 
-*Emily, Lauren, Fatemeh, please add details*
+*Emily, Lauren, Fatemeh, please add details*  
 The idea for applying machine learning methods can be divided in two steps:
 
 1- Pre-processing : In this step, we aim to prepare the data for the main analysis by first doing sanity checks and the applying appropriate normalization for removing the systematic variations.
 
 2- Data Analysis :
 
+- Principle Component Analysis (PCA): Use PCA to infer sub-groups present within the RNA expression data
+
 - Clustering (Unsupervised): We can use Independent Component Analysis (ICA) for extracting the biological significant dimensions from RNA-seq data. ICA assumes non-Gaussian expression variation and models the Micorarray observations as linear combination of its component. The components are chosen to be as independent as possible. 
+	- Recreate Figure 4A: "Unsupervised RNA expression patterns"
 	
 - Classification (supervised): We can apply Linear discriminant analysis or SVM  for classification of the data.
 
