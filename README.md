@@ -28,6 +28,8 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
 - [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
+**ADD LINK TO R script for importing data**
+
 Analysis Details
 ----------------
 
@@ -40,18 +42,21 @@ Analysis Details
 - Principal Component Analysis (PCA) to infer sub-groups present within RNA-seq data
 
 ### Correlation between CNAs and RNA expression
+
 - Do the predicted CNAs (supplementary table S5) lead to concurrent changes in gene expression?
 	- Individual sample scale: Circos plots? Manual checks of key chromosomal losses and gains?
 	- Across all samples: How can we analyse the correlation in an automated fashion? Map CNAs to genes, then call up and down-regulation and gain and loss for each gene predicted to have CNA?
 
 ### Machine learning
 
-*Emily, Lauren, Fatemeh, please add details*  
 The idea for applying machine learning methods can be divided in two steps:
 
-1- Pre-processing : In this step, we aim to prepare the data for the main analysis by first doing sanity checks and the applying appropriate normalization for removing the systematic variations.
+#### 1- Pre-processing
 
-2- Data Analysis :
+In this step, we aim to prepare the data for the main analysis by first doing sanity checks and the applying appropriate normalization for removing the systematic variations.
+
+#### 2- Data Analysis :
+
 - Clustering (Unsupervised): We can use Independent Component Analysis (ICA) for extracting the biological significant dimensions from RNA-seq data. ICA assumes non-Gaussian expression variation and models the Micorarray observations as linear combination of its component. The components are chosen to be as independent as possible. 
 	- Recreate Figure 4A: "Unsupervised RNA expression patterns" with RNA abundance heatmaps and sample annotations, including AML FAB subtype
 	
