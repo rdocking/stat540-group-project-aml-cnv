@@ -65,4 +65,4 @@ Group Composition
 | Lauren Chong | Bioinformatics (MSc) | Rotations (current: Dr. Ryan Morin) | Bioinformatics, R |
 | Rebecca Johnston | Bioinformatics (MSc) | Rotations (current: Dr. Christian Steidl) | Molecular biology, cancer biology |
 | Emily Hindalong | Bioinformatics (MSc) | Current Rotation: Dr. Paul Pavlidis | Computer Science, Software, Cognitive Systems |
-| Carmen Bayly | GSAT | | Biochemistry |
+| Carmen Bayly | GSAT | Current rotation: Dr. Corey Nislow | Biochemistry |
