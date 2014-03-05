@@ -23,6 +23,12 @@ We will analyse a publicly available AML dataset from The Cancer Genome Atlas (T
 
 The goal is to use the second data set as 'ground truth' by which to validate methods developed for the first data set.
 
+The specific data sets to be used are available through the [TCGA Data Portal site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/) for the AML marker paper. The main data files to be used are:
+
+- [RNAseq GAF 2.0 normalized RPKM](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz) (RNA-Seq RPKM data)
+- [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
+
+
 Group Composition
 -----------------
 
