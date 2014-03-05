@@ -1,7 +1,7 @@
-stat540-group-project-aml-cnv
-=============================
+Using RNA-Seq Data to Predict Large-scale Copy-number Alterations in AML
+========================================================================
 
-Group project for STAT540, Winter 2014. Detection of CNV events in Acute Myeloid Leukemia using RNA-seq data
+Group project for STAT540, Winter 2014.
 
 Project Description
 -------------------
@@ -9,6 +9,7 @@ Project Description
 Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or dedicated approaches such as array-CGH. However, these methods are technically limiting: karyotyping has low resolution, and array-based methods are limited to what is probed on the array, and thus, structural variants such as insertions or gene fusions cannot be captured.  
 
 The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of approaches to predict these events, including:
+
 - unsupervised and supervised clustering of RNA-seq data
 - machine learning
 
