@@ -51,6 +51,18 @@ Analysis Details
 ### Machine learning
 
 *Emily, Lauren, Fatemeh, please add details*
+The idea for applying machine learning methods can be divided in two steps:
+
+1- Pre-processing : In this step, we aim to prepare the data for the main analysis by first doing sanity checks and the applying appropriate normalization for removing the systematic variations.
+
+2- Data Analysis :
+
+	(a) Clustering (Unsupervised): We can use Independent Component Analysis (ICA) for extracting the biological significant dimensions from RNA-seq data. ICA assumes non-Gaussian expression variation and models the Micorarray observations as linear combination of its component. The components are chosen to be as independent as possible. 
+	
+	(b) Classification (supervised): We can apply Linear discriminant analysis or SVM  for classification of the data.
+
+We can also do the main analysis on data with smaller number of features, that is basically reducing the dimensionality of the data in order to identify the salient features.  The dimensionality reduction step can be accomplished by using PCA. Afterwards, we will be able to compare the result of the "original data" and "data with smaller number of features" and conclude how it is necessary in RNA-seq.
+
 
 Group Composition
 -----------------
