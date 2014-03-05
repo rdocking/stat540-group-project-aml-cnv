@@ -6,13 +6,15 @@ Group project for STAT540, Winter 2014.
 Project Description
 -------------------
 
-Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or dedicated approaches such as array-CGH. However, these methods are technically limiting: karyotyping has low resolution, and array-based methods are limited to what is probed on the array, and thus, structural variants such as insertions or gene fusions cannot be captured.  
+Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or dedicated approaches such as array-CGH. However, these methods are technically limiting: karyotyping has low resolution, and array-based methods are limited to what is probed on the array, and thus, structural variants such as insertions or gene fusions cannot be captured. 
 
 The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of approaches to predict these events, including:
 
-- unsupervised and supervised clustering of RNA-seq data
-- principle component analysis
-- machine learning
+- Unsupervised and supervised clustering of RNA-seq data
+- Principle component analysis
+- Machine learning
+
+The main rationale for using RNA-Seq, rather than the more-straightforward array-based and karyotyping approaches, is to increase the clinical utility of RNA-Seq based diagnostic testing in AML. For a clinical test to be useful in guiding AML treatment, the results need to be rapidly available. Additionally, additional tests add to the time and expense of diagnosis. The larger goal of the [AML Personalized Medicine Project](http://bccancerfoundation.com/blog/november-21-2011/personalized-medicine-project-pmp) is to provide better diagnostic tests for AML using next-generation sequencing technologies. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
 
 Data Sets
 ---------
