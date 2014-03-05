@@ -35,9 +35,9 @@ Analysis Details
 - Summarize the available data files
 
 ### Data exploration and differential expression analysis
-- Differential expression analysis
-- Hierarchical clustering of differentially expressed genes
-- Principal Component Analysis (PCA): Use PCA to infer sub-groups present within the RNA expression data
+- Differential expression analysis of RNA-seq data (R package limma voom)
+- Hierarchical clustering of differentially expressed genes (R heatmap function)
+- Principal Component Analysis (PCA) to infer sub-groups present within RNA-seq data
 
 ### Machine learning
 
