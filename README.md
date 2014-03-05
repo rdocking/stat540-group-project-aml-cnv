@@ -39,6 +39,11 @@ Analysis Details
 - Hierarchical clustering of differentially expressed genes (R heatmap function)
 - Principal Component Analysis (PCA) to infer sub-groups present within RNA-seq data
 
+### Correlation between CNAs and RNA expression
+- Do the predicted CNAs (supplementary table S5) lead to concurrent changes in gene expression?
+	- Individual sample scale: Circos plots? Manual checks of key chromosomal losses and gains?
+	- Across all samples: How can we analyse the correlation in an automated fashion? Map CNAs to genes, then call up and down-regulation and gain and loss for each gene predicted to have CNA?
+
 ### Machine learning
 
 *Emily, Lauren, Fatemeh, please add details*  
