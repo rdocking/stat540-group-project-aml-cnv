@@ -37,9 +37,12 @@ Analysis Details
 - Summarize the available data files
 
 ### Data exploration and differential expression analysis
-- Differential expression analysis of RNA-seq data (R package limma voom)
-- Hierarchical clustering of differentially expressed genes (R heatmap function)
+- Perform sample correlation (R heatmap function)
 - Principal Component Analysis (PCA) to infer sub-groups present within RNA-seq data
+	- Find most variable components in the data using colour for different factors: Cytogenetic abnormality? Race? Sex? Age? etc? 	
+- Differential expression analysis of RNA-seq data (R package limma voom)
+	- Use results from PCA to inform model
+- Hierarchical clustering of samples given differentially expressed genes (R heatmap function)
 
 ### Correlation between CNAs and RNA expression
 
