@@ -19,6 +19,7 @@ We will analyse a publicly available AML dataset from The Cancer Genome Atlas (T
 
 - RNA-seq data from 172 patients with AML, using Illumina HiSeq2000 paired-end 75 bp sequencing
 - SNP-array data from the same patients, for both tumour and skin samples, using Affymetrix SNP array 6.0
+- Clinical information describing karyotype results for all patients
 
 The goal is to use the second data set as 'ground truth' by which to validate methods developed for the first data set.
 
@@ -28,25 +29,27 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
 - [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
-**ADD LINK TO R script for importing data**
+Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data_import.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
 
 Analysis Details
 ----------------
 
 ### Data Summary and Tidying
+
 - Summarize the available data files
+- Construct a simplified categorical variable grouping the patients into categories based on large-scale chromosomal abnormalities.
 
 ### Data exploration and differential expression analysis
-- Perform sample correlation (R heatmap function)
+- Perform sample correlation (`heatmap()` function from `lattice`)
 - Principal Component Analysis (PCA) to infer sub-groups present within RNA-seq data
 	- Find most variable components in the data using colour for different factors: Cytogenetic abnormality? Race? Sex? Age? etc? 	
-- Differential expression analysis of RNA-seq data (R package limma voom)
+- Differential expression analysis of RNA-seq data (`voom` from `R` package `limma`)
 	- Use results from PCA to inform model
-- Hierarchical clustering of samples given differentially expressed genes (R heatmap function)
+- Hierarchical clustering of samples given differentially expressed genes (`heatmap()` function from `lattice`)
 
 ### Correlation between CNAs and RNA expression
 
-- Do the predicted CNAs (supplementary table S5) lead to concurrent changes in gene expression?
+- Do the predicted CNAs ([supplementary table S5](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SupplementalTable05.tsv) from the TCGA paper) lead to concurrent changes in gene expression?
 	- Individual sample scale: Circos plots? Manual checks of key chromosomal losses and gains?
 	- Across all samples: How can we analyse the correlation in an automated fashion? Map CNAs to genes, then call up and down-regulation and gain and loss for each gene predicted to have CNA?
 
