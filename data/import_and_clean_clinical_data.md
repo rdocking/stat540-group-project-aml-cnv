@@ -141,4 +141,78 @@ Alternate approaches possible:
 | 1 | T | F | F | F |T |
 | 2 | F | F | F |T | F |
 
-Thoughts?
+Thoughts? This would make the annotation simpler, but might complicate the analysis a bit.
+
+### Followup to that question: 
+
+#### Summarize Columns in Raw Clinical Data and Supplementary Table 1
+
+To address the comments at [issue #3](https://github.com/rdocking/stat540-group-project-aml-cnv/issues/3), I'm going to try a few approaches to stratifying the data-set.
+
+First, I'll work on trying to get a workable stratification out of the `raw_clinical_data` imported above. The main issues I've been having so far:
+
+- In the `cytogenetic_abnormality` column, the entries are sometimes split by pipes, e.g. 'Normal|del (7q) / 7q-' vs. 'del (7q) / 7q-' - it's not clear that these should be treated equivalently.
+- There is a second column, `cytogenetic_abnormality_other` that is even more inconsistently filled in (i.e. no data for 172 samples, uses 'no', 'No', and 'NO' for others)
+
+This is looking a bit like a rabbit-hole. I'm going to try another tack and see if I can regenerate the sample counts from Table 1 in the main text of the paper:
+
+![Table 1 Snippet](table_1_snippet.png)
+
+From Supplementary Table 1, (loaded above as `supp_d`), the cytogenetic data is available in the following columns:
+
+- `Cytogenetics` - karyotype using [cytogenetic nomenclature](http://www.radford.edu/~rsheehy/cytogenetics/Cytogenetic_Nomeclature.html). These seem consistently filled in (yay!), but are tricky to parse (boo!)
+- `Gene Fusions by RNA-Seq` - predicted gene fusions from the RNA-Seq data. This has entries like 'PML(+)RARA(+) (In frame)', which corresponds to 't(15;17)' from the `Cytogenetics` column. This _should_ be pretty accurate for fusions, but not for CNAs
+- `Inferred genomic rearrangement (from RNA-Seq fusion)` - translation of `Gene Fusions by RNA-Seq` into `Cytogenetics` nomenclature
+- `Cytogenetic Classification` - A categorical variable summarizing the previous columns:
+
+
+```r
+summary(supp_d$Cytogenetic.Classification)
+```
+
+```
+##                                           
+##                                         1 
+##                                  BCR-ABL1 
+##                                         3 
+##                                CBFB-MYH11 
+##                                        12 
+##                      Complex Cytogenetics 
+##                                        24 
+## Intermediate Risk Cytogenetic Abnormality 
+##                                        22 
+##              MLL translocation, poor risk 
+##                                         5 
+##                MLL translocation, t(9;11) 
+##                                         2 
+##                                      N.D. 
+##                                         5 
+##                          Normal Karyotype 
+##                                        92 
+##                                  PML-RARA 
+##                                        18 
+##         Poor Risk Cytogenetic Abnormality 
+##                                        10 
+##                             RUNX1-RUNX1T1 
+##                                         7
+```
+
+
+  this is _not quite_ what we're after - we'd like to call individual karyotype-level events.
+- `RISK (Cyto)` - another categorical classification of the samples by risk type:
+
+
+```r
+summary(supp_d$RISK..Cyto.)
+```
+
+```
+##                      Good Intermediate         N.D.         Poor 
+##            1           37          115            5           43
+```
+
+
+- Then two more classifications, `Molecular Classification` and `RISK (Molecular)`
+  
+#### Annotate Samples with Karyotypic events of interest  
+  
