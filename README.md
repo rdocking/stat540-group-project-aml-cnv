@@ -10,7 +10,7 @@ Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromoso
 
 The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype. Since changes in gene expression linked to these events are not expected to be simple, we will employ a range of machine learning approaches to predict these events including principal component analysis and unsupervised clustering.
 
-The main rationale for using RNA-Seq, rather than the more-straightforward array-based and karyotyping approaches, is to increase the clinical utility of RNA-Seq based diagnostic testing in AML. For a clinical test to be useful in guiding AML treatment, the results need to be rapidly available. Additionally, additional tests add to the time and expense of diagnosis. The larger goal of the [AML Personalized Medicine Project](http://bccancerfoundation.com/blog/november-21-2011/personalized-medicine-project-pmp) is to provide better diagnostic tests for AML using next-generation sequencing technologies. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
+The main rationale for using RNA-Seq, rather than the more-straightforward array-based and karyotyping approaches, is to increase the clinical utility of RNA-Seq based diagnostic testing in AML. For a clinical test to be useful in guiding AML treatment, the results need to be rapidly available. Furthermore, additional tests add to the time and expense of diagnosis. The larger goal of the [AML Personalized Medicine Project](http://bccancerfoundation.com/blog/november-21-2011/personalized-medicine-project-pmp) is to provide better diagnostic tests for AML using next-generation sequencing technologies. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
 
 Data Sets
 ---------
@@ -20,8 +20,6 @@ We will analyse a publicly available AML dataset from The Cancer Genome Atlas (T
 - RNA-seq data from 172 patients with AML, using Illumina HiSeq2000 paired-end 75 bp sequencing
 - SNP-array data from the same patients, for both tumour and skin samples, using Affymetrix SNP array 6.0
 - Clinical information describing karyotype results for all patients
-
-The goal is to use the second data set as 'ground truth' by which to validate methods developed for the first data set.
 
 The specific data sets to be used are available through the [TCGA Data Portal site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/) for the AML marker paper. The main data files to be used are:
 
@@ -37,7 +35,7 @@ Analysis Details
 ### Data Summary and Tidying
 
 - Summarize the available data files
-- Construct a simplified categorical variable grouping the patients into categories based on large-scale chromosomal abnormalities.
+- Construct a simplified categorical variable grouping the patients into categories based on large-scale chromosomal abnormalities
 
 ### Data exploration and differential expression analysis
 - Perform sample correlation (`heatmap()` function from `lattice`)
