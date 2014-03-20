@@ -110,7 +110,14 @@ python parse_supplementary_table.py > experimental_design.csv
 Now I can read in the modified CSV file to get a cleaner data frame:
 
 ```{r}
-cleaned <- read.csv('experimental_design.csv')
+cleaned_data <- read.csv('experimental_design.csv')
 ```
+
+This data frame is quite a bit smaller and simpler than the original:
+
+```{r}
+str(cleaned_data)
+```
+
 
   

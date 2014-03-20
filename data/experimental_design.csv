@@ -1,202 +1,201 @@
-TCGA_patient_id,RNAseq_available,Expired,Sex,Race,FAB,Age,BM_blast_pct,White_blood_cell_count,PB_blast_pct,WGS_subclones_detected,Cytogenetics
-2803,TRUE,TRUE,F,W,M3,61,44,1, ,,"46,XX,t(15;17)(q22:q21)[15]"
-2806,TRUE,TRUE,M,W,M1,46,90,29.4,81,,"45,X,-Y, t(8;7;21)(q22;p15;q22[22]/46,XY[3]"
-2870,TRUE,TRUE,M,W,M1,76,73,34,55,,"46,XY,inv(16)(p13q22)[9]/46,XY[10]"
-2815,TRUE,TRUE,M,W,M4,49,81,57.1,48,,"46,XY,inv(16)(p13q22)[17]/46,XY[3]"
-2872,TRUE,FALSE,M,B,M3,42,88,2.1,2,,"46,XY,del(9)(q13:q22),t(11:21)(p13;q22),t(15;17)(q22;q210[20]"
-2998,TRUE,TRUE,F,W,M3,68,85,29,32,1,"46,XX,t(15;17)(q22;q21)[20]"
-2914,TRUE,FALSE,F,W,M2,22,55,51.8,70,,"46,XX,inv(16)(p13q22)[5]/46,idem,t(3;3)(p13;q?28)[5]/46,XX[6]"
-2819,TRUE,TRUE,F,W,M2,52,67,4.1,18,,"46,XX,t(8;21)(q22;q22)[17]/46,XX[3]"
-2875,TRUE,FALSE,M,NH/C,M2,43,40,4.3,39,,"45,X,-Y,t(8;21)(q22;q22)[19]/46,XY[1]"
-2823,TRUE,TRUE,F,W,M3,61,73,86.4,68,,"47,XX,t(15;17)(q22:q21)+mar[20]"
-2828,TRUE,FALSE,M,W,M4,55,35,22.2,8,,"46,XY,t(2;4)(q34;q21)inv(16)(p13q22) [20]"
-3001,TRUE,FALSE,F,W,M3,31,40,1.6,0,2,"46,XX,t(15;17)(q22;q21)[11]/46,XX[9]"
-2905,FALSE,FALSE,M,H,M3,48,65,0.6,28,1,"46,XY,t(15;17)(q22:q21)[11]/46,XY[8]"
-2881,TRUE,TRUE,F,NH/C,M1,48,75,33.2,41,,"46,XX,inv(16)(p13q22)[19]/46,XX[1]"
-2840,TRUE,TRUE,M,W,M3,74,51,31.5, ,,"46,XY,t(15;17)(q22;q21)[20]"
-2982,TRUE,FALSE,F,H,M3,29,85,1.2,1,2,"46,XX,t(15;17)(q22;q21)[12]/46,XX[8]"
-2886,TRUE,FALSE,M,NH/C,M2,25,72,11,50,,"45,X,-Y,t(8;21)(q22;q22)[13]/45,idem,del(9)(q22;q32)[7]"
-2980,TRUE,FALSE,M,W,M3,50,74,0.5,10,2,"46,XY,t(15;17)(q22;q21)[20]"
-2888,TRUE,FALSE,M,NH/C,M4,57,40,4.9,0,,Outside hospital with inv(16)
-2991,TRUE,FALSE,F,W,M3,40,90,0.4,0,3,"46,XX,t(15;17)(q22;q21.1)[19]/47,idem,+8 [1]"
-2889,TRUE,TRUE,F,Unk/C,M4,55,52,30.9,59,,"46,XY,inv(16)(p13;q22)[20]"
-2937,TRUE,TRUE,F,W,M1,35,81,42.8,86,,"46,XX,t(8;21)(q22;q22)[20]"
-2906,FALSE,FALSE,M,W,M3,59,79,0.7,15,2,"46,XY,t(15;17)(q22;q21)[20]"
-2841,TRUE,TRUE,F,W,M3,51,93,3.6,40,,"46,XX,t(15;17)(q22;q21)[20]"
-2942,TRUE,FALSE,F,W,M4,67,69,37,61,,"46,XX,inv(16)(p13q22)[19]/46,XX[1]"
-2846,TRUE,TRUE,F,W,M4,57,61,13.6,17,,"46,XX,inv(16)(p13q22)[20]"
-2892,TRUE,FALSE,F,W,M4,42,40,37.9,16,,"46,XX,inv(16)(p13q22)[15]/46,XX[2]"
-3012,TRUE,FALSE,M,W,M3,53,42,1,29,4,"46,XY,t(15;17)(q22;q21)[19]/46,XY[1]"
-2994,TRUE,FALSE,M,W,M3,25,91,8.2,63,2,"46,XY,t(15;17)(q22;q21)[20]"
-2950,TRUE,FALSE,F,W,M2,34,57,14.3,59,,"45,X,-X,t(8;21)(q22;q22)[20]"
-2897,TRUE,FALSE,F,NH/C,M3,50,90,3.4,0,,"46,XX,t(15;17)(q22;q21),t(16;19)(p13.3;p13.1)[17]/46,XX[3]"
-2997,FALSE,TRUE,F,W,M3,25,93,16.3,40,1,"46,XX,t(15;17)(q22;q21)[20]"
-2954,TRUE,FALSE,F,Unk,M4,55,54,114.5,24,,"46,XX,del(16)(q22)[16]/47,XX,del(16)(q22),+22[8]/47,XX,+22[2]/46,XX[4]"
-2999,TRUE,FALSE,M,W,M3,62,82,0.9,11,2,"46,XY,t(15;17)(q22:q21)[11]/46,XY[9]"
-2858,TRUE,TRUE,F,W,M2,75,48,8.3,54,,"46,XX,t(8;21)[15]/46,idem,del(9)(q12q22)[5]"
-3007,TRUE,FALSE,M,W,M3,35,90,1.5,7,2,"47,XY,del(7)(q22),+8,t(15;17)(q22;q21)[18]/46,XY,del(7)(q22),t(15;17)(q22;q21)[2]"
-2957,FALSE,FALSE,M,W,M4,31,82,132.7,53,,"46,XY,inv(16)(p13q22)[20]"
-2802,FALSE,TRUE,M,W,M4,50,88,16.9,52,,"46, XY[20]"
-2804,FALSE,FALSE,M,W,M3,30,82,5.7, ,,"46, XY[25]"
-2805,TRUE,TRUE,M,W,M0,77,67,92,56,,"46, XY[20]"
-2807,TRUE,TRUE,F,W,M1,68,91,3.1,55,,"47,XX,+21[24]"
-2808,TRUE,FALSE,M,W,M2,23,59,32.4, ,,"47,XXY [17]"
-2809,FALSE,TRUE,F,W,M2,64,60,116.5, ,,"46,XX[24]"
-2811,TRUE,TRUE,M,W,M4,81,98,90.6,37,,"46, XY[20]"
-2978,TRUE,TRUE,F,W,M2,61,43,9.8,32,1,"46, XX[20]"
-2812,TRUE,TRUE,F,B,M2,25,53,34.2,87,,"46, XX[20]"
-2966,TRUE,TRUE,F,W,M2,57,43,3.1,35,1,"46, XX[15]"
-2909,TRUE,FALSE,M,NH/A,nc,22,80,115.4,94,,"46, XY[20]"
-2963,TRUE,TRUE,M,W,M1,56,90,30.5,45,2,"46, XY[20]"
-2869,TRUE,TRUE,F,NH/B,M2,64,80,2.6,46,,"46, XX[20]"
-2965,TRUE,TRUE,M,W,M4,60,89,67.5,56,1,"46, XY[15]"
-2871,TRUE,TRUE,M,NH/B,M1,51,62,1.5,10,,"46, XY[20]"
-2972,TRUE,TRUE,F,W,M2,82,53,1.4,25,3,"46, XX[20]"
-2873,TRUE,TRUE,F,NH/C,M5,51,57,14.9,0,,"46, XX[20]"
-2816,TRUE,TRUE,F,W,M4,57,90,87.5,84,,"46,XX[20]"
-2818,TRUE,TRUE,F,A,M2,62,46,75.2,53,,"46,XX[19]/46,XX,add(7)(p?22)[1]"
-2988,TRUE,TRUE,F,W,M1,67,76,45.6,49,2,"46, XX[20]"
-2977,TRUE,TRUE,F,W,M2,71,70,35.9,67,1,"46, XX[14]"
-2912,TRUE,TRUE,M,W,M4,63,62,17.9,9,,"47,XY,+8[15]/46,+8,-17[3]"
-2968,FALSE,TRUE,M,W,M4,79,58,18.5,0,3,"46,XY[20]"
-2986,TRUE,TRUE,F,W,M2,31,63,12.6,45,1,"46, XX[20]"
-2913,TRUE,TRUE,M,W,M0,61,95,61.6,86,,"47,XY,+8 [19]"
-2918,TRUE,TRUE,F,NHC,M1,47,77,80.5,79,,"47,XX+8 [20]"
-3000,TRUE,FALSE,M,W,M2,25,56,98.8,71,2,"46, XY[20]"
-2821,TRUE,TRUE,M,W,M1,64,60,1.2,5,,"47,XY,+8 [10]/46,XY [10]"
-2822,TRUE,TRUE,M,W,M0,65,99,2.9,34,,"47,XY,+8 [20]"
-2916,TRUE,FALSE,F,W,M4,49,51,12.4,5,,"47,XX+11 [20]"
-2824,TRUE,TRUE,M,W,M5,44,74,8.8,5,,"46, XY[20]"
-2825,TRUE,TRUE,F,W,M5,31,83,137.2,6,,"46, XX[20]"
-2919,TRUE,FALSE,F,NH/C,M1,54,72,13.1,90,,"46, XX[19]"
-2826,TRUE,TRUE,F,W,M4,64,72,131.5,90,,"46, XX[20]"
-2827,FALSE,TRUE,M,W,M2,33,33,2.8,0,,"46,XY[18]/46,XY,del(9)(q21q33)[1]/46,XY,del(20)(q?12)[1]"
-2877,TRUE,FALSE,F,W,M1,60,86,11.5,43,,"46,XX,9qh+[20]"
-2992,TRUE,TRUE,F,W,M1,32,94,5.1,70,2,"46, XX[20]"
-2879,TRUE,TRUE,F,NH/C,M1,68,90,59.9,91,,"46, XX[20]"
-2880,TRUE,TRUE,M,NH/C,M1,24,77,223.8,76,,"46, XY[20]"
-2974,FALSE,TRUE,F,W,M5,67,85,45.3,3,2,"46, XX[20]"
-2830,TRUE,TRUE,F,W,M4,64,85,2.9,22,,"47,XX,i(11)(q10)[18]/46,XX [2]"
-2921,TRUE,TRUE,F,NH/C,M4,55,69,27.6,57,,"46, XX[20]"
-2831,FALSE,TRUE,M,W,M0,59,61,1.4,2,,"46, XY[20]"
-2925,TRUE,TRUE,M,W,M5,57,52,99.2,4,,"46, XY[20]"
-2832,TRUE,TRUE,F,W,M5,59,95,12.1,0,,"45,X,-X[21]/46,XX[9]"
-2926,FALSE,TRUE,F,W,M1,57,91,19.8,91,,"47,XX,+8 [20]"
-2833,TRUE,TRUE,M,W,M4,77,80,40.4,2,,"46, XY[18]"
-2970,TRUE,TRUE,F,W,M4,34,71,19.6,58,1,"46, XX[20]"
-2922,FALSE,TRUE,M,W,M0,83,75,77.9,74,,"46, XY[20]"
-2835,TRUE,FALSE,M,W,M5,48,83,116.2,3,,"46, XY[20]"
-2836,TRUE,TRUE,M,W,M4,35,90,52.9,18,,"46, XY[20]"
-3002,TRUE,TRUE,M,W,M2,68,64,5.5,48,2,"46, XY[20]"
-2837,TRUE,TRUE,F,W,M5,66,90,111.8,7,,"46, XX[20]"
-2884,TRUE,TRUE,F,W,M1,44,86,13.5,17,,"46, XX[19]"
-2839,TRUE,TRUE,F,W,M2,51,64,42.1,79,,"46, XX[20]"
-2907,FALSE,TRUE,M,W,M0,69,82,1.6,0,2,"46, XY[20]"
-2996,TRUE,FALSE,M,W,M2,75,63,2.5,2,1,"46, XY[20]"
-2969,TRUE,FALSE,M,W,M5,55,97,72.6,8,3,"46, XY[15]"
-2967,TRUE,FALSE,M,W,M4,58,58,19.9,10,1,"46, XY[18]"
-2933,TRUE,TRUE,M,W,M4,58,79,101.3,64,,"46,XY,i(17)(q10)[15]/47,XY,idem+13[3]/46,XY[2]"
-2923,FALSE,TRUE,M,W,M4,78,70,16.8,28,,"46, XY[20]"
-2924,TRUE,FALSE,M,NH/C,M4,59,75,29.7,17,,"46, XY[20]"
-3011,TRUE,FALSE,F,W,M1,21,91,8.2,83,2,"46, XX[20]"
-2938,TRUE,TRUE,M,W,M7,76,33,3.6,6,,"45,X,-Y[3]/46,XY [17]"
-2979,TRUE,FALSE,F,W,M1,30,86,22.9,88,1,"46, XX[20]"
-2990,TRUE,FALSE,M,W,M1,51,85,63.7,85,2,"46, XY[20]"
-2890,TRUE,TRUE,M,NH/C,M0,69,60,6.1,22,,"47,XY,+9[10]/46,XY[10]"
-2842,TRUE,TRUE,M,W,M4,64,95,2.3,0,,"46,XY,del(11)(p12)[2]/46,XY[18]"
-2843,TRUE,TRUE,M,W,M6,77,75,2.6,8,,"46,XY,del(20)(q11.2)[23]/92,XXYY,del(20)(q11.2)x2[2]/46,XY[3]"
-2973,TRUE,TRUE,F,W,M4,67,75,15.2,10,1,"46, XX[16]"
-2927,TRUE,TRUE,F,NH/C,M1,88,33,2.9,0,,"46, XX[20]"
-2940,TRUE,TRUE,M,W,M2,35,34,33.5,40,,"47,XY,+21 [6]/46,XY[13]"
-2845,TRUE,TRUE,F,W,M2,37,52,18.7,33,,"46, XX[20]"
-2930,TRUE,TRUE,F,NH/C,M2,62,72,27.7,49,,"46, XX[20]"
-2931,TRUE,TRUE,M,W,M2,75,76,98.2,80,,"46,XY,9qh+[19]"
-2932,TRUE,FALSE,M,W,M5,62,85,59.3,22,,"46, XY[20]"
-2848,TRUE,TRUE,M,W,M4,62,65,118.8,65,,"46, XY[20]"
-2983,TRUE,TRUE,M,W,M0,45,75,2.3,0,1,"46,XY[20]"
-2987,TRUE,TRUE,F,W,M5,75,41,7.3,0,1,"46,XX[18]"
-2934,TRUE,TRUE,M,NH/C,M1,65,79,67.9,84,,"46,XY[15]"
-2851,TRUE,TRUE,F,W,M5,66,32,78.5,11,,"46, XX[20]"
-2896,TRUE,TRUE,F,W,M5,21,90,93,72,,"46,XX[15]"
-2989,FALSE,TRUE,M,W,M2,29,45,2.2,9,5,"46,XY,15pstk+[20]"
-2936,TRUE,TRUE,F,NH/C,M0,60,50,2.1,14,,"46, XX[20]"
-3005,TRUE,FALSE,M,W,M5,45,81,1.6,0,2,"46,XY[20]"
-2976,TRUE,TRUE,M,W,M1,53,86,88.1,52,1,"46,XY[20]"
-2853,TRUE,TRUE,M,W,M1,51,85,103.6,85,,"46,XY[20]"
-2984,TRUE,FALSE,M,W,M1,38,86,39.8,97,2,"46,XY[20]"
-3006,TRUE,TRUE,M,W,M1,61,49,2.9,14,1,"46,XY[20]"
-2981,TRUE,FALSE,F,W,M5,35,87,72.1,8,1,"46, XX[20]"
-2975,TRUE,TRUE,M,B,M2,54,67,45,83,1,"46,XY[19]"
-2854,TRUE,TRUE,F,W,M4,51,73,2.9,2,,"45,Xc,t(5;21)(q31;q22)[18]/45,idem,t(1;6)(?q21;p23)[1]/45,Xc[1]"
-2964,TRUE,FALSE,F,W,M1,57,64,2.5,61,1,"46, XX[19]"
-3008,TRUE,TRUE,M,W,M1,22,71,1.2,90,3,"46,XY[30]"
-2898,TRUE,FALSE,F,NH/C,M1,69,42,10.1,32,,"47,XX+8 [20]"
-2856,TRUE,TRUE,M,W,M4,63,82,76.7,39,,"46,XY[20]"
-2947,FALSE,FALSE,M,NH/C,M4,52,75,298.4,51,,"46,XY[20]"
-3009,TRUE,TRUE,M,W,M4,23,51,27.1,63,2,"46,XY[20]"
-2955,TRUE,TRUE,F,W,M2,56,60,202.7,96,,"46,XX[20]"
-2971,TRUE,TRUE,F,W,M4,76,91,5,16,1,"46,XX[20]"
-2985,TRUE,TRUE,F,W,M5,81,53,12.3,7,1,"46,XX[20]"
-2948,TRUE,TRUE,M,W,M4,67,30,26.1,6,,"46,XY[13]"
-2956,TRUE,TRUE,M,W,M5,61,89,8.4,0,,"46,XY,t(9;11)(p22;q23)[7]/47,XY,t(9;11)(p22;q23)[7]/46,XY[4]"
-2993,TRUE,TRUE,F,W,M1,57,100,102.5,91,1,"46,XX[20]"
-2859,TRUE,TRUE,M,B,M2,40,47,8.3,23,,"46,XY[20]"
-2899,TRUE,TRUE,F,W,M4,76,37,2.7,0,,"46,XX+13,21[cp17]/46,XX[3]"
-2862,TRUE,FALSE,F,B,M3,33,100,0.9,0,,"46,XX[20]"
-2959,TRUE,TRUE,M,W,M0,71,90,1,13,,"47,XY,+13[5]/46,XY[15]"
-2864,FALSE,TRUE,F,W,M1,53,82,1.2,42,,"47,XX,+8[19]/46,XX[2]"
-2900,TRUE,TRUE,M,Unk/B,M1,70,84,48,49,,"46,XY[20]"
-2865,TRUE,TRUE,M,W,M1,75,40,6.4,48,,"47,XY,+21[11]/48,XY,+3,+21[8]"
-2903,TRUE,TRUE,F,W,M1,76,99,297.4,98,,"46,XX[20]"
-2995,TRUE,TRUE,M,W,M2,63,35,0.6,0,2,"46,XY[20]"
-2866,TRUE,TRUE,M,W,M1,67,89,30.8,61,,"46,XY[20]"
-2867,TRUE,TRUE,F,W,M2,66,70,3.4,6,,"46,XX[20]"
-2810,TRUE,TRUE,F,B,M2,76,48,61.6,88,,ND
-2829,FALSE,TRUE,M,B,M6,50,70,5.5,0,,N.D.; -5q by FISH
-2895,TRUE,TRUE,F,NH/C,M1,41,92,134.4,90,,N.D.
-2850,FALSE,TRUE,F,B,M2,72,45,3,0,,"Incomplete-46,XX[2]"
-2946,TRUE,TRUE,M,NH/C,M2,41,47,43.1,62,,"incomplete-46,XY,del(12)(p11.20[2]/46,XY[3]"
-2908,TRUE,TRUE,M,W,M2,81,46,1.5,0,,"46~49,XY,del(3)(p14),del(5)(p11.2q33),del(17)(q21q21),add(21)(p11.2),+22,mar[cp20]"
-2910,TRUE,TRUE,F,W,M5,61,71,34.6,55,,"47,XX,+der(5)t(2;5)(p11.2;q11.2)?,t(8;16)(p11.2;p13.3)[19]"
-2904,TRUE,TRUE,M,W,M0,65,83,0.9,0,,"46~50,XY,-1,del(2),del(5)(q22q33),der(7)t(1;7)(q21;p13),add(7)(p11.1),+8,+add(11),del(12)(p12),del(13)(q22), 15,add(17)(p11.1),-20,+22 {cp20}Complex Cytogenetics , including 5q-,+8,"
-2813,TRUE,TRUE,M,W,M4,78,40,9.9,6,,"44-45,X,-Y,-5,add(16)(q22),-17,-18,iso(21),+mars[cp5]/82-84,XX,-Y,-3,-4,-11,-12,-19,-21,+21[cp5}"
-2814,TRUE,TRUE,F,W,M0,39,75,2.3,4,,"46,XX,del(5)(q22q33)[4]/46,XX[16]"
-2915,TRUE,TRUE,F,NH/C,M2,73,32,15.1,11,,"46,XX,del(3)(q23q26.2),der(7)t(1:7)(q32;q32),del(10)(q22q25),t(13;16)(q34;p11.2)dup(21)(q22)[cp20]"
-2817,TRUE,TRUE,M,W,M2,63,57,77.3,70,,"45,XY,-7, t(9;22)(q34;q11.20) [19]/46,XY[1]"
-2874,TRUE,FALSE,M,NH/C,M2,59,70,11.5,48,,"45,XY,-7[20]"
-2911,TRUE,FALSE,F,B,M4,51,39,50.3,39,,"44~46,XX,del(11)(q23),der(19)?t(11;19)(q23;p13.1)[cp11]/44~45,XX,-19[cp4]/46,XX [5]"
-2820,TRUE,TRUE,M,B,M0,76,74,14.5,82,,"53~56,XY,+1,del(2)(q33q34),+8,+10,+11x2,+13x1-2,+14,del(17)(p11.2),+19,add(21)(q22),+22[cp20]"
-2917,TRUE,TRUE,F,W,M0,41,42,47.6,74,,"46,XX,i(17)(q10)[1]/45,sl-7[2]/48,sl,+13,+19[3]/46,XX[15]"
-2876,TRUE,FALSE,F,W,M2,45,56,29.4,37,,"46,XX,1~50dmin[12]/46,idem,der(6)t(6;?)(q22;?)[2]/46,XX[6]"
-2920,TRUE,TRUE,M,W,M2,44,39,34.8,83,,"45~46,XY,add(X)(q22)[7],Y[4],der(5)t(5;17)(q13;21)[18],-7[18],+8[17],del(12)(q23)[16],-17[18],add(18)(p11.2)[14][cp18]"
-2878,TRUE,TRUE,F,W,M2,47,37,12,0,,"39~47,XX,del(5)(q13q33),-7,der(8)t(8;?8;8)(p23;?p11.2p23;q11.2),der(14)t(1;14)(p12;p11.2)der(1)t(7;16)(p15;q22),+2mar[cp19]"
-2882,TRUE,TRUE,F,W,M2,73,37,1.7,16,,"45,XX,-7[12]/46,XX[8]"
-2834,TRUE,TRUE,M,W,M4,33,71,25.9,14,,"46,XY,t(11;19)(q23;p13)[17]/46,XY,t(11;19)(q23;p13),inv(12)(p12p13)[3]"
-2883,TRUE,FALSE,M,W,M5,60,94,6.7,30,,"52~54,XY,+2,+4,+6,+8,del(11)(q23),+19,+19,+21[17]/46,XY[3]"
-2929,TRUE,TRUE,F,W,M0,71,55,5.6,50,,"41~44,X,?i(X)(p10),-7,der(12)t(8;12)(q11.2;p11.2),-8 [cp11]/46,XX[8["
-2838,TRUE,TRUE,M,W,M2,67,50,2.1,17,,"46,XY,del(5)(q11.2q31),-7,+8,+11,add(11)(q23),der(16;17)(q10;q10)[18]/51,idem,+1,+5,+8,+10,+21 [2]"
-2885,TRUE,TRUE,M,NH/C,M0,71,97,5.4,54,,"43,XY-3,del(5)(q12q33),-7,der(10)t(10;11)(q26;q13),-12,-18,+2mar[20]"
-2887,TRUE,TRUE,F,NH/C,M1,60,87,46.5,65,,"46,XX,del(7)(q11.2)[20]"
-2844,TRUE,TRUE,M,W,M2,63,80,17,71,,"46,XY,t(11;19)(q23;p13)[20]"
-2891,TRUE,TRUE,M,NH/B,M1,42,68,10.7,51,,"45,XY,der(7)(t:7;12)(p11.1;p11.2),-12,-13,+mar[19]/46,XY[1]"
-2928,TRUE,TRUE,F,NH/AA,M1,43,87,171.9,91,,"45,XX,-7[20]"
-2847,TRUE,TRUE,M,W,M1,53,72,2.7,41,,"46,XY,del(7)(q21q36)[18]/46,XY[2]"
-2893,TRUE,TRUE,M,W,M5,45,95,5.1,6,,"46,XY,t(6;11)(q27;q23)[15]"
-2849,TRUE,FALSE,M,W,M0,39,83,5,53,,"47,XY,del(5)(q22q33),t(10;11)(p13~p15;q22~23),i(17)(q10)[3]/46,XY[17]"
-2945,FALSE,TRUE,F,W,M4,65,90,48.5,76,,"46~47,XX,+i(4)(q10)[12],-8[5],10[3][cp20]"
-2894,TRUE,TRUE,F,W,M5,50,81,6.7,10,,"45,XX,-7,t(9;11)(p22;q23)[19]/46,XX[1]"
-2935,TRUE,TRUE,M,W,M4,66,81,2.2,12,,"44~47,XY,del(5)(q22q35)[20],-7[14],-8[6],der(12)t(10;12)(p11.2q21)[2],add(14)(p12)[11],-17[13],der(17)t(10;17)(q11.2;p13)[14],-18[7],add(18)(p11.2)[7],-21[10],i(21)(q10)[4],-22[4],+mar[10],+mar1x2[6][cp20]"
-2949,TRUE,TRUE,M,W/Nat Amer,M0,58,59,47.2,72,,"47,XY,+22[10]/47,XY,+8[7]/45,XY,del(3)(p21),del(4)(p12p15),-7,?dup(7)(q11.2q36)[3]"
-2939,TRUE,FALSE,M,W,M1,72,88,37.5,18,,"37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]"
-2941,TRUE,TRUE,M,W,nc,73,90,58.9,0,,"46,XY,t(9;22)(q34;q11.2)[13]/34~37,idem,-3,del(4),-4,-5,-7,-9,-10,t?(11;12),-12,-14,-14,-16,-17,-22[cp6]/46,XY[1]"
-2943,TRUE,TRUE,F,NH/C,M1,70,32,0.7,6,,"46,XX,del(5)(q11.2q33)[1]/48~52,idem,+1,+?del(5)(q15q33),+11,+11,?t(12;22)(p13;q12),-13,-17,+i(22)(q10),+i(22)(q10),+mar[cp19]"
-2952,TRUE,TRUE,F,W,M1,60,62,16,29,,"44~47,XX,t(1;15)(q32;q26)[14],del(5)(q13q33)[19],-7[20],+8[7],del(12)(p11.2p11.2)[15],del(17)(q21)[8],der(22)t(1;22)(p13;p11.2)[20],+mar[13][cp20]"
-2855,TRUE,TRUE,M,W,M1,18,86,41.5,90,,"48,XY,+4,t(10;11)(p13;q21),del(12)(p11.2),+19[6]/48idem,-17,+i(17)(q10)[14]"
-2944,TRUE,TRUE,M,NH/C,M0,48,92,111,87,,"45,XX-7[5]-only 5 metaphases"
-2857,TRUE,TRUE,M,W,M6,54,30,2.3,0,,"42,XY,-5,-7,add(12)(p13),t(14;15)(q10;q10),der(17)t(5;17)(p13;p11.2),-18[6]/40,idem,-11,-add(12)(p13),der(12)t(?;12)(?;p13),-19[6]/41,idem,-der(17)[3]/41,idem,-der(17),+mar1,+mar[3]/41,idem,der(1)der(1)(p12)add(1)(p12),+der(1)(q21)add(1)(q21),-3,-8[2]"
-2860,TRUE,TRUE,F,W,M7,60,58,0.8,0,,"44,XX,t(4;11)(q21;q23),-5,-7,add(12)(q24),add(18)(q23),del(20)(q12)[3]/43,XX,del(3)(p12),der(3)t(3;3)(p21;q2?7),psu dic(5;7)(q13;p22),-10,-15,-17,add(18)(p11.2),-21,+22,+mar[cp14]/46,XX[3]"
-2861,TRUE,TRUE,M,W,M5,76,78,4,0,,"47,XY+8 [15]/48,XY+8+8[4]/46,XY[1]"
-2863,TRUE,TRUE,M,W,M1,63,81,46.4,97,,"48,XY,+8,+8[16]/46,XY[4]"
-2868,TRUE,TRUE,M,W,M7,77,47,1.9,0,,"46,XY,-5,+8,del(9)(q22),add(10)(q26),der(15;19)(q10;q10),add(17)(p11.2),-20,-21,add(21)(p11),add(22)(q13),+3mar[20]"
-2901,TRUE,TRUE,M,NH/B,M1,27,77,90.4,88,,"46,XY,t(9;22)(q34;q11.2[4]/50,idem,+8,+10,+21,+der(22)(t(9;22)(q34;q11.2)[16]"
-,FALSE,FALSE,,,,,,,,,
+TCGA_patient_id,RNAseq_available,Expired,Sex,Race,FAB,Age,BM_blast_pct,White_blood_cell_count,PB_blast_pct,WGS_subclones_detected,Cytogenetics,RNAseq_gene_fusions,RNAseq_inferred_genomic_rearrangement,Cytogenetic_classification,Cytogenetic_risk,Molecular_classification,Molecular_risk,SVs_from_WGS
+2803,TRUE,TRUE,F,W,M3,61,44,1, ,,"46,XX,t(15;17)(q22:q21)[15]",PML(+)RARA(+) (In frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
+2806,TRUE,TRUE,M,W,M1,46,90,29.4,81,,"45,X,-Y, t(8;7;21)(q22;p15;q22[22]/46,XY[3]","RUNX1(+)RUNX1T1(+) (In Frame),CDK11B(-)SLC35E2(-) (Out of Frame)","t(21;8)(q22.3;q22), dup1p36.33",RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2870,TRUE,TRUE,M,W,M1,76,73,34,55,,"46,XY,inv(16)(p13q22)[9]/46,XY[10]","MYH11(-)CBFB(-)  (In Frame),TBC1D16(-)KIAA1618(+)  (Out of Frame)","t(16;16)(p13.11;q22.1), dup17q25.3",CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2815,TRUE,TRUE,M,W,M4,49,81,57.1,48,,"46,XY,inv(16)(p13q22)[17]/46,XY[3]",MYH11(+)CBFB(+) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2872,TRUE,FALSE,M,B,M3,42,88,2.1,2,,"46,XY,del(9)(q13:q22),t(11:21)(p13;q22),t(15;17)(q22;q210[20]",PML(-)RARA(-) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
+2998,TRUE,TRUE,F,W,M3,68,85,29,32,1,"46,XX,t(15;17)(q22;q21)[20]",PML(+)RARA(+)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72104255-17:35741663(CTX),15:72104247-17:35741661(CTX),15:72104257-17:35741661(CTX)"
+2914,TRUE,FALSE,F,W,M2,22,55,51.8,70,,"46,XX,inv(16)(p13q22)[5]/46,idem,t(3;3)(p13;q?28)[5]/46,XX[6]","MYH11(-)CBFB(-) (In Frame),FOXP1(+)PPP1R2(-) (Out of Frame)","t(16;16)(p13.11;q22.1), t(3;3)(p14.1;q29)",CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2819,TRUE,TRUE,F,W,M2,52,67,4.1,18,,"46,XX,t(8;21)(q22;q22)[17]/46,XX[3]",RUNX1(-)RUNX1T1(-) (In Frame),t(21;8)(q22.3;q22),RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2875,TRUE,FALSE,M,NH/C,M2,43,40,4.3,39,,"45,X,-Y,t(8;21)(q22;q22)[19]/46,XY[1]",RUNX1(-)RUNX1T1(-) (In Frame),t(21;8)(q22.3;q22),RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2823,TRUE,TRUE,F,W,M3,61,73,86.4,68,,"47,XX,t(15;17)(q22:q21)+mar[20]",PML(-)RARA(-)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
+2828,TRUE,FALSE,M,W,M4,55,35,22.2,8,,"46,XY,t(2;4)(q34;q21)inv(16)(p13q22) [20]","MYH11(-)CBFB(-) (In Frame),GPR128(+)TFG(+) (In Frame),NOD2(+)Storry(-) (Out of Frame)","t(16;16)(p13.11;q22.1), dup3q12.2, inv16q21-16q12.1",CBFB-MYH11,Good,CBFB-MYH11,Good, 
+3001,TRUE,FALSE,F,W,M3,31,40,1.6,0,2,"46,XX,t(15;17)(q22;q21)[11]/46,XX[9]",PML(-)RARA(-)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72103872-17:35752513(CTX),15:72103870-17:35752514(CTX)"
+2905,FALSE,FALSE,M,H,M3,48,65,0.6,28,1,"46,XY,t(15;17)(q22:q21)[11]/46,XY[8]", , ,PML-RARA,Good,PML-RARA,Good,"15:72113342-17:35755293(CTX),15:72113343-17:35755292(CTX)"
+2881,TRUE,TRUE,F,NH/C,M1,48,75,33.2,41,,"46,XX,inv(16)(p13q22)[19]/46,XX[1]",MYH11(-)CBFB(-) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2840,TRUE,TRUE,M,W,M3,74,51,31.5, ,,"46,XY,t(15;17)(q22;q21)[20]","PML(-)RARA(-)(2) (In Frame),ACAD10(-)MAPKAPK5(-) (Out of Frame),GAS6(+)FAM70B(-) (Out of Frame)","t(15;17)(q22;q21), dup12q24.12-13, dup13q34",PML-RARA,Good,PML-RARA,Good, 
+2982,TRUE,FALSE,F,H,M3,29,85,1.2,1,2,"46,XX,t(15;17)(q22;q21)[12]/46,XX[8]","PML(-)RARA(-) (In Frame),CUL1(+)DPP6(-) (Out of Frame)","t(15;17)(q22;q21), inv7q36.1-36.2",PML-RARA,Good,PML-RARA,Good,"15:72113496-17:35750399(CTX),15:72113490-17:35750402(CTX)"
+2886,TRUE,FALSE,M,NH/C,M2,25,72,11,50,,"45,X,-Y,t(8;21)(q22;q22)[13]/45,idem,del(9)(q22;q32)[7]",RUNX1(-)RUNX1T1(-) (In Frame),t(21;8)(q22.3;q22),RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2980,TRUE,FALSE,M,W,M3,50,74,0.5,10,2,"46,XY,t(15;17)(q22;q21)[20]",PML(+)RARA(+)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72103063-17:35756005(CTX),7:56712048-7:57544681(INV)"
+2888,TRUE,FALSE,M,NH/C,M4,57,40,4.9,0,,Outside hospital with inv(16),MYH11(+)CBFB(+) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2991,TRUE,FALSE,F,W,M3,40,90,0.4,0,3,"46,XX,t(15;17)(q22;q21.1)[19]/47,idem,+8 [1]",PML(+)RARA(+)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72102828-17:35748107(CTX),15:72102815-17:35748106(CTX),15:72102829-17:35748106(CTX)"
+2889,TRUE,TRUE,F,Unk/C,M4,55,52,30.9,59,,"46,XY,inv(16)(p13;q22)[20]",MYH11(-)CBFB(-) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2937,TRUE,TRUE,F,W,M1,35,81,42.8,86,,"46,XX,t(8;21)(q22;q22)[20]",RUNX1(+)RUNX1T1(+) (In Frame),t(21;8)(q22.3;q22),RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2906,FALSE,FALSE,M,W,M3,59,79,0.7,15,2,"46,XY,t(15;17)(q22;q21)[20]", , ,PML-RARA,Good,PML-RARA,Good,"15:72113381-17:35749505(CTX),15:72113386-17:35749588(CTX),15:72113410-17:35749505(CTX)"
+2841,TRUE,TRUE,F,W,M3,51,93,3.6,40,,"46,XX,t(15;17)(q22;q21)[20]",PML(-)RARA(-)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
+2942,TRUE,FALSE,F,W,M4,67,69,37,61,,"46,XX,inv(16)(p13q22)[19]/46,XX[1]",MYH11(-)CBFB(-) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2846,TRUE,TRUE,F,W,M4,57,61,13.6,17,,"46,XX,inv(16)(p13q22)[20]",MYH11(-)CBFB(-) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2892,TRUE,FALSE,F,W,M4,42,40,37.9,16,,"46,XX,inv(16)(p13q22)[15]/46,XX[2]",MYH11(+)CBFB(+) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+3012,TRUE,FALSE,M,W,M3,53,42,1,29,4,"46,XY,t(15;17)(q22;q21)[19]/46,XY[1]",PML(-)RARA(-)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72112749-17:35755472(CTX),15:72112751-17:35755469(CTX)"
+2994,TRUE,FALSE,M,W,M3,25,91,8.2,63,2,"46,XY,t(15;17)(q22;q21)[20]",PML(+)RARA(+)(2) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72113514-17:35752358(CTX),15:72113524-17:35752347(CTX)"
+2950,TRUE,FALSE,F,W,M2,34,57,14.3,59,,"45,X,-X,t(8;21)(q22;q22)[20]",RUNX1(+)RUNX1T1(+) (In Frame),t(21;8)(q22.3;q22),RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+2897,TRUE,FALSE,F,NH/C,M3,50,90,3.4,0,,"46,XX,t(15;17)(q22;q21),t(16;19)(p13.3;p13.1)[17]/46,XX[3]",PML(-)RARA(-) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
+2997,FALSE,TRUE,F,W,M3,25,93,16.3,40,1,"46,XX,t(15;17)(q22;q21)[20]", , ,PML-RARA,Good,PML-RARA,Good,"15:72113429-17:35756719(CTX),15:72052994-17:35833384(CTX)"
+2954,TRUE,FALSE,F,Unk,M4,55,54,114.5,24,,"46,XX,del(16)(q22)[16]/47,XX,del(16)(q22),+22[8]/47,XX,+22[2]/46,XX[4]",MYH11(+)CBFB(+) (In Frame),t(16;16)(p13.11;q22.1),CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2999,TRUE,FALSE,M,W,M3,62,82,0.9,11,2,"46,XY,t(15;17)(q22:q21)[11]/46,XY[9]",PML(-)RARA(-) (In Frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good,"15:72113191-17:35756597(CTX),15:72129457-17:35756833(CTX),3:46994998-3:46995128(DEL)"
+2858,TRUE,TRUE,F,W,M2,75,48,8.3,54,,"46,XX,t(8;21)[15]/46,idem,del(9)(q12q22)[5]","CRTC2(+)CREB3L4(-) (Out of Frame), RUNX1(-)RUNX1T1(-) (In Frame)","dup1q21.3, t(21;8)(q22.3;q22)",RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
+3007,TRUE,FALSE,M,W,M3,35,90,1.5,7,2,"47,XY,del(7)(q22),+8,t(15;17)(q22;q21)[18]/46,XY,del(7)(q22),t(15;17)(q22;q21)[2]","PML(-)RARA(-)(2) (In Frame),PLAUR(+)EXOC3L2(-)  (Out of Frame)","t(15;17)(q22;q21),  inv19q13.1-q13.32",PML-RARA,Good,PML-RARA,Good,15:72103777-17:35744690(CTX)
+2957,FALSE,FALSE,M,W,M4,31,82,132.7,53,,"46,XY,inv(16)(p13q22)[20]", , ,CBFB-MYH11,Good,CBFB-MYH11,Good, 
+2802,FALSE,TRUE,M,W,M4,50,88,16.9,52,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2804,FALSE,FALSE,M,W,M3,30,82,5.7, ,,"46, XY[25]", , ,Normal Karyotype,Intermediate,PML-RARA,Good, 
+2805,TRUE,TRUE,M,W,M0,77,67,92,56,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2807,TRUE,TRUE,F,W,M1,68,91,3.1,55,,"47,XX,+21[24]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2808,TRUE,FALSE,M,W,M2,23,59,32.4, ,,"47,XXY [17]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2809,FALSE,TRUE,F,W,M2,64,60,116.5, ,,"46,XX[24]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2811,TRUE,TRUE,M,W,M4,81,98,90.6,37,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2978,TRUE,TRUE,F,W,M2,61,43,9.8,32,1,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2812,TRUE,TRUE,F,B,M2,25,53,34.2,87,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2966,TRUE,TRUE,F,W,M2,57,43,3.1,35,1,"46, XX[15]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2909,TRUE,FALSE,M,NH/A,nc,22,80,115.4,94,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2963,TRUE,TRUE,M,W,M1,56,90,30.5,45,2,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate,6:104234249-6:104234390(DEL)
+2869,TRUE,TRUE,F,NH/B,M2,64,80,2.6,46,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2965,TRUE,TRUE,M,W,M4,60,89,67.5,56,1,"46, XY[15]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2871,TRUE,TRUE,M,NH/B,M1,51,62,1.5,10,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2972,TRUE,TRUE,F,W,M2,82,53,1.4,25,3,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2873,TRUE,TRUE,F,NH/C,M5,51,57,14.9,0,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2816,TRUE,TRUE,F,W,M4,57,90,87.5,84,,"46,XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2818,TRUE,TRUE,F,A,M2,62,46,75.2,53,,"46,XX[19]/46,XX,add(7)(p?22)[1]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2988,TRUE,TRUE,F,W,M1,67,76,45.6,49,2,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2977,TRUE,TRUE,F,W,M2,71,70,35.9,67,1,"46, XX[14]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2912,TRUE,TRUE,M,W,M4,63,62,17.9,9,,"47,XY,+8[15]/46,+8,-17[3]",FLT3LG(-)RPS11(-) (In Frame),dup19q13.3,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2968,FALSE,TRUE,M,W,M4,79,58,18.5,0,3,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2986,TRUE,TRUE,F,W,M2,31,63,12.6,45,1,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2913,TRUE,TRUE,M,W,M0,61,95,61.6,86,,"47,XY,+8 [19]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2918,TRUE,TRUE,F,NHC,M1,47,77,80.5,79,,"47,XX+8 [20]","GPR128(-)TFG(-) (In Frame),STIM1(+)NSD1(-) (out of frame),NUP98(+)NSD1(+) (In Frame)","dup3q12.2, t(11;5)(p15.5;q35), t(11;5)(p15.5;q35)",Intermediate Risk Cytogenetic Abnormality,Intermediate,NUP98 translocation,Poor, 
+3000,TRUE,FALSE,M,W,M2,25,56,98.8,71,2,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2821,TRUE,TRUE,M,W,M1,64,60,1.2,5,,"47,XY,+8 [10]/46,XY [10]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2822,TRUE,TRUE,M,W,M0,65,99,2.9,34,,"47,XY,+8 [20]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2916,TRUE,FALSE,F,W,M4,49,51,12.4,5,,"47,XX+11 [20]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2824,TRUE,TRUE,M,W,M5,44,74,8.8,5,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2825,TRUE,TRUE,F,W,M5,31,83,137.2,6,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2919,TRUE,FALSE,F,NH/C,M1,54,72,13.1,90,,"46, XX[19]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2826,TRUE,TRUE,F,W,M4,64,72,131.5,90,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2827,FALSE,TRUE,M,W,M2,33,33,2.8,0,,"46,XY[18]/46,XY,del(9)(q21q33)[1]/46,XY,del(20)(q?12)[1]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2877,TRUE,FALSE,F,W,M1,60,86,11.5,43,,"46,XX,9qh+[20]",GPR128(-)TFG(-) (In Frame),dup3q12.2,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2992,TRUE,TRUE,F,W,M1,32,94,5.1,70,2,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2879,TRUE,TRUE,F,NH/C,M1,68,90,59.9,91,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2880,TRUE,TRUE,M,NH/C,M1,24,77,223.8,76,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2974,FALSE,TRUE,F,W,M5,67,85,45.3,3,2,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate,3:140959414-3:140959497(DEL)
+2830,TRUE,TRUE,F,W,M4,64,85,2.9,22,,"47,XX,i(11)(q10)[18]/46,XX [2]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2921,TRUE,TRUE,F,NH/C,M4,55,69,27.6,57,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2831,FALSE,TRUE,M,W,M0,59,61,1.4,2,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2925,TRUE,TRUE,M,W,M5,57,52,99.2,4,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2832,TRUE,TRUE,F,W,M5,59,95,12.1,0,,"45,X,-X[21]/46,XX[9]","MLLT10(-)PPP2R1B(-) (In Frame),MLLT10(-)MLL(-) (In Frame),C11orf1(-)KIAA0999(-) (In Frame),PPP2R1B(-)KIAA0999(+) (Out of Frame)","t(10;11)(p12;q23.2), t(10;11)(p12;q23), inv11q23.1, inv11q23.2",Intermediate Risk Cytogenetic Abnormality,Intermediate,"MLL translocation, poor risk",Poor, 
+2926,FALSE,TRUE,F,W,M1,57,91,19.8,91,,"47,XX,+8 [20]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2833,TRUE,TRUE,M,W,M4,77,80,40.4,2,,"46, XY[18]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2970,TRUE,TRUE,F,W,M4,34,71,19.6,58,1,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2922,FALSE,TRUE,M,W,M0,83,75,77.9,74,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2835,TRUE,FALSE,M,W,M5,48,83,116.2,3,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2836,TRUE,TRUE,M,W,M4,35,90,52.9,18,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Poor, 
+3002,TRUE,TRUE,M,W,M2,68,64,5.5,48,2,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2837,TRUE,TRUE,F,W,M5,66,90,111.8,7,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2884,TRUE,TRUE,F,W,M1,44,86,13.5,17,,"46, XX[19]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2839,TRUE,TRUE,F,W,M2,51,64,42.1,79,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2907,FALSE,TRUE,M,W,M0,69,82,1.6,0,2,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate,"1:166453112-3:53150925(CTX),12:128688979-12:128689118(DEL),14:84366862-14:84371916(DEL),15:32718038-15:32718374(DEL),15:66836622-15:66836965(DEL),15:70173020-15:70175225(DEL),19:21508936-19:21509184(DEL),21:10155090-21:10156148(DEL),3:61450089-3:61450426(DEL),4:181278197-4:181280919(DEL),7:40845599-7:40846995(INV),9:88345663-9:88345767(INV)"
+2996,TRUE,FALSE,M,W,M2,75,63,2.5,2,1,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2969,TRUE,FALSE,M,W,M5,55,97,72.6,8,3,"46, XY[15]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2967,TRUE,FALSE,M,W,M4,58,58,19.9,10,1,"46, XY[18]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2933,TRUE,TRUE,M,W,M4,58,79,101.3,64,,"46,XY,i(17)(q10)[15]/47,XY,idem+13[3]/46,XY[2]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2923,FALSE,TRUE,M,W,M4,78,70,16.8,28,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2924,TRUE,FALSE,M,NH/C,M4,59,75,29.7,17,,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+3011,TRUE,FALSE,F,W,M1,21,91,8.2,83,2,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2938,TRUE,TRUE,M,W,M7,76,33,3.6,6,,"45,X,-Y[3]/46,XY [17]","TNK1(-)ZBTB7A(-) (Out of Frame),POLR2A(-)FBN3(-) (Out of Frame),NVL(-)FMN2(+) (Out of Frame)","t(17;19)(p13.1;p13.3), t(17;19)(p13.1;p13), dup1q41-q43",Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2979,TRUE,FALSE,F,W,M1,30,86,22.9,88,1,"46, XX[20]",LRBA(+)SH3D19(+) (In Frame),dup4q31.3,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2990,TRUE,FALSE,M,W,M1,51,85,63.7,85,2,"46, XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2890,TRUE,TRUE,M,NH/C,M0,69,60,6.1,22,,"47,XY,+9[10]/46,XY[10]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2842,TRUE,TRUE,M,W,M4,64,95,2.3,0,,"46,XY,del(11)(p12)[2]/46,XY[18]",MLLT10(+)MLL(+) (In Frame),t(10;11)(p12;q23),Intermediate Risk Cytogenetic Abnormality,Intermediate,"MLL translocation, poor risk",Poor, 
+2843,TRUE,TRUE,M,W,M6,77,75,2.6,8,,"46,XY,del(20)(q11.2)[23]/92,XXYY,del(20)(q11.2)x2[2]/46,XY[3]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2973,TRUE,TRUE,F,W,M4,67,75,15.2,10,1,"46, XX[16]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2927,TRUE,TRUE,F,NH/C,M1,88,33,2.9,0,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2940,TRUE,TRUE,M,W,M2,35,34,33.5,40,,"47,XY,+21 [6]/46,XY[13]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2845,TRUE,TRUE,F,W,M2,37,52,18.7,33,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2930,TRUE,TRUE,F,NH/C,M2,62,72,27.7,49,,"46, XX[20]",NUP98(-)NSD1(-) (In Frame),t(11;5)(p15.5;q35),Normal Karyotype,Intermediate,NUP98 Translocation,Poor, 
+2931,TRUE,TRUE,M,W,M2,75,76,98.2,80,,"46,XY,9qh+[19]",BIRC6(+)LTBP1(+) (In Frame),dup2p22.3,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2932,TRUE,FALSE,M,W,M5,62,85,59.3,22,,"46, XY[20]",MLL3(+)ACTR3B(-) (Out of Frame),dup7q36.1,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2848,TRUE,TRUE,M,W,M4,62,65,118.8,65,,"46, XY[20]",NCOR2(-)SCARB1(-) (Out of Frame),dup12q24.1-31,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2983,TRUE,TRUE,M,W,M0,45,75,2.3,0,1,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2987,TRUE,TRUE,F,W,M5,75,41,7.3,0,1,"46,XX[18]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2934,TRUE,TRUE,M,NH/C,M1,65,79,67.9,84,,"46,XY[15]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2851,TRUE,TRUE,F,W,M5,66,32,78.5,11,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2896,TRUE,TRUE,F,W,M5,21,90,93,72,,"46,XX[15]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2989,FALSE,TRUE,M,W,M2,29,45,2.2,9,5,"46,XY,15pstk+[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2936,TRUE,TRUE,F,NH/C,M0,60,50,2.1,14,,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+3005,TRUE,FALSE,M,W,M5,45,81,1.6,0,2,"46,XY[20]",MLLT10(+)MLL(+) (In Frame),t(10;11)(p12;q23),Normal Karyotype,Intermediate,"MLL translocation, poor risk",Poor,"5:168977114-5:168977145(DEL),5:585454-5:585654(DEL),6:150735535-6:150735635(DEL),9:36352882-9:36354094(DEL)"
+2976,TRUE,TRUE,M,W,M1,53,86,88.1,52,1,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2853,TRUE,TRUE,M,W,M1,51,85,103.6,85,,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2984,TRUE,FALSE,M,W,M1,38,86,39.8,97,2,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+3006,TRUE,TRUE,M,W,M1,61,49,2.9,14,1,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2981,TRUE,FALSE,F,W,M5,35,87,72.1,8,1,"46, XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2975,TRUE,TRUE,M,B,M2,54,67,45,83,1,"46,XY[19]",BCL11A(-)GRIP2(-)* (Out of Frame),t(2;3)(p16.1; p24-p23),Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2854,TRUE,TRUE,F,W,M4,51,73,2.9,2,,"45,Xc,t(5;21)(q31;q22)[18]/45,idem,t(1;6)(?q21;p23)[1]/45,Xc[1]","RUNX1(-)ADAMTS19(+) (Out of Frame),RUNX1(+)PRRC1(+) (Out of Frame)","t(21;5)(q22.3;q23.3), t(21;5)(q22.3;q23.2)",Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2964,TRUE,FALSE,F,W,M1,57,64,2.5,61,1,"46, XX[19]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+3008,TRUE,TRUE,M,W,M1,22,71,1.2,90,3,"46,XY[30]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2898,TRUE,FALSE,F,NH/C,M1,69,42,10.1,32,,"47,XX+8 [20]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2856,TRUE,TRUE,M,W,M4,63,82,76.7,39,,"46,XY[20]",NUP98(-)NSD1(-) (In Frame),t(11;5)(p15.5;q35),Normal Karyotype,Intermediate,NUP98 Translocation,Poor, 
+2947,FALSE,FALSE,M,NH/C,M4,52,75,298.4,51,,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+3009,TRUE,TRUE,M,W,M4,23,51,27.1,63,2,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2955,TRUE,TRUE,F,W,M2,56,60,202.7,96,,"46,XX[20]",UBR4(+)ZFP37(+) (Out of Frame),t(1;9)(p36.13;q32),Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2971,TRUE,TRUE,F,W,M4,76,91,5,16,1,"46,XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2985,TRUE,TRUE,F,W,M5,81,53,12.3,7,1,"46,XX[20]","MLLT10(+)CEP164(-) (Out of Frame),MLLT10(+)MLL(+) (In Frame)","t(10;11)(p12;q23.3), t(10;11)(p12;q23)",Normal Karyotype,Intermediate,"MLL translocation, poor risk",Poor, 
+2948,TRUE,TRUE,M,W,M4,67,30,26.1,6,,"46,XY[13]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2956,TRUE,TRUE,M,W,M5,61,89,8.4,0,,"46,XY,t(9;11)(p22;q23)[7]/47,XY,t(9;11)(p22;q23)[7]/46,XY[4]","MLL(-)MLLT3(-) (In Frame),VTI1B(-)RDH11(-) (Out of Frame)","t(11;9)(q23;p22), dup14q24.1","MLL translocation, t(9;11)",Intermediate,"MLL translocation, t(9;11)",Intermediate, 
+2993,TRUE,TRUE,F,W,M1,57,100,102.5,91,1,"46,XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate,"2:88210954-2:88211270(DEL),20:61859659-20:61859782(DEL),3:8697749-3:8697853(DEL)"
+2859,TRUE,TRUE,M,B,M2,40,47,8.3,23,,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2899,TRUE,TRUE,F,W,M4,76,37,2.7,0,,"46,XX+13,21[cp17]/46,XX[3]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2862,TRUE,FALSE,F,B,M3,33,100,0.9,0,,"46,XX[20]",PML(-)RARA(-) (In Frame),t(15;17)(q22;q21),Normal Karyotype,Intermediate,PML-RARA,Good, 
+2959,TRUE,TRUE,M,W,M0,71,90,1,13,,"47,XY,+13[5]/46,XY[15]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2864,FALSE,TRUE,F,W,M1,53,82,1.2,42,,"47,XX,+8[19]/46,XX[2]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2900,TRUE,TRUE,M,Unk/B,M1,70,84,48,49,,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2865,TRUE,TRUE,M,W,M1,75,40,6.4,48,,"47,XY,+21[11]/48,XY,+3,+21[8]", , ,Intermediate Risk Cytogenetic Abnormality,Intermediate,Intermediate Risk Cytogenetic Abnormality,Intermediate, 
+2903,TRUE,TRUE,F,W,M1,76,99,297.4,98,,"46,XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2995,TRUE,TRUE,M,W,M2,63,35,0.6,0,2,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate,20:23051193-20:23051633(DEL)
+2866,TRUE,TRUE,M,W,M1,67,89,30.8,61,,"46,XY[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2867,TRUE,TRUE,F,W,M2,66,70,3.4,6,,"46,XX[20]", , ,Normal Karyotype,Intermediate,Normal Karyotype,Intermediate, 
+2810,TRUE,TRUE,F,B,M2,76,48,61.6,88,,ND, , ,N.D.,N.D.,N.D.,N.D., 
+2829,FALSE,TRUE,M,B,M6,50,70,5.5,0,,N.D.; -5q by FISH, , ,N.D.,N.D.,N.D.,Poor, 
+2895,TRUE,TRUE,F,NH/C,M1,41,92,134.4,90,,N.D., , ,N.D.,N.D.,N.D.,N.D., 
+2850,FALSE,TRUE,F,B,M2,72,45,3,0,,"Incomplete-46,XX[2]", , ,N.D.,N.D.,N.D.,N.D., 
+2946,TRUE,TRUE,M,NH/C,M2,41,47,43.1,62,,"incomplete-46,XY,del(12)(p11.20[2]/46,XY[3]", , ,N.D.,N.D.,N.D.,N.D., 
+2908,TRUE,TRUE,M,W,M2,81,46,1.5,0,,"46~49,XY,del(3)(p14),del(5)(p11.2q33),del(17)(q21q21),add(21)(p11.2),+22,mar[cp20]",IFNGR2(-)GART(-) (Out of Frame),inv21q22.11,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2910,TRUE,TRUE,F,W,M5,61,71,34.6,55,,"47,XX,+der(5)t(2;5)(p11.2;q11.2)?,t(8;16)(p11.2;p13.3)[19]",CREBBP(+)KAT6A(+)(2) (In Frame),t(16;8)(p13.3;p11),Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2904,TRUE,TRUE,M,W,M0,65,83,0.9,0,,"46~50,XY,-1,del(2),del(5)(q22q33),der(7)t(1;7)(q21;p13),add(7)(p11.1),+8,+add(11),del(12)(p12),del(13)(q22), 15,add(17)(p11.1),-20,+22 {cp20}Complex Cytogenetics , including 5q-,+8,",MDM4(+)DNMT3B(+) (Out of Frame),t(1;20)(q32;q11.2),Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2813,TRUE,TRUE,M,W,M4,78,40,9.9,6,,"44-45,X,-Y,-5,add(16)(q22),-17,-18,iso(21),+mars[cp5]/82-84,XX,-Y,-3,-4,-11,-12,-19,-21,+21[cp5}", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2814,TRUE,TRUE,F,W,M0,39,75,2.3,4,,"46,XX,del(5)(q22q33)[4]/46,XX[16]",GAS6(-)FAM70B(+) (Out of Frame),dup13q34,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2915,TRUE,TRUE,F,NH/C,M2,73,32,15.1,11,,"46,XX,del(3)(q23q26.2),der(7)t(1:7)(q32;q32),del(10)(q22q25),t(13;16)(q34;p11.2)dup(21)(q22)[cp20]","GRID1(+)DPM1(+) (In Frame),RUNX1(+)MECOM(+)  (In Frame)","t(10;20)(q22;q13.13), t(21;3)(q22.3;q26)",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2817,TRUE,TRUE,M,W,M2,63,57,77.3,70,,"45,XY,-7, t(9;22)(q34;q11.20) [19]/46,XY[1]",BCR(-)ABL1(-) (In Frame),t(22;9)(q11.23;q34.1),BCR-ABL1,Poor,BCR-ABL1,Poor, 
+2874,TRUE,FALSE,M,NH/C,M2,59,70,11.5,48,,"45,XY,-7[20]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2911,TRUE,FALSE,F,B,M4,51,39,50.3,39,,"44~46,XX,del(11)(q23),der(19)?t(11;19)(q23;p13.1)[cp11]/44~45,XX,-19[cp4]/46,XX [5]",MLL(-)ELL(-) (In Frame),t(11;19)(q23;p13.1),"MLL translocation, poor risk",Poor,"MLL translocation, poor risk",Poor, 
+2820,TRUE,TRUE,M,B,M0,76,74,14.5,82,,"53~56,XY,+1,del(2)(q33q34),+8,+10,+11x2,+13x1-2,+14,del(17)(p11.2),+19,add(21)(q22),+22[cp20]",GOSR1(-)ZNF207(-) (In Frame),del17q11.2,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2917,TRUE,TRUE,F,W,M0,41,42,47.6,74,,"46,XX,i(17)(q10)[1]/45,sl-7[2]/48,sl,+13,+19[3]/46,XX[15]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2876,TRUE,FALSE,F,W,M2,45,56,29.4,37,,"46,XX,1~50dmin[12]/46,idem,der(6)t(6;?)(q22;?)[2]/46,XX[6]","CR593328(-)FAM49B(+) (Out of Frame),PVT1(+)ASAP1(+)(2) (Out of Frame)","inv8q24.21, inv8q24.1-q24.2",Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2920,TRUE,TRUE,M,W,M2,44,39,34.8,83,,"45~46,XY,add(X)(q22)[7],Y[4],der(5)t(5;17)(q13;21)[18],-7[18],+8[17],del(12)(q23)[16],-17[18],add(18)(p11.2)[14][cp18]","C12orf59(-)XIAP(+) (Out of Frame),CHST11(-)ATP1B4(-) (In Frame),KPNB1(-)ACE(-) (In Frame),KSR1(-)ODZ1(-) (In Frame),OLR1(-)XIAP(-) (In Frame),PTPN2(+)UBLCP1(+) (Out of Frame),WSB1(+)NBR1(+) (Out of Frame)","t(12;X)(p13.2;q25), t(12;X)(q?;q24), del17q21.3-23.3, t(17;X)(q11.1-q11.2;q25), t(12;X)(p13.2-p12.3;q25), t(18;5)(p11.3-p11.2;q33.3), del17q11.1-q21.31",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2878,TRUE,TRUE,F,W,M2,47,37,12,0,,"39~47,XX,del(5)(q13q33),-7,der(8)t(8;?8;8)(p23;?p11.2p23;q11.2),der(14)t(1;14)(p12;p11.2)der(1)t(7;16)(p15;q22),+2mar[cp19]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2882,TRUE,TRUE,F,W,M2,73,37,1.7,16,,"45,XX,-7[12]/46,XX[8]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2834,TRUE,TRUE,M,W,M4,33,71,25.9,14,,"46,XY,t(11;19)(q23;p13)[17]/46,XY,t(11;19)(q23;p13),inv(12)(p12p13)[3]",MLL(-)ELL(-) (In Frame),t(11;19)(q23;p13.1),"MLL translocation, poor risk",Poor,"MLL translocation, poor risk",Poor, 
+2883,TRUE,FALSE,M,W,M5,60,94,6.7,30,,"52~54,XY,+2,+4,+6,+8,del(11)(q23),+19,+19,+21[17]/46,XY[3]",MLL(+)MLLT4(+) (In Frame),t(11;6)(q23;q27),"MLL translocation, poor risk",Poor,"MLL translocation, poor risk",Poor, 
+2929,TRUE,TRUE,F,W,M0,71,55,5.6,50,,"41~44,X,?i(X)(p10),-7,der(12)t(8;12)(q11.2;p11.2),-8 [cp11]/46,XX[8[", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2838,TRUE,TRUE,M,W,M2,67,50,2.1,17,,"46,XY,del(5)(q11.2q31),-7,+8,+11,add(11)(q23),der(16;17)(q10;q10)[18]/51,idem,+1,+5,+8,+10,+21 [2]","AF086125(+)USP22(+) (Out of Frame),CA7(-)USP22(+) (Out of Frame)","t(16;17)(q22;p11.2), t(16;17)(q22.1;p11.2)",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2885,TRUE,TRUE,M,NH/C,M0,71,97,5.4,54,,"43,XY-3,del(5)(q12q33),-7,der(10)t(10;11)(q26;q13),-12,-18,+2mar[20]",KSR2(-)SETMAR(+) (Out of Frame),t(12;3)(q24.22-23;p26.1),Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2887,TRUE,TRUE,F,NH/C,M1,60,87,46.5,65,,"46,XX,del(7)(q11.2)[20]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2844,TRUE,TRUE,M,W,M2,63,80,17,71,,"46,XY,t(11;19)(q23;p13)[20]",MLL(-)ELL(-) (In Frame),t(11;19)(q23;p13.1),"MLL translocation, poor risk",Poor,"MLL translocation, poor risk",Poor, 
+2891,TRUE,TRUE,M,NH/B,M1,42,68,10.7,51,,"45,XY,der(7)(t:7;12)(p11.1;p11.2),-12,-13,+mar[19]/46,XY[1]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2928,TRUE,TRUE,F,NH/AA,M1,43,87,171.9,91,,"45,XX,-7[20]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2847,TRUE,TRUE,M,W,M1,53,72,2.7,41,,"46,XY,del(7)(q21q36)[18]/46,XY[2]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2893,TRUE,TRUE,M,W,M5,45,95,5.1,6,,"46,XY,t(6;11)(q27;q23)[15]",MLL(-)MLLT4(-)(2) (In Frame),t(11;6)(q23;q27),"MLL translocation, poor risk",Poor,"MLL translocation, poor risk",Poor, 
+2849,TRUE,FALSE,M,W,M0,39,83,5,53,,"47,XY,del(5)(q22q33),t(10;11)(p13~p15;q22~23),i(17)(q10)[3]/46,XY[17]",MLLT10(+)PICALM(+) (2 (In Frame)),t(10;11)(p12;q14),Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2945,FALSE,TRUE,F,W,M4,65,90,48.5,76,,"46~47,XX,+i(4)(q10)[12],-8[5],10[3][cp20]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2894,TRUE,TRUE,F,W,M5,50,81,6.7,10,,"45,XX,-7,t(9;11)(p22;q23)[19]/46,XX[1]",MLL(-)MLLT3(-) (In Frame),t(11;9)(q23;p22),"MLL translocation, t(9;11)",Poor,"MLL translocation, t(9;11)",Intermediate, 
+2935,TRUE,TRUE,M,W,M4,66,81,2.2,12,,"44~47,XY,del(5)(q22q35)[20],-7[14],-8[6],der(12)t(10;12)(p11.2q21)[2],add(14)(p12)[11],-17[13],der(17)t(10;17)(q11.2;p13)[14],-18[7],add(18)(p11.2)[7],-21[10],i(21)(q10)[4],-22[4],+mar[10],+mar1x2[6][cp20]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2949,TRUE,TRUE,M,W/Nat Amer,M0,58,59,47.2,72,,"47,XY,+22[10]/47,XY,+8[7]/45,XY,del(3)(p21),del(4)(p12p15),-7,?dup(7)(q11.2q36)[3]", , ,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2939,TRUE,FALSE,M,W,M1,72,88,37.5,18,,"37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]","MTOR(+)CHD1(+) (Out of Frame),CDC73(-)FAM172A(-) (Out of Frame),EDIL3(-)MKLN1(-) (Out of Frame)","t(1;5)(p36.2;q15-q21), t(1;5)(q25;q15), t(5;7)(q14;q32)",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2941,TRUE,TRUE,M,W,nc,73,90,58.9,0,,"46,XY,t(9;22)(q34;q11.2)[13]/34~37,idem,-3,del(4),-4,-5,-7,-9,-10,t?(11;12),-12,-14,-14,-16,-17,-22[cp6]/46,XY[1]","BCR(+)ABL1(+)(2) (In Frame),DOCK6(-)CCDC130(-) (In Frame)","t(22;9)(q11.23;q34.1),  inv19p13.2",BCR-ABL1,Poor,BCR-ABL1,Poor, 
+2943,TRUE,TRUE,F,NH/C,M1,70,32,0.7,6,,"46,XX,del(5)(q11.2q33)[1]/48~52,idem,+1,+?del(5)(q15q33),+11,+11,?t(12;22)(p13;q12),-13,-17,+i(22)(q10),+i(22)(q10),+mar[cp19]",RSAD2(+)ELMOD3(-) (Out of Frame),inv2p25.2-p11.2,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2952,TRUE,TRUE,F,W,M1,60,62,16,29,,"44~47,XX,t(1;15)(q32;q26)[14],del(5)(q13q33)[19],-7[20],+8[7],del(12)(p11.2p11.2)[15],del(17)(q21)[8],der(22)t(1;22)(p13;p11.2)[20],+mar[13][cp20]",NF1(+)LRRC37B(+) (In Frame),del17q11.2,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2855,TRUE,TRUE,M,W,M1,18,86,41.5,90,,"48,XY,+4,t(10;11)(p13;q21),del(12)(p11.2),+19[6]/48idem,-17,+i(17)(q10)[14]","MLLT10(+)PICALM(+)(2) (In Frame),GAS6(+)FAM70B(-) (Out of Frame)","t(10;11)(p12;q14), dup13q34",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2944,TRUE,TRUE,M,NH/C,M0,48,92,111,87,,"45,XX-7[5]-only 5 metaphases",RPN1(+)MECOM(+) (In Frame),del3q21.3-q26,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2857,TRUE,TRUE,M,W,M6,54,30,2.3,0,,"42,XY,-5,-7,add(12)(p13),t(14;15)(q10;q10),der(17)t(5;17)(p13;p11.2),-18[6]/40,idem,-11,-add(12)(p13),der(12)t(?;12)(?;p13),-19[6]/41,idem,-der(17)[3]/41,idem,-der(17),+mar1,+mar[3]/41,idem,der(1)der(1)(p12)add(1)(p12),+der(1)(q21)add(1)(q21),-3,-8[2]","H2AFX(-)WDR18(-) (In Frame),DDX20(-)TBX15(-) (In Frame),ZNF585B(-) C2CD2L(+) (In Frame)","t(11;19)(q23.3;p13.3), inv1p21.1-p11.1, t(19;11)(q13.12;q23.3)",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2860,TRUE,TRUE,F,W,M7,60,58,0.8,0,,"44,XX,t(4;11)(q21;q23),-5,-7,add(12)(q24),add(18)(q23),del(20)(q12)[3]/43,XX,del(3)(p12),der(3)t(3;3)(p21;q2?7),psu dic(5;7)(q13;p22),-10,-15,-17,add(18)(p11.2),-21,+22,+mar[cp14]/46,XX[3]",USP25(-)TRAPPC10(+) (Out of Frame),inv21q11.2-q22.3,Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2861,TRUE,TRUE,M,W,M5,76,78,4,0,,"47,XY+8 [15]/48,XY+8+8[4]/46,XY[1]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2863,TRUE,TRUE,M,W,M1,63,81,46.4,97,,"48,XY,+8,+8[16]/46,XY[4]", , ,Poor Risk Cytogenetic Abnormality,Poor,Poor Risk Cytogenetic Abnormality,Poor, 
+2868,TRUE,TRUE,M,W,M7,77,47,1.9,0,,"46,XY,-5,+8,del(9)(q22),add(10)(q26),der(15;19)(q10;q10),add(17)(p11.2),-20,-21,add(21)(p11),add(22)(q13),+3mar[20]","NEK1(-)CLCN3(+) (Out of Frame),ZNF483(-)GAPVD1(+) (Out of Frame),NR6A1(+)OBP2B(-) (Out of Frame)","dup4q33, inv9q31.3-33.3, inv9q33.3-34",Complex Cytogenetics,Poor,Complex Cytogenetics,Poor, 
+2901,TRUE,TRUE,M,NH/B,M1,27,77,90.4,88,,"46,XY,t(9;22)(q34;q11.2[4]/50,idem,+8,+10,+21,+der(22)(t(9;22)(q34;q11.2)[16]","BCR(-)ABL1(-)(2) (In Frame),SEC63(-)FIG4(-) (Out of Frame)","t(22;9)(q11.23;q34.1), inv6q21",BCR-ABL1,Poor,BCR-ABL1,Poor, 

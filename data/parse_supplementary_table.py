@@ -34,11 +34,20 @@ def main():
     original_names = ['TCGA Patient ID', 'RNAseq data?', 'Expired?  4.30.13',
                       'Sex', 'Race', 'FAB', 'Age', '%BM Blast', 'WBC',
                       '%PB Blast', 'Subclones deteceted by WGS', 
-                      'Cytogenetics']
+                      'Cytogenetics', 'Gene Fusions by RNA-Seq',
+                      'Inferred genomic rearrangement (from RNA-Seq fusion)',
+                      'Cytogenetic Classification', 'RISK (Cyto)',
+                      'Molecular Classification', 'RISK (Molecular)',
+                      'SVs (from WGS)']
     modified_names = ['TCGA_patient_id', 'RNAseq_available', 'Expired',
                       'Sex', 'Race', 'FAB', 'Age', 'BM_blast_pct',
                       'White_blood_cell_count', 'PB_blast_pct',
-                      'WGS_subclones_detected', 'Cytogenetics']
+                      'WGS_subclones_detected', 'Cytogenetics',
+                      'RNAseq_gene_fusions', 
+                      'RNAseq_inferred_genomic_rearrangement',
+                      'Cytogenetic_classification', 'Cytogenetic_risk',
+                      'Molecular_classification', 'Molecular_risk',
+                      'SVs_from_WGS']
 
     # Open the CSV file for reading
     supp_csv_file = "SuppTable01.update.2013.05.13.csv"
@@ -53,7 +62,8 @@ def main():
         for row in csv_reader:
             tidied_row = standardize_nomenclature(row, original_names, 
                                                   modified_names)
-            csv_writer.writerow(tidied_row)
+            if tidied_row['TCGA_patient_id']:
+                csv_writer.writerow(tidied_row)
 
 
 if __name__ == '__main__':
