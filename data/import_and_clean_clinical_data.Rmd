@@ -92,5 +92,25 @@ summary(supp_d$RISK..Cyto.)
   
 #### Annotate Samples with Karyotypic events of interest  
 
-Clean the supplemental data in 
+Per conversation with group members and Shaun, I'll clean the supplemental data in `SuppTable01.update.2013.05.13.csv`. Note that I'm doing this in Python (with ` parse_supplementary_table.py`) for expediency.
+
+Manipulations are as follows:
+
+- Select a relevant subset of variables
+- For variables that can be converted to boolean types, do so
+- Convert column names to be more R-friendly (e.g., `'Expired?  4.30.13'` became `Expired` and `'%BM Blast'` became `BM_blast_pct`)
+
+The script should be run like so:
+
+```
+python parse_supplementary_table.py > experimental_design.csv
+```
+
+
+Now I can read in the modified CSV file to get a cleaner data frame:
+
+```{r}
+cleaned <- read.csv('experimental_design.csv')
+```
+
   

@@ -13,6 +13,7 @@ def standardize_nomenclature(row, original_names, modified_names):
     Standardize and simplify nomenclature
     """
     
+    # Set up a new dict with simplified column names
     tidied_row = {}
     for old, new in zip(original_names, modified_names):
         tidied_row[new] = row.pop(old)
@@ -22,10 +23,7 @@ def standardize_nomenclature(row, original_names, modified_names):
         tidied_row['RNAseq_available'] == 'Yes' else 'FALSE'
     tidied_row['Expired'] = 'TRUE' if tidied_row['Expired'] == '*' else 'FALSE'
     
-    for field in row:
-        if not 
-    
-    return row
+    return tidied_row
 
 def main():
     """
@@ -47,8 +45,8 @@ def main():
     csv_reader = csv.DictReader(open(supp_csv_file, 'r'), 
                             delimiter=',', quotechar='"')
 
-    # Parse the CSV file row-by-row
-    with open('test.csv','wb') as out_handle:
+    # Parse the CSV file row-by-row and write output
+    with open('experimental_design.csv','wb') as out_handle:
         csv_writer = csv.DictWriter(out_handle, delimiter=',', 
                             fieldnames=modified_names)
         csv_writer.writeheader()
@@ -57,15 +55,6 @@ def main():
                                                   modified_names)
             csv_writer.writerow(tidied_row)
 
-    # for row in csv_reader:
-    #     # Clean up nomenclature
-    #     row = standardize_nomenclature(row, original_names, modified_names)
-    #     # Skip if no TCGA ID
-    #     if not row['TCGA_patient_id']:
-    #         continue
-    #     #print ",".join(row[f] for f in modified_names)
-    
-    # Write output
 
 if __name__ == '__main__':
     main()
