@@ -25,6 +25,21 @@ def tidy_field(field, revised, var_type):
     
     return field
 
+def parse_cytogenetics(cytogenetics, revised):
+    """Parse the 'cytogenetics' field to count the karyotypoes of interest"""
+
+    presence = 'FALSE'
+    if revised == 'trisomy_8':
+        if '+8' in cytogenetics:
+            presence = 'TRUE'
+    if revised == 'del_5q':
+        if 'del(5)' in cytogenetics:
+            presence = 'TRUE'
+    if revised == 'del_7q':
+        if 'del(7)' in cytogenetics:
+            presence = 'TRUE'
+    return presence
+
 def standardize_nomenclature(row, column_names):
     """
     Standardize and simplify nomenclature
@@ -33,9 +48,13 @@ def standardize_nomenclature(row, column_names):
     # Set up a new dict with simplified column names
     tidied_row = {}
     for original, revised, var_type in column_names:
-        tidied_row[revised] = row.pop(original)
-        tidied_row[revised] = tidy_field(tidied_row[revised],
-                                         revised, var_type)
+        if var_type == 'novel':
+            tidied_row[revised] = parse_cytogenetics(tidied_row['Cytogenetics'],
+                                                     revised) 
+        else:
+            tidied_row[revised] = row.pop(original)
+            tidied_row[revised] = tidy_field(tidied_row[revised],
+                                             revised, var_type)
     return tidied_row
 
 def main():
@@ -46,8 +65,9 @@ def main():
     # Simplify variable names
     # This is a list of tuples, with each member consisting of the
     # original and revised variable names, and the
-    # type: either 'bool', 'factor', or 'custom'
-    # (for fields that don't fit the other types)
+    # type: either 'bool', 'factor', 'custom'
+    # (for fields that don't fit the other types), or
+    # 'novel' (for fields that I'm deriving from other fields)
     # NOTE: 'factor' here isn't meant to imply that these variables
     #  will be treated as factorial variables in R
     column_names = [
@@ -63,6 +83,9 @@ def main():
         ('%PB Blast', 'PB_blast_pct', 'factor'),
         ('Subclones deteceted by WGS', 'WGS_subclones_detected', 'factor'),
         ('Cytogenetics', 'Cytogenetics', 'factor'),
+        ('', 'trisomy_8', 'novel'),
+        ('', 'del_5q', 'novel'),
+        ('', 'del_7q', 'novel'),
         ('Gene Fusions by RNA-Seq', 'RNAseq_gene_fusions', 'factor'),
         ('Inferred genomic rearrangement (from RNA-Seq fusion)',
          'RNAseq_inferred_genomic_rearrangement', 'factor'),
