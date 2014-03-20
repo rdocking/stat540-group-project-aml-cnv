@@ -1,4 +1,4 @@
-TCGA_patient_id,RNAseq_available,Expired,Sex,Race,FAB,Age,BM_blast_pct,White_blood_cell_count,PB_blast_pct,WGS_subclones_detected,Cytogenetics,RNAseq_gene_fusions,RNAseq_inferred_genomic_rearrangement,Cytogenetic_classification,Cytogenetic_risk,Molecular_classification,Molecular_risk,SVs_from_WGS
+TCGA_patient_id,RNAseq_available,Expired,Sex,Race,FAB_subtype,Age,BM_blast_pct,White_blood_cell_count,PB_blast_pct,WGS_subclones_detected,Cytogenetics,RNAseq_gene_fusions,RNAseq_inferred_genomic_rearrangement,Cytogenetic_classification,Cytogenetic_risk,Molecular_classification,Molecular_risk,SVs_from_WGS
 2803,TRUE,TRUE,F,W,M3,61,44,1, ,,"46,XX,t(15;17)(q22:q21)[15]",PML(+)RARA(+) (In frame),t(15;17)(q22;q21),PML-RARA,Good,PML-RARA,Good, 
 2806,TRUE,TRUE,M,W,M1,46,90,29.4,81,,"45,X,-Y, t(8;7;21)(q22;p15;q22[22]/46,XY[3]","RUNX1(+)RUNX1T1(+) (In Frame),CDK11B(-)SLC35E2(-) (Out of Frame)","t(21;8)(q22.3;q22), dup1p36.33",RUNX1-RUNX1T1,Good,RUNX1-RUNX1T1,Good, 
 2870,TRUE,TRUE,M,W,M1,76,73,34,55,,"46,XY,inv(16)(p13q22)[9]/46,XY[10]","MYH11(-)CBFB(-)  (In Frame),TBC1D16(-)KIAA1618(+)  (Out of Frame)","t(16;16)(p13.11;q22.1), dup17q25.3",CBFB-MYH11,Good,CBFB-MYH11,Good, 
