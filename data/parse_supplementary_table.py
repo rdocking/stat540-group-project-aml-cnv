@@ -22,7 +22,7 @@ def tidy_field(field, revised, var_type):
     elif var_type == 'custom':
         if revised == 'RNAseq_available':
             field = 'TRUE' if field == 'Yes' else 'FALSE'
-        
+    
     return field
 
 def standardize_nomenclature(row, column_names):
@@ -34,7 +34,7 @@ def standardize_nomenclature(row, column_names):
     tidied_row = {}
     for original, revised, var_type in column_names:
         tidied_row[revised] = row.pop(original)
-        tidied_row[revised] = tidy_field(tidied_row[revised], 
+        tidied_row[revised] = tidy_field(tidied_row[revised],
                                          revised, var_type)
     return tidied_row
 
@@ -44,9 +44,9 @@ def main():
     """
     
     # Simplify variable names
-    # This is a list of tuples, with each member consisting of the 
-    # original and revised variable names, and the 
-    # type: either 'bool', 'factor', or 'custom' 
+    # This is a list of tuples, with each member consisting of the
+    # original and revised variable names, and the
+    # type: either 'bool', 'factor', or 'custom'
     # (for fields that don't fit the other types)
     # NOTE: 'factor' here isn't meant to imply that these variables
     #  will be treated as factorial variables in R
@@ -54,7 +54,7 @@ def main():
         ('TCGA Patient ID', 'TCGA_patient_id', 'factor'),
         ('RNAseq data?', 'RNAseq_available', 'custom'),
         ('Expired?  4.30.13', 'Expired', 'bool'),
-        ('Sex', 'Sex', 'factor'), 
+        ('Sex', 'Sex', 'factor'),
         ('Race', 'Race', 'factor'),
         ('FAB', 'FAB_subtype', 'factor'),
         ('Age', 'Age', 'factor'),
@@ -85,18 +85,29 @@ def main():
         ('Other in -frame fusions', 'other_in_frame_fusions', 'factor'),
         ('FLT3', 'FLT3', 'factor'),
         ('NPM1', 'NPM1', 'factor'),
-        ('DNMT3A', 'DNMT3A', 'factor')
+        ('DNMT3A', 'DNMT3A', 'factor'),
+        ('IDH2', 'IDH2', 'factor'),
+        ('IDH1', 'IDH1', 'factor'),
+        ('RUNX1', 'RUNX1', 'factor'),
+        ('TET2', 'TET2', 'factor'),
+        ('TP53', 'TP53', 'factor'),
+        ('NRAS', 'NRAS', 'factor'),
+        ('CEBPA', 'CEBPA', 'factor'),
+        ('WT1', 'WT1', 'factor'),
+        ('PTPN11', 'PTPN11', 'factor'),
+        ('KIT', 'KIT', 'factor'),
+        ('KRAS', 'KRAS', 'factor'),
     ]
     modified_names = [t[1] for t in column_names]
-
+    
     # Open the CSV file for reading
     supp_csv_file = "SuppTable01.update.2013.05.13.csv"
-    csv_reader = csv.DictReader(open(supp_csv_file, 'r'), 
+    csv_reader = csv.DictReader(open(supp_csv_file, 'r'),
                             delimiter=',', quotechar='"')
-
+    
     # Parse the CSV file row-by-row and write output
     with open('experimental_design.csv','wb') as out_handle:
-        csv_writer = csv.DictWriter(out_handle, delimiter=',', 
+        csv_writer = csv.DictWriter(out_handle, delimiter=',',
                             fieldnames=modified_names)
         csv_writer.writeheader()
         for row in csv_reader:
