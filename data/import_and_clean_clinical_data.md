@@ -230,7 +230,6 @@ The script should be run like so:
 python parse_supplementary_table.py > experimental_design.csv
 ```
 
-
 Now I can read in the modified CSV file to get a cleaner data frame:
 
 
@@ -261,8 +260,8 @@ str(cleaned_data)
 ##  $ WGS_subclones_detected               : int  NA NA NA NA NA 1 NA NA NA NA ...
 ##  $ Cytogenetics                         : Factor w/ 125 levels "37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]",..: 52 13 74 72 69 51 46 53 15 100 ...
 ##  $ trisomy_8                            : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ del_5q                               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ del_7q                               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_5                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_7                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ RNAseq_gene_fusions                  : Factor w/ 58 levels "AF086125(+)USP22(+) (Out of Frame),CA7(-)USP22(+) (Out of Frame)",..: 48 55 34 38 43 49 36 53 53 45 ...
 ##  $ RNAseq_inferred_genomic_rearrangement: Factor w/ 51 levels "del17q11.2","del3q21.3-q26",..: 34 48 39 38 34 34 41 47 47 34 ...
 ##  $ Cytogenetic_classification           : Factor w/ 11 levels "BCR-ABL1","CBFB-MYH11",..: 9 11 2 2 9 9 2 11 11 9 ...
@@ -303,31 +302,20 @@ Here is a reduced data frame, with just the main karyotypic variables of interes
 
 
 ```r
-karyotypes <- subset(cleaned_data, select = c("TCGA_patient_id", "Cytogenetics", 
-    "trisomy_8", "del_5q", "del_7q"))
+karyotypes <- subset(cleaned_data, select = c("trisomy_8", "del_5", "del_7"))
 summary(karyotypes)
 ```
 
 ```
-##  TCGA_patient_id                      Cytogenetics trisomy_8      
-##  Min.   :2802    46, XX[20]                 : 24   Mode :logical  
-##  1st Qu.:2852    46, XY[20]                 : 22   FALSE:179      
-##  Median :2904    46,XY[20]                  : 14   TRUE :21       
-##  Mean   :2904    46,XX[20]                  :  8   NA's :0        
-##  3rd Qu.:2955    46,XY,t(15;17)(q22;q21)[20]:  4                  
-##  Max.   :3012    46, XX[19]                 :  3                  
-##                  (Other)                    :125                  
-##    del_5q          del_7q       
-##  Mode :logical   Mode :logical  
-##  FALSE:190       FALSE:197      
-##  TRUE :10        TRUE :3        
-##  NA's :0         NA's :0        
-##                                 
-##                                 
-## 
+##  trisomy_8         del_5           del_7        
+##  Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:179       FALSE:183       FALSE:179      
+##  TRUE :21        TRUE :17        TRUE :21       
+##  NA's :0         NA's :0         NA's :0
 ```
 
 
-The problem now, is that the number of `del_7q` is very small, and doesn't match the expected value from the paper.
+*Note:*: In the original version of the parsing script, I selected for 'del(5q)' and 'del(7q)'. In the current version, the selection is expanded to include full-chromosome losses as well as the smaller deletions. The revised version gives numbers that more accurately match the numbers presented in the paper.
+
 
   

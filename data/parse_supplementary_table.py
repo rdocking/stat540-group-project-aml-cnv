@@ -32,11 +32,11 @@ def parse_cytogenetics(cytogenetics, revised):
     if revised == 'trisomy_8':
         if '+8' in cytogenetics:
             presence = 'TRUE'
-    if revised == 'del_5q':
-        if 'del(5)' in cytogenetics:
+    if revised == 'del_5':
+        if ('del(5)' in cytogenetics) or ('-5' in cytogenetics):
             presence = 'TRUE'
-    if revised == 'del_7q':
-        if 'del(7)' in cytogenetics:
+    if revised == 'del_7':
+        if ('del(7)' in cytogenetics) or ('-7' in cytogenetics):
             presence = 'TRUE'
     return presence
 
@@ -84,8 +84,8 @@ def main():
         ('Subclones deteceted by WGS', 'WGS_subclones_detected', 'factor'),
         ('Cytogenetics', 'Cytogenetics', 'factor'),
         ('', 'trisomy_8', 'novel'),
-        ('', 'del_5q', 'novel'),
-        ('', 'del_7q', 'novel'),
+        ('', 'del_5', 'novel'),
+        ('', 'del_7', 'novel'),
         ('Gene Fusions by RNA-Seq', 'RNAseq_gene_fusions', 'factor'),
         ('Inferred genomic rearrangement (from RNA-Seq fusion)',
          'RNAseq_inferred_genomic_rearrangement', 'factor'),
