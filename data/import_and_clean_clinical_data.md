@@ -315,7 +315,56 @@ summary(karyotypes)
 ```
 
 
-*Note:*: In the original version of the parsing script, I selected for 'del(5q)' and 'del(7q)'. In the current version, the selection is expanded to include full-chromosome losses as well as the smaller deletions. The revised version gives numbers that more accurately match the numbers presented in the paper.
+*Note:* In the original version of the parsing script, I selected for 'del(5q)' and 'del(7q)'. In the current version, the selection is expanded to include full-chromosome losses as well as the smaller deletions. The revised version gives numbers that more accurately match the numbers presented in the paper.
+
+Summarizing the different classes:
+
+
+```r
+normal_karyotype <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == FALSE & 
+    del_7 == FALSE))
+trisomy_8_exclusive <- nrow(subset(karyotypes, trisomy_8 == TRUE & del_5 == 
+    FALSE & del_7 == FALSE))
+del_5_exclusive <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == TRUE & 
+    del_7 == FALSE))
+del_7_exclusive <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == FALSE & 
+    del_7 == TRUE))
+t8_del5 <- nrow(subset(karyotypes, trisomy_8 == TRUE & del_5 == TRUE & del_7 == 
+    FALSE))
+t8_del7 <- nrow(subset(karyotypes, trisomy_8 == TRUE & del_5 == FALSE & del_7 == 
+    TRUE))
+del5_del7 <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == TRUE & del_7 == 
+    TRUE))
+all_three <- nrow(subset(karyotypes, trisomy_8 == TRUE & del_5 == TRUE & del_7 == 
+    TRUE))
+count <- c(normal_karyotype, trisomy_8_exclusive, del_5_exclusive, del_7_exclusive, 
+    t8_del5, t8_del7, del5_del7, all_three)
+summary_frame <- data.frame(count, row.names = c("Normal Karyotype", "Trisomy 8", 
+    "Loss of 5 or del(5q)", "Loss of 7 or del(7q)", "+8, -5", "+8, -7", "-5, -7", 
+    "+8, -5, -7"))
+```
+
+
+Print the summary table:
+
+
+```r
+kable(summary_frame, format = "markdown")
+```
+
+|id                    |  count|
+|:---------------------|------:|
+|Normal Karyotype      |    156|
+|Trisomy 8             |     14|
+|Loss of 5 or del(5q)  |      7|
+|Loss of 7 or del(7q)  |     10|
+|+8, -5                |      2|
+|+8, -7                |      3|
+|-5, -7                |      6|
+|+8, -5, -7            |      2|
+
+
+So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.
 
 
   
