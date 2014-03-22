@@ -119,5 +119,14 @@ This data frame is quite a bit smaller and simpler than the original:
 str(cleaned_data)
 ```
 
+Here is a reduced data frame, with just the main karyotypic variables of interest:
+
+```{r}
+karyotypes <- subset(cleaned_data, select = c('TCGA_patient_id', 'Cytogenetics', 'trisomy_8',
+                                              'del_5q', 'del_7q'))
+summary(karyotypes)
+```
+
+The problem now, is that the number of `del_7q` is very small, and doesn't match the expected value from the paper.
 
   

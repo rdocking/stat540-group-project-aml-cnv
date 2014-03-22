@@ -1,139 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0014)about:internet -->
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta http-equiv="x-ua-compatible" content="IE=9" >
 
 <title>Clinical Data Import and Cleaning</title>
-
-<style type="text/css">
-body, td {
-   font-family: sans-serif;
-   background-color: white;
-   font-size: 12px;
-   margin: 8px;
-}
-
-tt, code, pre {
-   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
-}
-
-h1 { 
-   font-size:2.2em; 
-}
-
-h2 { 
-   font-size:1.8em; 
-}
-
-h3 { 
-   font-size:1.4em; 
-}
-
-h4 { 
-   font-size:1.0em; 
-}
-
-h5 { 
-   font-size:0.9em; 
-}
-
-h6 { 
-   font-size:0.8em; 
-}
-
-a:visited {
-   color: rgb(50%, 0%, 50%);
-}
-
-pre {	
-   margin-top: 0;
-   max-width: 95%;
-   border: 1px solid #ccc;
-   white-space: pre-wrap;
-}
-
-pre code {
-   display: block; padding: 0.5em;
-}
-
-code.r, code.cpp {
-   background-color: #F8F8F8;
-}
-
-table, td, th {
-  border: none;
-}
-
-blockquote {
-   color:#666666;
-   margin:0;
-   padding-left: 1em;
-   border-left: 0.5em #EEE solid;
-}
-
-hr {
-   height: 0px;
-   border-bottom: none;
-   border-top-width: thin;
-   border-top-style: dotted;
-   border-top-color: #999999;
-}
-
-@media print {
-   * { 
-      background: transparent !important; 
-      color: black !important; 
-      filter:none !important; 
-      -ms-filter: none !important; 
-   }
-
-   body { 
-      font-size:12pt; 
-      max-width:100%; 
-   }
-       
-   a, a:visited { 
-      text-decoration: underline; 
-   }
-
-   hr { 
-      visibility: hidden;
-      page-break-before: always;
-   }
-
-   pre, blockquote { 
-      padding-right: 1em; 
-      page-break-inside: avoid; 
-   }
-
-   tr, img { 
-      page-break-inside: avoid; 
-   }
-
-   img { 
-      max-width: 100% !important; 
-   }
-
-   @page :left { 
-      margin: 15mm 20mm 15mm 10mm; 
-   }
-     
-   @page :right { 
-      margin: 15mm 10mm 15mm 20mm; 
-   }
-
-   p, h2, h3 { 
-      orphans: 3; widows: 3; 
-   }
-
-   h2, h3 { 
-      page-break-after: avoid; 
-   }
-}
-
-</style>
 
 <!-- Styles for R syntax highlighter -->
 <style type="text/css">
@@ -143,19 +13,21 @@ hr {
    }
 
    pre .literal {
-     color: rgb(88, 72, 246)
+     color: #990073
    }
 
    pre .number {
-     color: rgb(0, 0, 205);
+     color: #099;
    }
 
    pre .comment {
-     color: rgb(76, 136, 107);
+     color: #998;
+     font-style: italic
    }
 
    pre .keyword {
-     color: rgb(0, 0, 255);
+     color: #900;
+     font-weight: bold
    }
 
    pre .identifier {
@@ -163,7 +35,7 @@ hr {
    }
 
    pre .string {
-     color: rgb(3, 106, 7);
+     color: #d14;
    }
 </style>
 
@@ -173,6 +45,14 @@ var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/<
 hljs.initHighlightingOnLoad();
 </script>
 
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<style type="text/css">
+/Users/rdocking///Users/rdocking/Coding/stat540/markdown-css-themes/swiss.css
+</style>
 
 
 
@@ -434,29 +314,84 @@ dim(supp_d)
 <pre><code class="r">str(cleaned_data)
 </code></pre>
 
-<pre><code>## &#39;data.frame&#39;:    200 obs. of  19 variables:
+<pre><code>## &#39;data.frame&#39;:    200 obs. of  48 variables:
 ##  $ TCGA_patient_id                      : int  2803 2806 2870 2815 2872 2998 2914 2819 2875 2823 ...
 ##  $ RNAseq_available                     : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
 ##  $ Expired                              : logi  TRUE TRUE TRUE TRUE FALSE TRUE ...
 ##  $ Sex                                  : Factor w/ 2 levels &quot;F&quot;,&quot;M&quot;: 1 2 2 2 2 1 1 1 2 1 ...
 ##  $ Race                                 : Factor w/ 13 levels &quot;A&quot;,&quot;B&quot;,&quot;H&quot;,&quot;NH/A&quot;,..: 12 12 12 12 2 12 12 12 7 12 ...
-##  $ FAB                                  : Factor w/ 9 levels &quot;M0&quot;,&quot;M1&quot;,&quot;M2&quot;,..: 4 2 2 5 4 4 3 3 3 4 ...
+##  $ FAB_subtype                          : Factor w/ 9 levels &quot;M0&quot;,&quot;M1&quot;,&quot;M2&quot;,..: 4 2 2 5 4 4 3 3 3 4 ...
 ##  $ Age                                  : int  61 46 76 49 42 68 22 52 43 61 ...
 ##  $ BM_blast_pct                         : int  44 90 73 81 88 85 55 67 40 73 ...
 ##  $ White_blood_cell_count               : num  1 29.4 34 57.1 2.1 29 51.8 4.1 4.3 86.4 ...
 ##  $ PB_blast_pct                         : int  NA 81 55 48 2 32 70 18 39 68 ...
 ##  $ WGS_subclones_detected               : int  NA NA NA NA NA 1 NA NA NA NA ...
 ##  $ Cytogenetics                         : Factor w/ 125 levels &quot;37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]&quot;,..: 52 13 74 72 69 51 46 53 15 100 ...
-##  $ RNAseq_gene_fusions                  : Factor w/ 59 levels &quot; &quot;,&quot;AF086125(+)USP22(+) (Out of Frame),CA7(-)USP22(+) (Out of Frame)&quot;,..: 49 56 35 39 44 50 37 54 54 46 ...
-##  $ RNAseq_inferred_genomic_rearrangement: Factor w/ 52 levels &quot; &quot;,&quot;del17q11.2&quot;,..: 35 49 40 39 35 35 42 48 48 35 ...
+##  $ trisomy_8                            : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_5q                               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_7q                               : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ RNAseq_gene_fusions                  : Factor w/ 58 levels &quot;AF086125(+)USP22(+) (Out of Frame),CA7(-)USP22(+) (Out of Frame)&quot;,..: 48 55 34 38 43 49 36 53 53 45 ...
+##  $ RNAseq_inferred_genomic_rearrangement: Factor w/ 51 levels &quot;del17q11.2&quot;,&quot;del3q21.3-q26&quot;,..: 34 48 39 38 34 34 41 47 47 34 ...
 ##  $ Cytogenetic_classification           : Factor w/ 11 levels &quot;BCR-ABL1&quot;,&quot;CBFB-MYH11&quot;,..: 9 11 2 2 9 9 2 11 11 9 ...
 ##  $ Cytogenetic_risk                     : Factor w/ 4 levels &quot;Good&quot;,&quot;Intermediate&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ Molecular_classification             : Factor w/ 13 levels &quot;BCR-ABL1&quot;,&quot;CBFB-MYH11&quot;,..: 11 13 2 2 11 11 2 13 13 11 ...
 ##  $ Molecular_risk                       : Factor w/ 4 levels &quot;Good&quot;,&quot;Intermediate&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ SVs_from_WGS                         : Factor w/ 19 levels &quot; &quot;,&quot;1:166453112-3:53150925(CTX),12:128688979-12:128689118(DEL),14:84366862-14:84371916(DEL),15:32718038-15:32718374(DEL),15:6683662&quot;| __truncated__,..: 1 1 1 1 1 7 1 1 1 1 ...
+##  $ SVs_from_WGS                         : Factor w/ 18 levels &quot;1:166453112-3:53150925(CTX),12:128688979-12:128689118(DEL),14:84366862-14:84371916(DEL),15:32718038-15:32718374(DEL),15:6683662&quot;| __truncated__,..: NA NA NA NA NA 6 NA NA NA NA ...
+##  $ event_free_survival_months           : num  24.1 16.1 4.5 14.2 55.9 1 54.3 95.6 42.9 0.2 ...
+##  $ overall_survival_months              : num  25.7 30.6 4.5 26.3 55.9 1 54.3 95.6 42.9 0.2 ...
+##  $ PML_RARA_present                     : logi  TRUE FALSE FALSE FALSE TRUE TRUE ...
+##  $ MLL_partner                          : Factor w/ 4 levels &quot;MLL-ELL&quot;,&quot;MLL-MLLT3&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ MYH11_CBFB                           : logi  FALSE FALSE TRUE TRUE FALSE FALSE ...
+##  $ RUNX1_RUNX1T1                        : logi  FALSE TRUE FALSE FALSE FALSE FALSE ...
+##  $ MLLT10_partner                       : Factor w/ 4 levels &quot;MLLT10-CEP164, MLLT10-MLL&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ BCR_ABL                              : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ GPR128_TFG                           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ NUP98_NSD1                           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ MLL_PTD                              : Factor w/ 4 levels &quot;exons2-10&quot;,&quot;exons2-8&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ other_in_frame_fusions               : Factor w/ 10 levels &quot;BIRC6-LTBP1&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ FLT3                                 : Factor w/ 36 levels &quot;in_frame_ins&quot;,..: NA NA 6 NA NA 16 NA NA 11 NA ...
+##  $ NPM1                                 : Factor w/ 4 levels &quot;p.I268fs,p.N270fs&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ DNMT3A                               : Factor w/ 25 levels &quot;e14-1&quot;,&quot;e20+2,p.R792H&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ IDH2                                 : Factor w/ 3 levels &quot;p.R140L&quot;,&quot;p.R140Q&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ IDH1                                 : Factor w/ 4 levels &quot;p.R132C&quot;,&quot;p.R132G&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ RUNX1                                : Factor w/ 17 levels &quot;e5-2&quot;,&quot;outofframe_fusion&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ TET2                                 : Factor w/ 17 levels &quot;e3+2,p.R318*&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ TP53                                 : Factor w/ 16 levels &quot;e0+1&quot;,&quot;e4-1&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ NRAS                                 : Factor w/ 7 levels &quot;p.G12C&quot;,&quot;p.G12D&quot;,..: NA NA 5 NA NA NA NA NA NA NA ...
+##  $ CEBPA                                : Factor w/ 13 levels &quot;p.304in_frame_insL&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ WT1                                  : Factor w/ 10 levels &quot;e7+1&quot;,&quot;e9-1&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ PTPN11                               : Factor w/ 9 levels &quot;p.A72V&quot;,&quot;p.D61N&quot;,..: NA NA NA NA NA NA 1 NA NA NA ...
+##  $ KIT                                  : Factor w/ 6 levels &quot;p.419in_frame_insFF&quot;,..: NA NA NA NA NA NA NA 6 NA NA ...
+##  $ KRAS                                 : Factor w/ 7 levels &quot;p.A146T&quot;,&quot;p.A59E&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
 </code></pre>
+
+<p>Here is a reduced data frame, with just the main karyotypic variables of interest:</p>
+
+<pre><code class="r">karyotypes &lt;- subset(cleaned_data, select = c(&quot;TCGA_patient_id&quot;, &quot;Cytogenetics&quot;, 
+    &quot;trisomy_8&quot;, &quot;del_5q&quot;, &quot;del_7q&quot;))
+summary(karyotypes)
+</code></pre>
+
+<pre><code>##  TCGA_patient_id                      Cytogenetics trisomy_8      
+##  Min.   :2802    46, XX[20]                 : 24   Mode :logical  
+##  1st Qu.:2852    46, XY[20]                 : 22   FALSE:179      
+##  Median :2904    46,XY[20]                  : 14   TRUE :21       
+##  Mean   :2904    46,XX[20]                  :  8   NA&#39;s :0        
+##  3rd Qu.:2955    46,XY,t(15;17)(q22;q21)[20]:  4                  
+##  Max.   :3012    46, XX[19]                 :  3                  
+##                  (Other)                    :125                  
+##    del_5q          del_7q       
+##  Mode :logical   Mode :logical  
+##  FALSE:190       FALSE:197      
+##  TRUE :10        TRUE :3        
+##  NA&#39;s :0         NA&#39;s :0        
+##                                 
+##                                 
+## 
+</code></pre>
+
+<p>The problem now, is that the number of <code>del_7q</code> is very small, and doesn&#39;t match the expected value from the paper.</p>
 
 </body>
 
 </html>
-
