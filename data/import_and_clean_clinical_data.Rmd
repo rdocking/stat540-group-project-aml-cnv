@@ -1,42 +1,50 @@
 Clinical Data Import and Cleaning
 =================================
 
-Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
-
+Load required libraries:
 ```{r}
 library(RCurl)
 library(knitr)
-d <- getURL("https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv")
-raw_clinical_data <- read.table(text=d, header=TRUE, sep='\t')
 ```
 
-This data-sheet has a lot more data than we'll actually need for this project:
+Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
 
 ```{r}
-dim(raw_clinical_data)
+# Require "ssl.verifypeer = FALSE" to avoid SSL certificate issues
+url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
+raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
+raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
+                                sep ='\t')
+# # Alternatively read saved file:
+# raw_clinical_data <- read.table("clinical_patient_laml.tsv", header = TRUE, sep = "\t")
 ```
+
+```{r}
+str(raw_clinical_data, max.level = 0)
+names(raw_clinical_data)
+```
+This data-sheet has `r length(raw_clinical_data)` columns, a lot more variables than we'll need for this project. The `r nrow(raw_clincal_data)` rows represent the patients.
 
 Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:
 
-*Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've done some manipulation outside of R:*
+*Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
 
 - Download the Supplementary file from [the paper website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx)
 - Open in Excel, Save as CSV
 
 ```{r}
 supp_d <- read.csv('SuppTable01.update.2013.05.13.csv')
-dim(supp_d)
+str(supp_d, max.level = 0)
 ```
 
 As a first pass, we'll try to clean the `cytogenetic_abnormality` column from the raw clinical data into a simpler categorical variable:
-
 ```{r}
 summary(raw_clinical_data$cytogenetic_abnormality)
 ```
 
 There are some immediate problems with this approach:
 
-- 19 samples are missing data
+- `r sum(raw_clinical_data$cytogenetic_abnormality == "[Not Available]")` samples are missing data
 - Several samples have many of the CNAs of interest
 - The notation seems inconsistent between samples
 
@@ -107,19 +115,16 @@ python parse_supplementary_table.py > experimental_design.csv
 ```
 
 Now I can read in the modified CSV file to get a cleaner data frame:
-
 ```{r}
 cleaned_data <- read.csv('experimental_design.csv')
 ```
 
 This data frame is quite a bit smaller and simpler than the original:
-
 ```{r}
 str(cleaned_data)
 ```
 
 Here is a reduced data frame, with just the main karyotypic variables of interest:
-
 ```{r}
 karyotypes <- subset(cleaned_data, select = c('trisomy_8', 'del_5', 'del_7'))
 summary(karyotypes)
@@ -128,7 +133,6 @@ summary(karyotypes)
 *Note:* In the original version of the parsing script, I selected for 'del(5q)' and 'del(7q)'. In the current version, the selection is expanded to include full-chromosome losses as well as the smaller deletions. The revised version gives numbers that more accurately match the numbers presented in the paper.
 
 Summarizing the different classes:
-
 ```{r}
 normal_karyotype <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == FALSE & del_7 == FALSE))
 trisomy_8_exclusive <- nrow(subset(karyotypes, trisomy_8 == TRUE & del_5 == FALSE & del_7 == FALSE))
@@ -143,7 +147,6 @@ summary_frame <- data.frame(count, row.names = c('Normal Karyotype', 'Trisomy 8'
 ```
 
 Print the summary table:
-
 ```{r results='asis'}
 kable(summary_frame, format='markdown')
 ```
