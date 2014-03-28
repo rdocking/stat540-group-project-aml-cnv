@@ -1,10 +1,8 @@
 # Import RNA Seq Data
 
-design <- read.table("clinical_patient_laml-1.tsv", sep = "\t", header = TRUE)
+design <- read.table("clinical_patient_laml.tsv", sep = "\t", header = TRUE)
 RNA_seq_dat <- read.table("laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt",
                           sep = "\t", header = TRUE, row.names = 1)
-array_dat <- read.table("genome.wustl.edu_LAML.Genome_Wide_SNP_6.1.sdrf.txt",
-                        sep = "\t", header = TRUE)
 
 # Some inspection
 str(design)
