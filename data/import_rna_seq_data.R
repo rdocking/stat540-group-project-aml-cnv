@@ -9,6 +9,7 @@ str(design)
 dim(design)
 str(RNA_seq_dat)
 dim(RNA_seq_dat)
+# There are 20442 transcripts (rows) for 179 patients (columns)
 
 # Let's make sure all the samples in `RNA_seq_dat` are present in `design`
 des_temp <- design
@@ -17,8 +18,3 @@ des_temp$bcr_patient_barcode <- as.character(gsub("-",".",
 merged <- merge(t(RNA_seq_dat), des_temp, by.x = "row.names",
                 by.y = "bcr_patient_barcode")
 dim(merged) # Good, they are
-
-# There are 179 samples (complete with clinical data) for 20442 genes
-# The array data is weird... don't know how to interpret this...
-str(array_dat)
-head(array_dat)
