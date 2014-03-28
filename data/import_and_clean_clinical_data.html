@@ -51,7 +51,301 @@ hljs.initHighlightingOnLoad();
 
 
 <style type="text/css">
-/Users/rdocking///Users/rdocking/Coding/stat540/markdown-css-themes/swiss.css
+body {
+   font-family: Helvetica, arial, sans-serif;
+   font-size: 14px;
+   line-height: 1.6;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   background-color: white;
+   padding: 30px; }
+
+body > *:first-child {
+   margin-top: 0 !important; }
+body > *:last-child {
+   margin-bottom: 0 !important; }
+
+a {
+   color: #4183C4; }
+a.absent {
+   color: #cc0000; }
+a.anchor {
+   display: block;
+   padding-left: 30px;
+   margin-left: -30px;
+   cursor: pointer;
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+   margin: 20px 0 10px;
+   padding: 0;
+   font-weight: bold;
+   -webkit-font-smoothing: antialiased;
+   cursor: text;
+   position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+   text-decoration: none; }
+
+h1 tt, h1 code {
+   font-size: inherit; }
+
+h2 tt, h2 code {
+   font-size: inherit; }
+
+h3 tt, h3 code {
+   font-size: inherit; }
+
+h4 tt, h4 code {
+   font-size: inherit; }
+
+h5 tt, h5 code {
+   font-size: inherit; }
+
+h6 tt, h6 code {
+   font-size: inherit; }
+
+h1 {
+   font-size: 28px;
+   color: black; }
+
+h2 {
+   font-size: 24px;
+   border-bottom: 1px solid #cccccc;
+   color: black; }
+
+h3 {
+   font-size: 18px; }
+
+h4 {
+   font-size: 16px; }
+
+h5 {
+   font-size: 14px; }
+
+h6 {
+   color: #777777;
+   font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+   margin: 15px 0; }
+
+hr {
+   border: 0 none;
+   color: #cccccc;
+   height: 4px;
+   padding: 0;
+}
+
+body > h2:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+body > h1:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+body > h1:first-child + h2 {
+   margin-top: 0;
+   padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+   margin-top: 0;
+   padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+   margin-top: 0; }
+
+li p.first {
+   display: inline-block; }
+li {
+   margin: 0; }
+ul, ol {
+   padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+   margin-top: 0; }
+
+dl {
+   padding: 0; }
+dl dt {
+   font-size: 14px;
+   font-weight: bold;
+   font-style: italic;
+   padding: 0;
+   margin: 15px 0 5px; }
+dl dt:first-child {
+   padding: 0; }
+dl dt > :first-child {
+   margin-top: 0; }
+dl dt > :last-child {
+   margin-bottom: 0; }
+dl dd {
+   margin: 0 0 15px;
+   padding: 0 15px; }
+dl dd > :first-child {
+   margin-top: 0; }
+dl dd > :last-child {
+   margin-bottom: 0; }
+
+blockquote {
+   border-left: 4px solid #dddddd;
+   padding: 0 15px;
+   color: #777777; }
+blockquote > :first-child {
+   margin-top: 0; }
+blockquote > :last-child {
+   margin-bottom: 0; }
+
+table {
+   padding: 0;border-collapse: collapse; }
+table tr {
+   border-top: 1px solid #cccccc;
+   background-color: white;
+   margin: 0;
+   padding: 0; }
+table tr:nth-child(2n) {
+   background-color: #f8f8f8; }
+table tr th {
+   font-weight: bold;
+   border: 1px solid #cccccc;
+   margin: 0;
+   padding: 6px 13px; }
+table tr td {
+   border: 1px solid #cccccc;
+   margin: 0;
+   padding: 6px 13px; }
+table tr th :first-child, table tr td :first-child {
+   margin-top: 0; }
+table tr th :last-child, table tr td :last-child {
+   margin-bottom: 0; }
+
+img {
+   max-width: 100%; }
+
+span.frame {
+   display: block;
+   overflow: hidden; }
+span.frame > span {
+   border: 1px solid #dddddd;
+   display: block;
+   float: left;
+   overflow: hidden;
+   margin: 13px 0 0;
+   padding: 7px;
+   width: auto; }
+span.frame span img {
+   display: block;
+   float: left; }
+span.frame span span {
+   clear: both;
+   color: #333333;
+   display: block;
+   padding: 5px 0 0; }
+span.align-center {
+   display: block;
+   overflow: hidden;
+   clear: both; }
+span.align-center > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px auto 0;
+   text-align: center; }
+span.align-center span img {
+   margin: 0 auto;
+   text-align: center; }
+span.align-right {
+   display: block;
+   overflow: hidden;
+   clear: both; }
+span.align-right > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px 0 0;
+   text-align: right; }
+span.align-right span img {
+   margin: 0;
+   text-align: right; }
+span.float-left {
+   display: block;
+   margin-right: 13px;
+   overflow: hidden;
+   float: left; }
+span.float-left span {
+   margin: 13px 0 0; }
+span.float-right {
+   display: block;
+   margin-left: 13px;
+   overflow: hidden;
+   float: right; }
+span.float-right > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px auto 0;
+   text-align: right; }
+
+code, tt {
+   margin: 0 2px;
+   padding: 0 5px;
+   white-space: nowrap;
+   border: 1px solid #eaeaea;
+   background-color: #f8f8f8;
+   border-radius: 3px; }
+
+pre code {
+   margin: 0;
+   padding: 0;
+   white-space: pre;
+   border: none;
+   background: transparent; }
+
+.highlight pre {
+   background-color: #f8f8f8;
+   border: 1px solid #cccccc;
+   font-size: 13px;
+   line-height: 19px;
+   overflow: auto;
+   padding: 6px 10px;
+   border-radius: 3px; }
+
+pre {
+   background-color: #f8f8f8;
+   border: 1px solid #cccccc;
+   font-size: 13px;
+   line-height: 19px;
+   overflow: auto;
+   padding: 6px 10px;
+   border-radius: 3px; }
+pre code, pre tt {
+   background-color: transparent;
+   border: none; }
+
+sup {
+   font-size: 0.83em;
+   vertical-align: super;
+   line-height: 0;
+}
+* {
+	 -webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+   body {
+      width: 854px;
+      margin:0 auto;
+   }
+}
+@media print {
+	 table, pre {
+		  page-break-inside: avoid;
+	 }
+	 pre {
+		  word-wrap: break-word;
+	 }
+}
 </style>
 
 
@@ -61,41 +355,132 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>Clinical Data Import and Cleaning</h1>
 
-<p>Read in the clinical data-sheet from the <a href="https://tcga-data.nci.nih.gov/docs/publications/laml_2012/">TCGA Publication Website</a>:</p>
+<p>Load required libraries:</p>
 
 <pre><code class="r">library(RCurl)
+library(knitr)
 </code></pre>
 
-<pre><code>## Loading required package: bitops
+<p>Read in the clinical data-sheet from the <a href="https://tcga-data.nci.nih.gov/docs/publications/laml_2012/">TCGA Publication Website</a>:</p>
+
+<pre><code class="r"># Require &quot;ssl.verifypeer = FALSE&quot; to avoid SSL certificate issues
+url &lt;- &quot;https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv&quot;
+raw_clinical_data &lt;- getURL(url, ssl.verifypeer = FALSE)
+raw_clinical_data &lt;- read.table(text = raw_clinical_data, header = TRUE, 
+                                sep =&#39;\t&#39;)
+# # Alternatively read saved file:
+# raw_clinical_data &lt;- read.table(&quot;clinical_patient_laml.tsv&quot;, 
+#                                 header = TRUE, sep = &quot;\t&quot;)
 </code></pre>
 
-<pre><code class="r">library(knitr)
-d &lt;- getURL(&quot;https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv&quot;)
-raw_clinical_data &lt;- read.table(text = d, header = TRUE, sep = &quot;\t&quot;)
+<pre><code class="r">str(raw_clinical_data, max.level = 0)
 </code></pre>
 
-<p>This data-sheet has a lot more data than we&#39;ll actually need for this project:</p>
-
-<pre><code class="r">dim(raw_clinical_data)
+<pre><code>## &#39;data.frame&#39;:    200 obs. of  78 variables:
 </code></pre>
 
-<pre><code>## [1] 200  78
+<pre><code class="r">names(raw_clinical_data)
 </code></pre>
+
+<pre><code>##  [1] &quot;bcr_patient_barcode&quot;                                                    
+##  [2] &quot;acute_myeloid_leukemia_calgb_cytogenetics_risk_category&quot;                
+##  [3] &quot;age_at_initial_pathologic_diagnosis&quot;                                    
+##  [4] &quot;atra_exposure&quot;                                                          
+##  [5] &quot;bcr_patient_uuid&quot;                                                       
+##  [6] &quot;cumulative_agent_total_dose&quot;                                            
+##  [7] &quot;cytogenetic_abnormality&quot;                                                
+##  [8] &quot;cytogenetic_abnormality_other&quot;                                          
+##  [9] &quot;cytogenetic_analysis_performed_ind&quot;                                     
+## [10] &quot;date_of_form_completion&quot;                                                
+## [11] &quot;date_of_initial_pathologic_diagnosis&quot;                                   
+## [12] &quot;days_to_birth&quot;                                                          
+## [13] &quot;days_to_death&quot;                                                          
+## [14] &quot;days_to_initial_pathologic_diagnosis&quot;                                   
+## [15] &quot;days_to_last_followup&quot;                                                  
+## [16] &quot;days_to_last_known_alive&quot;                                               
+## [17] &quot;diagnosis_age&quot;                                                          
+## [18] &quot;disease_detection_molecular_analysis_method_type&quot;                       
+## [19] &quot;disease_detection_molecular_analysis_method_type_other_text&quot;            
+## [20] &quot;eastern_cancer_oncology_group&quot;                                          
+## [21] &quot;ethnicity&quot;                                                              
+## [22] &quot;fish_evaluation_performed_ind&quot;                                          
+## [23] &quot;fluorescence_in_situ_hybrid_cytogenetics_metaphase_nucleus_result_count&quot;
+## [24] &quot;fluorescence_in_situ_hybridization_abnormal_result_indicator&quot;           
+## [25] &quot;gender&quot;                                                                 
+## [26] &quot;hydroxyurea_administration_prior_registration_clinical_study_indicator&quot; 
+## [27] &quot;hydroxyurea_agent_administered_day_count&quot;                               
+## [28] &quot;icd_10&quot;                                                                 
+## [29] &quot;icd_o_3_histology&quot;                                                      
+## [30] &quot;icd_o_3_site&quot;                                                           
+## [31] &quot;immunophenotype_cytochemistry_percent_positive&quot;                         
+## [32] &quot;immunophenotype_cytochemistry_testing_result&quot;                           
+## [33] &quot;informed_consent_verified&quot;                                              
+## [34] &quot;initial_pathologic_diagnosis_method&quot;                                    
+## [35] &quot;karnofsky_performance_score&quot;                                            
+## [36] &quot;lab_procedure_abnormal_lymphocyte_result_percent_value&quot;                 
+## [37] &quot;lab_procedure_blast_cell_outcome_percentage_value&quot;                      
+## [38] &quot;lab_procedure_bone_marrow_band_cell_result_percent_value&quot;               
+## [39] &quot;lab_procedure_bone_marrow_basophil_result_percent_value&quot;                
+## [40] &quot;lab_procedure_bone_marrow_blast_cell_outcome_percent_value&quot;             
+## [41] &quot;lab_procedure_bone_marrow_cellularity_outcome_percent_value&quot;            
+## [42] &quot;lab_procedure_bone_marrow_diff_not_reported_reason&quot;                     
+## [43] &quot;lab_procedure_bone_marrow_lab_eosinophil_result_percent_value&quot;          
+## [44] &quot;lab_procedure_bone_marrow_lymphocyte_outcome_percent_value&quot;             
+## [45] &quot;lab_procedure_bone_marrow_metamyelocyte_result_value&quot;                   
+## [46] &quot;lab_procedure_bone_marrow_myelocyte_result_percent_value&quot;               
+## [47] &quot;lab_procedure_bone_marrow_neutrophil_result_percent_value&quot;              
+## [48] &quot;lab_procedure_bone_marrow_prolymphocyte_result_percent_value&quot;           
+## [49] &quot;lab_procedure_bone_marrow_promonocyte_count_result_percent_value&quot;       
+## [50] &quot;lab_procedure_bone_marrow_promyelocyte_result_percent_value&quot;            
+## [51] &quot;lab_procedure_hematocrit_outcome_percent_value&quot;                         
+## [52] &quot;lab_procedure_hemoglobin_result_specified_value&quot;                        
+## [53] &quot;lab_procedure_leukocyte_result_unspecified_value&quot;                       
+## [54] &quot;lab_procedure_monocyte_result_percent_value&quot;                            
+## [55] &quot;lab_procedure_platelet_result_specified_value&quot;                          
+## [56] &quot;leukemia_french_american_british_morphology_code&quot;                       
+## [57] &quot;leukemia_specimen_cell_source_type&quot;                                     
+## [58] &quot;molecular_analysis_abnormal_result_indicator&quot;                           
+## [59] &quot;molecular_analysis_abnormality_testing_percentage_value&quot;                
+## [60] &quot;molecular_analysis_abnormality_testing_result&quot;                          
+## [61] &quot;molecular_analysis_performed_indicator&quot;                                 
+## [62] &quot;patient_id&quot;                                                             
+## [63] &quot;performance_status_assessment_timepoint_category_other_text&quot;            
+## [64] &quot;performance_status_scale_timing&quot;                                        
+## [65] &quot;person_history_leukemogenic_agent_other_exposure_text&quot;                  
+## [66] &quot;person_history_nonmedical_leukemia_causing_agent_type&quot;                  
+## [67] &quot;pretreatment_history&quot;                                                   
+## [68] &quot;primary_other_site_of_disease_name&quot;                                     
+## [69] &quot;prior_diagnosis&quot;                                                        
+## [70] &quot;prior_hematologic_disorder_diagnosis_indicator&quot;                         
+## [71] &quot;race&quot;                                                                   
+## [72] &quot;steroid_therapy_administered&quot;                                           
+## [73] &quot;tissue_source_site&quot;                                                     
+## [74] &quot;total_dose_units&quot;                                                       
+## [75] &quot;tumor_tissue_site&quot;                                                      
+## [76] &quot;vital_status&quot;                                                           
+## [77] &quot;FISH_test_component&quot;                                                    
+## [78] &quot;FISH_test_component_percentage_value&quot;
+</code></pre>
+
+<p>This data-sheet has 78 columns, a lot more variables than we&#39;ll need for this project. The 200 rows represent the patients.</p>
 
 <p>Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:</p>
 
-<p><em>Note that we&#39;re using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we&#39;ve done some manipulation outside of R:</em></p>
+<blockquote>
+<p><em>Note that we&#39;re using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we&#39;ve saved the data in .csv format outside of R:</em></p>
 
 <ul>
 <li>Download the Supplementary file from <a href="https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx">the paper website</a></li>
-<li>Open in Excel, Save as CSV</li>
+<li>Open in Excel, save as CSV</li>
 </ul>
+</blockquote>
 
 <pre><code class="r">supp_d &lt;- read.csv(&quot;SuppTable01.update.2013.05.13.csv&quot;)
-dim(supp_d)
+str(supp_d, max.level = 0)
 </code></pre>
 
-<pre><code>## [1]  201 2006
+<pre><code>## &#39;data.frame&#39;:    201 obs. of  2006 variables:
+##   [list output truncated]
 </code></pre>
 
 <p>As a first pass, we&#39;ll try to clean the <code>cytogenetic_abnormality</code> column from the raw clinical data into a simpler categorical variable:</p>
@@ -326,7 +711,7 @@ dim(supp_d)
 ##  $ White_blood_cell_count               : num  1 29.4 34 57.1 2.1 29 51.8 4.1 4.3 86.4 ...
 ##  $ PB_blast_pct                         : int  NA 81 55 48 2 32 70 18 39 68 ...
 ##  $ WGS_subclones_detected               : int  NA NA NA NA NA 1 NA NA NA NA ...
-##  $ Cytogenetics                         : Factor w/ 125 levels &quot;37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]&quot;,..: 52 13 74 72 69 51 46 53 15 100 ...
+##  $ Cytogenetics                         : Factor w/ 125 levels &quot;37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]&quot;,..: 47 13 74 72 69 51 46 53 15 100 ...
 ##  $ trisomy_8                            : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_5                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_7                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
@@ -450,7 +835,7 @@ summary_frame &lt;- data.frame(count, row.names = c(&quot;Normal Karyotype&quot;
 </tr>
 </tbody></table>
 
-<p>So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.</p>
+<p>So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.  </p>
 
 </body>
 

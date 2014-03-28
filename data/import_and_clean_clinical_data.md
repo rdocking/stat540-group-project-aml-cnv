@@ -1,56 +1,144 @@
 Clinical Data Import and Cleaning
 =================================
 
+Load required libraries:
+
+```r
+library(RCurl)
+library(knitr)
+```
+
+
 Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
 
 
 ```r
-library(RCurl)
+# Require "ssl.verifypeer = FALSE" to avoid SSL certificate issues
+url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
+raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
+raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
+                                sep ='\t')
+# # Alternatively read saved file:
+# raw_clinical_data <- read.table("clinical_patient_laml.tsv", 
+#                                 header = TRUE, sep = "\t")
 ```
 
-```
-## Loading required package: bitops
-```
-
-```r
-library(knitr)
-d <- getURL("https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv")
-raw_clinical_data <- read.table(text = d, header = TRUE, sep = "\t")
-```
-
-
-This data-sheet has a lot more data than we'll actually need for this project:
 
 
 ```r
-dim(raw_clinical_data)
+str(raw_clinical_data, max.level = 0)
 ```
 
 ```
-## [1] 200  78
+## 'data.frame':	200 obs. of  78 variables:
 ```
 
+```r
+names(raw_clinical_data)
+```
+
+```
+##  [1] "bcr_patient_barcode"                                                    
+##  [2] "acute_myeloid_leukemia_calgb_cytogenetics_risk_category"                
+##  [3] "age_at_initial_pathologic_diagnosis"                                    
+##  [4] "atra_exposure"                                                          
+##  [5] "bcr_patient_uuid"                                                       
+##  [6] "cumulative_agent_total_dose"                                            
+##  [7] "cytogenetic_abnormality"                                                
+##  [8] "cytogenetic_abnormality_other"                                          
+##  [9] "cytogenetic_analysis_performed_ind"                                     
+## [10] "date_of_form_completion"                                                
+## [11] "date_of_initial_pathologic_diagnosis"                                   
+## [12] "days_to_birth"                                                          
+## [13] "days_to_death"                                                          
+## [14] "days_to_initial_pathologic_diagnosis"                                   
+## [15] "days_to_last_followup"                                                  
+## [16] "days_to_last_known_alive"                                               
+## [17] "diagnosis_age"                                                          
+## [18] "disease_detection_molecular_analysis_method_type"                       
+## [19] "disease_detection_molecular_analysis_method_type_other_text"            
+## [20] "eastern_cancer_oncology_group"                                          
+## [21] "ethnicity"                                                              
+## [22] "fish_evaluation_performed_ind"                                          
+## [23] "fluorescence_in_situ_hybrid_cytogenetics_metaphase_nucleus_result_count"
+## [24] "fluorescence_in_situ_hybridization_abnormal_result_indicator"           
+## [25] "gender"                                                                 
+## [26] "hydroxyurea_administration_prior_registration_clinical_study_indicator" 
+## [27] "hydroxyurea_agent_administered_day_count"                               
+## [28] "icd_10"                                                                 
+## [29] "icd_o_3_histology"                                                      
+## [30] "icd_o_3_site"                                                           
+## [31] "immunophenotype_cytochemistry_percent_positive"                         
+## [32] "immunophenotype_cytochemistry_testing_result"                           
+## [33] "informed_consent_verified"                                              
+## [34] "initial_pathologic_diagnosis_method"                                    
+## [35] "karnofsky_performance_score"                                            
+## [36] "lab_procedure_abnormal_lymphocyte_result_percent_value"                 
+## [37] "lab_procedure_blast_cell_outcome_percentage_value"                      
+## [38] "lab_procedure_bone_marrow_band_cell_result_percent_value"               
+## [39] "lab_procedure_bone_marrow_basophil_result_percent_value"                
+## [40] "lab_procedure_bone_marrow_blast_cell_outcome_percent_value"             
+## [41] "lab_procedure_bone_marrow_cellularity_outcome_percent_value"            
+## [42] "lab_procedure_bone_marrow_diff_not_reported_reason"                     
+## [43] "lab_procedure_bone_marrow_lab_eosinophil_result_percent_value"          
+## [44] "lab_procedure_bone_marrow_lymphocyte_outcome_percent_value"             
+## [45] "lab_procedure_bone_marrow_metamyelocyte_result_value"                   
+## [46] "lab_procedure_bone_marrow_myelocyte_result_percent_value"               
+## [47] "lab_procedure_bone_marrow_neutrophil_result_percent_value"              
+## [48] "lab_procedure_bone_marrow_prolymphocyte_result_percent_value"           
+## [49] "lab_procedure_bone_marrow_promonocyte_count_result_percent_value"       
+## [50] "lab_procedure_bone_marrow_promyelocyte_result_percent_value"            
+## [51] "lab_procedure_hematocrit_outcome_percent_value"                         
+## [52] "lab_procedure_hemoglobin_result_specified_value"                        
+## [53] "lab_procedure_leukocyte_result_unspecified_value"                       
+## [54] "lab_procedure_monocyte_result_percent_value"                            
+## [55] "lab_procedure_platelet_result_specified_value"                          
+## [56] "leukemia_french_american_british_morphology_code"                       
+## [57] "leukemia_specimen_cell_source_type"                                     
+## [58] "molecular_analysis_abnormal_result_indicator"                           
+## [59] "molecular_analysis_abnormality_testing_percentage_value"                
+## [60] "molecular_analysis_abnormality_testing_result"                          
+## [61] "molecular_analysis_performed_indicator"                                 
+## [62] "patient_id"                                                             
+## [63] "performance_status_assessment_timepoint_category_other_text"            
+## [64] "performance_status_scale_timing"                                        
+## [65] "person_history_leukemogenic_agent_other_exposure_text"                  
+## [66] "person_history_nonmedical_leukemia_causing_agent_type"                  
+## [67] "pretreatment_history"                                                   
+## [68] "primary_other_site_of_disease_name"                                     
+## [69] "prior_diagnosis"                                                        
+## [70] "prior_hematologic_disorder_diagnosis_indicator"                         
+## [71] "race"                                                                   
+## [72] "steroid_therapy_administered"                                           
+## [73] "tissue_source_site"                                                     
+## [74] "total_dose_units"                                                       
+## [75] "tumor_tissue_site"                                                      
+## [76] "vital_status"                                                           
+## [77] "FISH_test_component"                                                    
+## [78] "FISH_test_component_percentage_value"
+```
+
+This data-sheet has 78 columns, a lot more variables than we'll need for this project. The 200 rows represent the patients.
 
 Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:
 
-*Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've done some manipulation outside of R:*
-
+> *Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
 - Download the Supplementary file from [the paper website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx)
-- Open in Excel, Save as CSV
+- Open in Excel, save as CSV
 
 
 ```r
 supp_d <- read.csv("SuppTable01.update.2013.05.13.csv")
-dim(supp_d)
+str(supp_d, max.level = 0)
 ```
 
 ```
-## [1]  201 2006
+## 'data.frame':	201 obs. of  2006 variables:
+##   [list output truncated]
 ```
 
 
 As a first pass, we'll try to clean the `cytogenetic_abnormality` column from the raw clinical data into a simpler categorical variable:
-
 
 ```r
 summary(raw_clinical_data$cytogenetic_abnormality)
@@ -232,14 +320,12 @@ python parse_supplementary_table.py > experimental_design.csv
 
 Now I can read in the modified CSV file to get a cleaner data frame:
 
-
 ```r
 cleaned_data <- read.csv("experimental_design.csv")
 ```
 
 
 This data frame is quite a bit smaller and simpler than the original:
-
 
 ```r
 str(cleaned_data)
@@ -258,7 +344,7 @@ str(cleaned_data)
 ##  $ White_blood_cell_count               : num  1 29.4 34 57.1 2.1 29 51.8 4.1 4.3 86.4 ...
 ##  $ PB_blast_pct                         : int  NA 81 55 48 2 32 70 18 39 68 ...
 ##  $ WGS_subclones_detected               : int  NA NA NA NA NA 1 NA NA NA NA ...
-##  $ Cytogenetics                         : Factor w/ 125 levels "37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]",..: 52 13 74 72 69 51 46 53 15 100 ...
+##  $ Cytogenetics                         : Factor w/ 125 levels "37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]",..: 47 13 74 72 69 51 46 53 15 100 ...
 ##  $ trisomy_8                            : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_5                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_7                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
@@ -300,7 +386,6 @@ str(cleaned_data)
 
 Here is a reduced data frame, with just the main karyotypic variables of interest:
 
-
 ```r
 karyotypes <- subset(cleaned_data, select = c("trisomy_8", "del_5", "del_7"))
 summary(karyotypes)
@@ -318,7 +403,6 @@ summary(karyotypes)
 *Note:* In the original version of the parsing script, I selected for 'del(5q)' and 'del(7q)'. In the current version, the selection is expanded to include full-chromosome losses as well as the smaller deletions. The revised version gives numbers that more accurately match the numbers presented in the paper.
 
 Summarizing the different classes:
-
 
 ```r
 normal_karyotype <- nrow(subset(karyotypes, trisomy_8 == FALSE & del_5 == FALSE & 
@@ -347,7 +431,6 @@ summary_frame <- data.frame(count, row.names = c("Normal Karyotype", "Trisomy 8"
 
 Print the summary table:
 
-
 ```r
 kable(summary_frame, format = "markdown")
 ```
@@ -364,7 +447,4 @@ kable(summary_frame, format = "markdown")
 |+8, -5, -7            |      2|
 
 
-So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.
-
-
-  
+So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.  

@@ -2,38 +2,38 @@ Clinical Data Import and Cleaning
 =================================
 
 Load required libraries:
-```{r}
+```{r message=FALSE}
 library(RCurl)
 library(knitr)
 ```
 
 Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
 
-```{r}
+```{r tidy=FALSE}
 # Require "ssl.verifypeer = FALSE" to avoid SSL certificate issues
 url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
 raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
 raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
                                 sep ='\t')
 # # Alternatively read saved file:
-# raw_clinical_data <- read.table("clinical_patient_laml.tsv", header = TRUE, sep = "\t")
+# raw_clinical_data <- read.table("clinical_patient_laml.tsv", 
+#                                 header = TRUE, sep = "\t")
 ```
 
 ```{r}
 str(raw_clinical_data, max.level = 0)
 names(raw_clinical_data)
 ```
-This data-sheet has `r length(raw_clinical_data)` columns, a lot more variables than we'll need for this project. The `r nrow(raw_clincal_data)` rows represent the patients.
+This data-sheet has `r length(raw_clinical_data)` columns, a lot more variables than we'll need for this project. The `r nrow(raw_clinical_data)` rows represent the patients.
 
 Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:
 
-*Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
-
+> *Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
 - Download the Supplementary file from [the paper website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx)
-- Open in Excel, Save as CSV
+- Open in Excel, save as CSV
 
 ```{r}
-supp_d <- read.csv('SuppTable01.update.2013.05.13.csv')
+supp_d <- read.csv("SuppTable01.update.2013.05.13.csv")
 str(supp_d, max.level = 0)
 ```
 
@@ -116,7 +116,7 @@ python parse_supplementary_table.py > experimental_design.csv
 
 Now I can read in the modified CSV file to get a cleaner data frame:
 ```{r}
-cleaned_data <- read.csv('experimental_design.csv')
+cleaned_data <- read.csv("experimental_design.csv")
 ```
 
 This data frame is quite a bit smaller and simpler than the original:
@@ -151,7 +151,4 @@ Print the summary table:
 kable(summary_frame, format='markdown')
 ```
 
-So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.
-
-
-  
+So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.  
