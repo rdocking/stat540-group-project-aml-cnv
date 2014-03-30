@@ -1,3 +1,5 @@
+# NOTE: run script import_and_clean_clinical_dat.Rmd before running this
+
 # Join RNA seq data with experimental design file
 
 # Read in RNA Seq data

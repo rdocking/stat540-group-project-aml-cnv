@@ -1,3 +1,5 @@
+# NOTE: This was for the purposes of the proposal - don't bother using it now
+
 # Import RNA Seq Data
 
 design <- read.table("clinical_patient_laml.tsv", sep = "\t", header = TRUE)
