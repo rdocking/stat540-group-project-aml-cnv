@@ -3,7 +3,7 @@
 # Join RNA seq data with experimental design file
 
 # Read in RNA Seq data
-RNA_seq_dat <- read.table("laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt",
+RNA_seq_dat <- read.table("data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt",
                           sep = "\t", header = TRUE, row.names = 1)
 
 # Prepare `RNA_seq_dat` for merging with `design`
