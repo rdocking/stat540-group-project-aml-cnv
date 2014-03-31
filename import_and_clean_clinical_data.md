@@ -1,11 +1,16 @@
 Clinical Data Import and Cleaning
 =================================
 
-Load required libraries:
+Load required libraries and print working directory:
 
 ```r
 library(RCurl)
 library(knitr)
+getwd()
+```
+
+```
+## [1] "C:/Users/Bec/Documents/Canada/UBC/Term 2/STAT540/stat540-group-project-aml-cnv"
 ```
 
 
@@ -19,8 +24,8 @@ raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
 raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
                                 sep ='\t')
 # # Alternatively read saved file:
-# raw_clinical_data <- read.table("clinical_patient_laml.tsv", 
-#                                 header = TRUE, sep = "\t")
+# raw_clinical_data <- read.table("data/clinical_patient_laml.tsv", header = TRUE, 
+#                                 sep = "\t")
 ```
 
 
@@ -128,7 +133,7 @@ Also available, as an Excel sheet, is a Supplementary table listing much of the 
 
 
 ```r
-supp_d <- read.csv("SuppTable01.update.2013.05.13.csv")
+supp_d <- read.csv("data/SuppTable01.update.2013.05.13.csv")
 str(supp_d, max.level = 0)
 ```
 
@@ -244,7 +249,7 @@ First, I'll work on trying to get a workable stratification out of the `raw_clin
 
 This is looking a bit like a rabbit-hole. I'm going to try another tack and see if I can regenerate the sample counts from Table 1 in the main text of the paper:
 
-![Table 1 Snippet](table_1_snippet.png)
+![Table 1 Snippet](data/table_1_snippet.png)
 
 From Supplementary Table 1, (loaded above as `supp_d`), the cytogenetic data is available in the following columns:
 
@@ -321,7 +326,7 @@ python parse_supplementary_table.py > experimental_design.csv
 Now I can read in the modified CSV file to get a cleaner data frame:
 
 ```r
-cleaned_data <- read.csv("experimental_design.csv")
+cleaned_data <- read.csv("data/experimental_design.csv")
 ```
 
 
