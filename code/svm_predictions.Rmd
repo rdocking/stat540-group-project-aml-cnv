@@ -1,0 +1,133 @@
+SVM Predictions
+========================================================
+
+### Prep Work
+
+**First, run import_and_clean_clinical_data.Rmd and join_rna_seq_data_with_design.R.**
+
+**Load libraries.**
+```{r}
+library(plyr)
+library(kernlab)
+library(taRifx)
+library(cvTools)
+```
+
+**Now, let's remove the columns with NA values - we won't use them at this time.**
+```{r}
+complete_cols <- lapply(joined_dat,function(x) {all(!is.na(x))})
+dat_complete <- joined_dat[unlist(complete_cols)]
+```
+
+Part 1: Predicting Cytogenetic Risk
+-------------------------
+
+### Part 1a: Data clean-up
+
+**First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
+```{r}
+levels(dat_complete$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
+```
+
+**Remove the rows with N.D.**
+```{r}
+dat_filt <- subset(dat_complete,dat_complete$Cytogenetic_risk != "N.D.")
+```
+
+**Now, for the SVM, let's make a binary prognosis columns (TRUE for poor).**
+```{r}
+dat_svm <- dat_filt
+dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(FALSE,FALSE,TRUE), warn_missing = TRUE)
+#dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(TRUE,FALSE,FALSE), warn_missing = TRUE)
+```
+
+### Part 1b: Predict using just most correlated gene features
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+```{r}
+prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
+prelim <- dat_svm[,c(colnames(dat_svm_gene),"prognosis","Cytogenetic_risk")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(prelim), K = 10)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+#conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("trueNotGood","trueGood"),c("predNotGood","predGood")))
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:10) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim[folds$subsets[folds$which==f],]
+  prelim_test_labels <- prelim_test$prognosis
+  
+  # *** Narrow the feature set by finding the genes most correlated with risk in the test set ***
+  
+  # Get just gene columns
+  gene_cols <- prelim_train[,grepl(".*calculated",colnames(prelim_train))]
+  
+  # Get correlations
+  gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$Cytogenetic_risk),gene_cols,method="spearman")))
+  
+  # Sort
+  gene_corrs_sort <- sort(gene_corrs, f= ~ -V1, drop=FALSE)
+  
+  # Grab top 10
+  gene_corrs_top <- gene_corrs_sort[1:10,,drop=FALSE]
+  
+  # *** Do SVM ***
+  
+  # Prepare training and test sets
+  dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"prognosis")]
+  dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"prognosis")]
+  
+  # Build
+  fit_svm <- ksvm(prognosis~.,dat_svm_gene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_gene_test,type="response")
+  
+  # Process
+  results <- table(prelim_test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+### Part 1c: Predict using just non-gene features (INCOMPLETE)
+
+**Get non-gene columns.**
+```{r}
+dat_svm_nongene <- dat_svm[,!grepl(".*calculated",colnames(dat_svm))]
+```
+
+**Remove unhelpful non-gene columns.**
+```{r}
+# RETURN TO THIS
+drop_cols <- c("TCGA_patient_id","RNAseq_available","Expired","Cytogenetic_risk")
+```
+
+**Make our training and test sets.**
+```{r}
+dat_svm_nongene_train <- dat_svm_nongene[1:100,]
+dat_svm_nongene_test <- dat_svm_nongene[101:137,]
+```
+
+**Now let's try building an SVM.**
+```{r}
+fit_svm <- ksvm(prognosis~.,dat_svm_nongene_train) 
+pred_svm <- predict(fit_svm,newdata=dat_svm_nongene_test,type="response")
+```
