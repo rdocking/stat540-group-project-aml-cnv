@@ -359,10 +359,10 @@ sup {
 
 <pre><code class="r">library(RCurl)
 library(knitr)
-getwd()
+getwd()  # note knitr changes the wd
 </code></pre>
 
-<pre><code>## [1] &quot;C:/Users/Bec/Documents/Canada/UBC/Term 2/STAT540/stat540-group-project-aml-cnv&quot;
+<pre><code>## [1] &quot;C:/Users/Bec/Documents/Canada/UBC/Term 2/STAT540/stat540-group-project-aml-cnv/code&quot;
 </code></pre>
 
 <p>Read in the clinical data-sheet from the <a href="https://tcga-data.nci.nih.gov/docs/publications/laml_2012/">TCGA Publication Website</a>:</p>
@@ -373,7 +373,7 @@ raw_clinical_data &lt;- getURL(url, ssl.verifypeer = FALSE)
 raw_clinical_data &lt;- read.table(text = raw_clinical_data, header = TRUE, 
                                 sep =&#39;\t&#39;)
 # # Alternatively read saved file:
-# raw_clinical_data &lt;- read.table(&quot;data/clinical_patient_laml.tsv&quot;, header = TRUE, 
+# raw_clinical_data &lt;- read.table(&quot;../data/clinical_patient_laml.tsv&quot;, header = TRUE, 
 #                                 sep = &quot;\t&quot;)
 </code></pre>
 
@@ -479,7 +479,7 @@ raw_clinical_data &lt;- read.table(text = raw_clinical_data, header = TRUE,
 </ul>
 </blockquote>
 
-<pre><code class="r">supp_d &lt;- read.csv(&quot;data/SuppTable01.update.2013.05.13.csv&quot;)
+<pre><code class="r">supp_d &lt;- read.csv(&quot;../data/SuppTable01.update.2013.05.13.csv&quot;)
 str(supp_d, max.level = 0)
 </code></pre>
 
@@ -695,7 +695,7 @@ str(supp_d, max.level = 0)
 
 <p>Now I can read in the modified CSV file to get a cleaner data frame:</p>
 
-<pre><code class="r">cleaned_data &lt;- read.csv(&quot;data/experimental_design.csv&quot;)
+<pre><code class="r">cleaned_data &lt;- read.csv(&quot;../data/experimental_design.csv&quot;)
 </code></pre>
 
 <p>This data frame is quite a bit smaller and simpler than the original:</p>
