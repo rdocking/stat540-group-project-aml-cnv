@@ -1,0 +1,163 @@
+PCA feature selection
+========================================================
+
+### Prep Work (copied from svm_predictions to be consistent in saved data format)
+
+**First, run import_and_clean_clinical_data.Rmd and join_rna_seq_data_with_design.R.**
+
+**Load libraries.**
+```{r}
+library(plyr)
+library(kernlab)
+library(taRifx)
+library(cvTools)
+```
+
+**Now, let's remove the columns with NA values - we won't use them at this time.**
+```{r}
+complete_cols <- lapply(joined_dat,function(x) {all(!is.na(x))})
+dat_complete <- joined_dat[unlist(complete_cols)]
+```
+
+Part 1: Predicting Cytogenetic Risk
+-------------------------
+
+### Part 1a: Data clean-up
+
+**First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
+```{r}
+levels(dat_complete$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
+```
+
+**Remove the rows with N.D.**
+```{r}
+dat_filt <- subset(dat_complete,dat_complete$Cytogenetic_risk != "N.D.")
+```
+
+**Now, for the SVM, let's make a binary prognosis columns (TRUE for poor).**
+```{r}
+dat_in <- dat_filt
+dat_in$prognosis <- mapvalues(dat_in$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
+#dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(TRUE,FALSE,FALSE), warn_missing = TRUE)
+### Part 1b: Predict using just most correlated gene features
+```
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+```{r}
+prelim_in <- dat_in[,grepl(".*calculated",colnames(dat_in))]
+prelim_in <- dat_in[,c(colnames(prelim_in),"prognosis","Cytogenetic_risk")]
+```
+
+**kernel PCA**
+```{r}
+library(geigen)
+kernel_pca <- function(x.tr, x.ts, label, d, flag){
+  #x.tr and x.ts are feature*sample
+  n <- dim(x.tr)[2]
+  I <- diag(n)
+  e <- rep(1, n)
+  s <- 1/n
+  H <- I - s*tcrossprod(e)
+  if (flag==TRUE){
+    L <- label %*% t(label)
+  }else{
+    L <- I    
+  }
+    
+  L <- label %*% t(label)
+  k <- t(x.tr) %*% x.tr
+  Q <- k %*% H %*% L %*% H %*% k
+  Q.svd <- svd(Q, nu=d, nv=d)
+  U <- Q.svd$u[,1:d]
+  V <- Q.svd$v[,1:d]
+  D <- Q.svd$d[1:d]
+  beta <- geigen(Q, k)
+  mapped.tr <- beta$vectors %*% k
+  mapped.ts <- beta$vectors %*% t(x.tr) %*% x.ts
+  
+  list(tr.dat=mapped.tr, ts.dat=mapped.ts)
+}
+
+```
+
+```{r}
+x.ts <- t(data.matrix(prelim_in[1:30,grepl(".*calculated",colnames(prelim_in))]))
+ytest <- prelim_in[1:30,c("prognosis")]
+x.tr <- t(data.matrix(prelim_in[-30:-1,grepl(".*calculated",colnames(prelim_in))]))
+ytrain <- prelim_in[-30:-1,c("prognosis")]
+d=5
+
+res <- kernel_pca((x.tr), (x.ts), as.numeric(l.tr), d, FALSE)
+xtrain <- t(res$tr.dat)
+xtest <- t(res$ts.dat)
+
+fit.svm <- ksvm(xtrain,ytrain,type="C-svc",kernel="rbfdot")
+pred_svm <- predict(fit.svm,newdata=xtest)
+results <- table(ytest,pred_svm)
+conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+
+
+
+
+
+
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+k<- 5
+folds <- cvFolds(nrow(prelim_in), K = k)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+#conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("trueNotGood","trueGood"),c("predNotGood","predGood")))
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:k) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim_in[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim_in[folds$subsets[folds$which==f],]
+  prelim_test_labels <- prelim_test$prognosis
+  
+  
+  x.ts <- t(data.matrix(prelim_in[folds$subsets[folds$which==f,],grepl(".*calculated",colnames(prelim_in))]))
+  ytest <- prelim_in[folds$subsets[folds$which==f,],c("prognosis")]
+  x.tr <- t(data.matrix(prelim_in[folds$subsets[folds$which!=f,],grepl(".*calculated",colnames(prelim_in))]))
+  ytrain <- prelim_in[folds$subsets[folds$which!=f,],c("prognosis")]
+  d = 20
+  res <- kernel_pca((x.tr), (x.ts), as.numeric(ytrain), d, FALSE)
+  xtrain <- t(res$tr.dat)
+  xtest <- t(res$ts.dat)
+  
+  
+  fit.svm <- ksvm(xtrain,ytrain,type="C-svc",kernel="rbfdot")
+  pred_svm <- predict(fit.svm,newdata=xtest,type="response")
+  
+  
+  fit.svm <- ksvm(xtrain,ytrain,type="C-svc",kernel="rbfdot")
+  pred_svm <- predict(fit.svm,newdata=xtest)
+  results <- table(ytest,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+(sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,]))
+(spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,]))
+
+```
+
+
