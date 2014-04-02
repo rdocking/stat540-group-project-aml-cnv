@@ -1,0 +1,261 @@
+RNA-seq differential expression analysis
+========================================
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
+
+Use `voom + limma` to perform differential expression analysis on the RNA-seq data.
+
+Load required libraries:
+```{r warning=FALSE, message=FALSE}
+library(RColorBrewer)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(limma)
+library(edgeR)
+```
+
+Load RNA-seq data and the experimental design:
+```{r}
+rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt", sep = "\t", header = TRUE, row.names = 1)
+
+rDes <- read.csv("../data/experimental_design.csv")
+```
+
+Data inspection:
+```{r}
+str(rDat, max.level = 0)
+rDat[1:4, 1:4]
+head(names(rDat))
+head(rownames(rDat), n = 10)
+tail(rownames(rDat), n = 10)
+str(rDes, max.level = 0)
+```
+
+```{r include=FALSE}
+names(rDes)
+```
+RNA-seq data: there are `r nrow(rDat)` transcripts (rows) for `r length(rDat)` patients (columns). The row names are strange, I will attempt to change them.
+
+Experimental design: there are `r nrow(rDes)` rows, representing information for each of the patients in the AML TCGA data set, and `r length(rDat)` variables, but I will only choose some variables for differential expression analysis. Note the sample ID naming scheme does not match across `rDat` and `rDes`, so I will need to fix this too.
+
+### Clean rDat
+Change sample names in `rDat` to match `rDes` by extracting substrings, i.e. extract the numbers in each sample name:
+```{r}
+names(rDat) <- regmatches(names(rDat), regexpr("(?<=AB.).*",
+                                                  names(rDat),
+                                                  perl = TRUE))
+head(names(rDat))
+```
+
+Now to fix the row names: some begin with "?" so I assume this means they cannot be associated with a gene. Also, each row name has the suffix "|", followed by an integer, then "_calculated". I will remove the rows with "?" in the row name first:
+```{r}
+# "?" only present at the start of the row name:
+# rownames(rDat)[grep("[?]", rownames(rDat))]
+length(grep("[?]", rownames(rDat)))
+rDat <- rDat[grep("[?]", rownames(rDat), invert = TRUE), ]
+dim(rDat)
+```
+
+In the row names, I attempted to remove substrings after and including the "|" symbol, but this was not allowed since I obtain non-unique row names. What does the integer in suffix of the row names mean?:
+```{r}
+# test <- tail(rownames(rDat))
+# gsub("[|].*$", "", test)
+# rownames(rDat) <- gsub("[|].*$", "", rownames(rDat))
+```
+
+
+**Filtering:** 
+Remove transcripts with RPKM = 0 across all samples:
+```{r}
+# Number of transcripts with RPKM = 0 for all samples
+nrow(rDat[rowSums(rDat) == 0, ])
+# Remove these transcripts
+rDat <- rDat[rowSums(rDat) != 0, ]
+dim(rDat)
+```
+This filter does not remove all RPKM values of 0. What do we do when RPKM = 0? Do we need to apply more filters for low RPKM values? Or do we add a small number to all RPKM values?
+
+Potential additional filters:
+```{r}
+nrow(rDat)
+# 1. Remove rows where sum RPKM values across all samples < 5
+nrow(rDat) - nrow(rDat[rowSums(rDat) < 5, ])
+# 2. Remove rows where at least one sample has RPKM value = 0; too stringent
+nrow(rDat) - nrow(rDat[apply(rDat, 1, prod) != 0, ])
+# 3. Remove rows where more than 50 samples have RPKM values < 1; too stringent
+nrow(rDat) - nrow(rDat[apply(rDat, 1, function(x)sum(abs(x) < 1) < 50), ])
+```
+I have actually run the differential expression analysis code right through using the 3rd filter (remove rows where more than 50 samples have RPKM values < 1), but I found almost no genes had logFC > 1, and only 8 genes were called as differentially expressed with FDR 1e-5, and they did not appear to be sex related. So I believe the 3rd filter is far too stringent.
+
+Instead, I have chosen to apply the 1st filter, since it does not remove > 50% of the probes:
+```{r}
+# Remove transcripts where sum of RPKM values across all samples is < 5
+rDat <- rDat[rowSums(rDat) > 5, ]
+dim(rDat)
+head(rDat[1:5, 1:5])
+```
+
+```{r include=FALSE}
+# # Drop rows where more than 3 samples have values less than or equal to 1
+# test <- rDat[1:10, 1:5]
+# test[apply(test, 1, function(x)sum(abs(x) <= 1) < 3), ]
+```
+
+
+### Clean rDes
+I don't need all the variables stored in the experimental design file, so I will only keep the columns I want to test using a linear model for differential expression:
+```{r}
+rDes <- rDes[, c("TCGA_patient_id", "Sex", "Race", "FAB_subtype", "Age",
+                 "trisomy_8", "del_5", "del_7", "Cytogenetic_risk", 
+                 "Molecular_risk")]
+str(rDes)
+```
+Much better, now I only have `r length(rDes)` variables (columns).
+
+Now I need to subset the 200 patients in `rDes` by the 179 patients in `rDat`:
+```{r}
+rDes <- rDes[rDes$TCGA_patient_id %in% names(rDat), ]
+dim(rDes)
+```
+
+Next, I need to ensure `rDat` and `rDes` are in the same order:
+```{r}
+rDat <- rDat[ , order(names(rDat))]
+head(rDat[1:5, 1:5])
+rDes <- rDes[order(rDes$TCGA_patient_id), ]
+rDes$TCGA_patient_id <- as.character(rDes$TCGA_patient_id)
+head(rDes)
+identical(names(rDat), rDes$TCGA_patient_id)
+```
+
+
+### Explore rDat
+Check the RNA-seq data using a sample-to-sample correlation heatmap:
+```{r fig.height=10, fig.width=10}
+heatmap(cor(rDat), Rowv = NA, symm = TRUE, col = brewer.pal(n = 9, 
+                                                            name = "Blues"))
+```
+Ok there are definitely groups of samples with correlated expression. I need to reorder the samples based on different variables to find if there are trends.
+
+Check the box plots:
+```{r}
+rDatMelt <- melt(rDat, variable.name = "Sample", 
+                 value.name = "RPKM")
+head(rDatMelt)
+ggplot(rDatMelt, aes(Sample, RPKM)) +
+  geom_boxplot()
+```
+This is very messy, but it shows that log2 transformation is necessary:
+
+```{r}
+rDatMelt <- melt(log2(rDat), variable.name = "Sample", 
+                 value.name = "RPKM")
+head(rDatMelt)
+ggplot(rDatMelt, aes(Sample, RPKM)) +
+  geom_boxplot()
+```
+Ok now we can see the results! No samples appear to stick out in terms of expression. But post-log2 transformation many RPKM values become negative. I'm not sure if this is a problem?
+
+
+### Differential expression analysis
+I will use `voom` to perform differential expression analysis. From my experience, `voom` makes the most stringent calls for differential expression. 
+
+**Sex**
+First I will do a simple differential expression analysis: which genes are differentially expressed between males and females?
+```{r}
+sex <- rDes$Sex
+table(sex)
+```
+
+Apply scale normalization. I'm not sure if I need to do this given we have RPKM values?
+```{r}
+normFactor <- calcNormFactors(rDat)
+```
+
+Linear modelling: Use `voom` to convert RPKM to log2-RPKM ready for linear modelling:
+```{r}
+design <- model.matrix(~ sex)
+# The intercept represents females
+head(design)
+rDatVoom <- voom(rDat, design, plot = TRUE)
+```
+Looking good so far.
+
+Now find genes differentially expressed between males and females:
+```{r}
+fit <- lmFit(rDatVoom, design)
+fit <- eBayes(fit)
+voomSex <- topTable(fit, coef = "sexM", p.value = 1e-5, n = Inf)
+nrow(voomSex)
+(voomSexgenes <- rownames(voomSex))
+```
+Ok XIST and TSIX are popping up, this is a promising result! Plus it turns out the top hit, `r voomSexgenes[1]` is "Ribosomal Protein S4, Y-Linked 1"! So I must be doing something right :)
+
+Can I plot the differentially expressed genes using a DGEList object and plotSmear function from `edgeR`?
+```{r}
+# Create a DGEList object
+dgeGlm <- DGEList(counts = rDat, group = sex)
+plotSmear(dgeGlm, de.tags = voomSexgenes, ylab = "logFC", xlab = "AverageRPKM")
+abline(h = c(-1, 1), col = "blue")
+```
+I'm concerned that some of the differentially expressed transcripts being called have negative logCPM values. I'm also concerned that I'm not applying the correct tests given I'm working with RPKM values instead of CPM values :S
+
+Let's plot the top hits to see if I'm on the right track:
+```{r tidy=FALSE}
+rDatvoomSex <- rDat[voomSexgenes[1:6], ]
+dim(rDatvoomSex)
+rDatvoomSex$Transcript <- rownames(rDatvoomSex)
+rDatvoomSex <- melt(rDatvoomSex, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomSex$Transcript <- gsub("[|].*$", "", rDatvoomSex$Transcript)
+head(rDatvoomSex)
+rDatvoomSex <- merge(rDatvoomSex, rDes, by = "TCGA_patient_id")
+head(rDatvoomSex)
+ggplot(rDatvoomSex, aes(Transcript, RPKM, colour = Sex)) +
+  geom_boxplot()
+```
+So the top genes differentially expressed between males and females have no expression in one of the sexes. Fair enough. But this is not a very exciting result.
+
+**Cytogenetic risk**
+Now to explore another variable, "Cytogenetic_risk". 
+```{r}
+levels(rDes$Cytogenetic_risk)
+table(rDes$Cytogenetic_risk)
+```
+
+Which transcripts are differentially expressed between "Good", "Intermediate", and "Poor" cytogenetic risk?
+
+First, remove samples where cytogenetic risk could not be determined "N.D":
+```{r}
+# CRGIP = Cytogenetic Response Good + Intermediate + Poor
+rDesCRGIP <- droplevels(subset(rDes, Cytogenetic_risk != "N.D."))
+str(rDesCRGIP)
+dim(rDesCRGIP)
+rDatCRGIP <- rDat[ , rDesCRGIP$TCGA_patient_id]
+dim(rDatCRGIP)
+identical(names(rDatCRGIP), rDesCRGIP$TCGA_patient_id)
+cytoRisk <- rDesCRGIP$Cytogenetic_risk
+```
+
+```{r}
+normFactor <- calcNormFactors(rDatCRGIP)
+design <- model.matrix(~ cytoRisk)
+colnames(design)
+# The intercept represents "Good" cytogenetic risk
+head(design)
+rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE)
+fit <- lmFit(rDatCRGIPvoom, design)
+fit <- eBayes(fit)
+voomCR <- topTable(fit, coef = c("cytoRiskIntermediate", "cytoRiskPoor"), 
+                   p.value = 1e-5, n = Inf)
+nrow(voomCR)
+head(voomCR)
+voomCRgenes <- rownames(voomCR)
+```
+
+
+
+
+
