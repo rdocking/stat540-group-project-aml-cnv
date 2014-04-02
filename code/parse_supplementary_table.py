@@ -26,7 +26,7 @@ def tidy_field(field, revised, var_type):
     return field
 
 def parse_cytogenetics(cytogenetics, revised):
-    """Parse the 'cytogenetics' field to count the karyotypoes of interest"""
+    """Parse the 'cytogenetics' field to count the karyotypes of interest"""
 
     presence = 'FALSE'
     if revised == 'trisomy_8':
