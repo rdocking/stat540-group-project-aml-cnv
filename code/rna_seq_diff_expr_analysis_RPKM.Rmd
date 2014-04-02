@@ -253,9 +253,38 @@ voomCR <- topTable(fit, coef = c("cytoRiskIntermediate", "cytoRiskPoor"),
 nrow(voomCR)
 head(voomCR)
 voomCRgenes <- rownames(voomCR)
+
+dgeGlm <- DGEList(counts = rDatCRGIP, group = cytoRisk)
+plotSmear(dgeGlm, de.tags = voomCRgenes, ylab = "logFC", xlab = "AverageRPKM")
+abline(h = c(-1, 1), col = "blue")
 ```
+Ok this definitely doesn't look right. There are too many genes coloured red with very little logFC.
 
 
+Genes differentially expressed between Good and Poor cytogenetic risk:
+```{r}
+voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-5, n = Inf)
+nrow(voomCRGP)
+voomCRGPgenes <- rownames(voomCRGP)
+dgeGlm <- DGEList(counts = rDatCRGIP, group = cytoRisk)
+plotSmear(dgeGlm, de.tags = voomCRGPgenes, ylab = "logFC", xlab = "AverageRPKM",
+          smearWidth = 10)
+abline(h = c(-1, 1), col = "blue")
+```
+Again, this doesn't look right. There are too many genes coloured red with very little logFC.
 
-
-
+Let's plot the top hits to see if I'm on the right track:
+```{r tidy=FALSE}
+rDatvoomCR <- rDatCRGIP[voomCRGPgenes[1:6], ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, RPKM, colour = Cytogenetic_risk)) +
+  geom_boxplot()
+```
