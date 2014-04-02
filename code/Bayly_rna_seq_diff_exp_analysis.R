@@ -51,7 +51,7 @@ norm.factor <- calcNormFactors(prDat[1:16]) #Error message. so prDat(16) has som
 str(prDat[1:16]) #seems unable to deal with a column full of zeros. go figure. So, removing zeros....
 prDat[15]
 
-#removing zeros with EdgR, based off of Mac's script (Mac does RNA-seq in the bohlmann lab)--------------
+#RPKM filtering, based off of Mac's script (Mac does RNA-seq in the bohlmann lab)--------------
 y <- DGEList(counts=t(prDat)) #had to transpose from original disordered form...
 nrow(y)
 
