@@ -89,13 +89,56 @@ Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Mar
 
 |  Document Number   |   Subject   |   Owner   | Input | Output |
 | ------------------ | ----------- | --------- | ----- | ------ | 
-| 1    | Experimental Design Sheet Generation     | @rdocking  | Raw Clinical Data | Cleaned Experimental design CSV |
-| row2    | row2     | row2      |
+| **1**    | Experimental Design Sheet Generation     | Rod  | Raw Clinical Data | Cleaned Experimental design CSV |
+| **2**    | Expression Matrix Generation | Rebecca | Raw count and RPKM Data | Cleaned count data | 
+| **3**    | Differential Expression I - Cytogenetic Risk | Rebecca | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
+| **4**    | Differential Expression II - Karyotypic Events | Carmen | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
+| **5** | Differential Expression Summary | CB, RD, RJ | Output of **3**, **4** | Summary of the differential expression analysis |
+| **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components? |
+| **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM? |
+| **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF? |
+| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | ??? |
 
-### Experimental Design Sheet Generation
+Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
+
+### 1. Experimental Design Sheet Generation
 
 The task here is to turn the raw clinical data (from the Supplemental material made available in the publication), into an analysis-ready CSV file describing the experimental design of the study.
 
 The output CSV file will be used in all subsequent analysis steps.
 
 This task can be viewed at [import_and_clean_clinical_data.md](code/import_and_clean_clinical_data.md)
+
+### 2. Expression Matrix Generation
+
+From the raw RPKM and count data available, summarize and clean the data into an analysis-ready format.
+
+The output matrix data will be used in all subsequent analysis steps.
+
+### 3. Differential Expression I - Cytogenetic Risk
+
+Using `voom`, predict differentially expressed genes between the 'Good', 'Poor', and 'Intermediate' cytogenetic risk statuses.
+
+### 4. Differential Expression II - Karyotpyic Events
+
+Using `voom`, predict differentially expressed genes between samples with or without the karyotypic events of interest.
+
+### 5. Differential Expression Summary
+
+Compare and summarize the approaches described in **3, 4**.
+
+### 6. Principal Components Analysis
+
+Using the matrix of expression data, predict principal components.
+
+### 7. SVM Analysis
+
+Using the matrix of expression data (with perhaps a reduced data set produced in **6**), construct and test a SVM.
+
+### 8. Random Forest Analysis
+
+Using the matrix of expression data (with perhaps a reduced data set produced in **6**), construct and test a Random Forest model.
+
+### 8. Machine Learning Summary
+
+Summarize the work from documents **6, 7, 8**.
