@@ -29,8 +29,8 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 
 Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data_import.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
 
-Analysis Details
-----------------
+Initial Analysis Plan
+---------------------
 
 ### Data Summary and Tidying
 
@@ -79,3 +79,23 @@ Group Composition
 | Rebecca Johnston | Bioinformatics (MSc) | Rotations (current: Dr. Christian Steidl) | Molecular biology, cancer biology |
 | Emily Hindalong | Bioinformatics (MSc) | Current Rotation: Dr. Paul Pavlidis | Computer Science, Software, Cognitive Systems |
 | Carmen Bayly | GSAT | Current rotation: Dr. Corey Nislow | Biochemistry |
+
+Deliverables and Responsibilities
+---------------------------------
+
+The main deliverables for the project will be a poster, as well as this git repository. Within this git repository, the work will be broken down into a series of [R Markdown](http://rmarkdown.rstudio.com) documents.  
+
+Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Markdown documents, their interconnection, and the group member in charge of each document:
+
+|  Document Number   |   Subject   |   Owner   | Input | Output |
+| ------------------ | ----------- | --------- | ----- | ------ | 
+| 1    | Experimental Design Sheet Generation     | @rdocking  | Raw Clinical Data | Cleaned Experimental design CSV |
+| row2    | row2     | row2      |
+
+### Experimental Design Sheet Generation
+
+The task here is to turn the raw clinical data (from the Supplemental material made available in the publication), into an analysis-ready CSV file describing the experimental design of the study.
+
+The output CSV file will be used in all subsequent analysis steps.
+
+This task can be viewed at [import_and_clean_clinical_data.md](code/import_and_clean_clinical_data.md)
