@@ -1,11 +1,12 @@
 Clinical Data Import and Cleaning
 =================================
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
 
 Load required libraries and print working directory:
 ```{r message=FALSE}
 library(RCurl)
 library(knitr)
-getwd() # note knitr changes the wd
 ```
 
 Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
@@ -49,8 +50,6 @@ There are some immediate problems with this approach:
 - Several samples have many of the CNAs of interest
 - The notation seems inconsistent between samples
 
-*Note: Supplemenary Table 5 from the paper website might be an alternate approach here - this lists the inferred CNAs directly*
-
 Alternate approaches possible:
 
 1. Limit the analysis to things with a single, distinct karyotypic event (will lose lots of samples)
@@ -64,7 +63,7 @@ Alternate approaches possible:
 
 Thoughts? This would make the annotation simpler, but might complicate the analysis a bit.
 
-### Followup to that question: 
+### Follow-up to that question: 
 
 #### Summarize Columns in Raw Clinical Data and Supplementary Table 1
 
@@ -101,12 +100,12 @@ summary(supp_d$RISK..Cyto.)
   
 #### Annotate Samples with Karyotypic events of interest  
 
-Per conversation with group members and Shaun, I'll clean the supplemental data in `SuppTable01.update.2013.05.13.csv`. Note that I'm doing this in Python (with ` parse_supplementary_table.py`) for expediency.
+Per conversation with group members and Shaun, I'll clean the supplemental data in `SuppTable01.update.2013.05.13.csv`. Note that I'm doing this in Python with [`parse_supplementary_table.py`](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/parse_supplementary_table.py) for expediency.
 
 Manipulations are as follows:
 
 - Select a relevant subset of variables
-- For variables that can be converted to boolean types, do so
+- For variables that can be converted to Boolean types, do so
 - Convert column names to be more R-friendly (e.g., `'Expired?  4.30.13'` became `Expired` and `'%BM Blast'` became `BM_blast_pct`)
 
 The script should be run like so:
@@ -153,3 +152,44 @@ kable(summary_frame, format='markdown')
 ```
 
 So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.  
+
+
+### Further cleaning of the experimental design file `cleaned_dat`
+
+We only need to keep the patients for which we have RNA-seq data available:
+```{r}
+cleaned_data <- cleaned_data[cleaned_data$RNAseq_available == TRUE, ]
+dim(cleaned_data)
+```
+
+We won't need all the variables stored in the experimental design file, so let's keep the most relevant variables for our analyses:
+```{r}
+cleanExpDes <- cleaned_data[ , c("TCGA_patient_id", "Sex", "Race", 
+                                 "FAB_subtype", "Age", "trisomy_8", "del_5",
+                                  "del_7", "Cytogenetic_risk", 
+                                 "Molecular_risk")]
+str(cleanExpDes)
+```
+Much better, now we only have `r length(cleanExpDes)` variables (columns) instead of `r length(cleaned_data)` variables.
+
+Order the rows in 'cleanExpDes' by TCGA Patient ID:
+```{r}
+cleanExpDes <- cleanExpDes[order(cleanExpDes$TCGA_patient_id), ]
+head(cleanExpDes)
+```
+
+Save the output to file:
+```{r}
+write.table(cleanExpDes, "../data/experimental_design_cleaned.txt", sep = "\t",
+            row.names = FALSE)
+```
+
+Ensure we can read the file back in correctly:
+```{r}
+test <- read.delim("../data/experimental_design_cleaned.txt")
+str(test)
+head(test)
+tail(test)
+```
+
+Great, so we will use the `experimental_design_cleaned.txt` file our experimental design, where the `r nrow(cleanExpDes)` rows represent the patients for which we have RNA-seq data available, and are sorted by their TCGA patient ID. There are `r length(cleanExpDes)` columns which represent the key variables we want to include in our linear modelling and machine learning tasks.

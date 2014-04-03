@@ -1,16 +1,13 @@
 Clinical Data Import and Cleaning
 =================================
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
 
 Load required libraries and print working directory:
 
 ```r
 library(RCurl)
 library(knitr)
-getwd()  # note knitr changes the wd
-```
-
-```
-## [1] "C:/Users/Bec/Documents/Canada/UBC/Term 2/STAT540/stat540-group-project-aml-cnv/code"
 ```
 
 
@@ -221,8 +218,6 @@ There are some immediate problems with this approach:
 - Several samples have many of the CNAs of interest
 - The notation seems inconsistent between samples
 
-*Note: Supplemenary Table 5 from the paper website might be an alternate approach here - this lists the inferred CNAs directly*
-
 Alternate approaches possible:
 
 1. Limit the analysis to things with a single, distinct karyotypic event (will lose lots of samples)
@@ -236,7 +231,7 @@ Alternate approaches possible:
 
 Thoughts? This would make the annotation simpler, but might complicate the analysis a bit.
 
-### Followup to that question: 
+### Follow-up to that question: 
 
 #### Summarize Columns in Raw Clinical Data and Supplementary Table 1
 
@@ -309,12 +304,12 @@ summary(supp_d$RISK..Cyto.)
   
 #### Annotate Samples with Karyotypic events of interest  
 
-Per conversation with group members and Shaun, I'll clean the supplemental data in `SuppTable01.update.2013.05.13.csv`. Note that I'm doing this in Python (with ` parse_supplementary_table.py`) for expediency.
+Per conversation with group members and Shaun, I'll clean the supplemental data in `SuppTable01.update.2013.05.13.csv`. Note that I'm doing this in Python with [`parse_supplementary_table.py`](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/parse_supplementary_table.py) for expediency.
 
 Manipulations are as follows:
 
 - Select a relevant subset of variables
-- For variables that can be converted to boolean types, do so
+- For variables that can be converted to Boolean types, do so
 - Convert column names to be more R-friendly (e.g., `'Expired?  4.30.13'` became `Expired` and `'%BM Blast'` became `BM_blast_pct`)
 
 The script should be run like so:
@@ -453,3 +448,141 @@ kable(summary_frame, format = "markdown")
 
 
 So, we have a few cases where the abnormalities of interest occur in isolation, but several where they overlap.  
+
+
+### Further cleaning of the experimental design file `cleaned_dat`
+
+We only need to keep the patients for which we have RNA-seq data available:
+
+```r
+cleaned_data <- cleaned_data[cleaned_data$RNAseq_available == TRUE, ]
+dim(cleaned_data)
+```
+
+```
+## [1] 179  48
+```
+
+
+We won't need all the variables stored in the experimental design file, so let's keep the most relevant variables for our analyses:
+
+```r
+cleanExpDes <- cleaned_data[, c("TCGA_patient_id", "Sex", "Race", "FAB_subtype", 
+    "Age", "trisomy_8", "del_5", "del_7", "Cytogenetic_risk", "Molecular_risk")]
+str(cleanExpDes)
+```
+
+```
+## 'data.frame':	179 obs. of  10 variables:
+##  $ TCGA_patient_id : int  2803 2806 2870 2815 2872 2998 2914 2819 2875 2823 ...
+##  $ Sex             : Factor w/ 2 levels "F","M": 1 2 2 2 2 1 1 1 2 1 ...
+##  $ Race            : Factor w/ 13 levels "A","B","H","NH/A",..: 12 12 12 12 2 12 12 12 7 12 ...
+##  $ FAB_subtype     : Factor w/ 9 levels "M0","M1","M2",..: 4 2 2 5 4 4 3 3 3 4 ...
+##  $ Age             : int  61 46 76 49 42 68 22 52 43 61 ...
+##  $ trisomy_8       : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_5           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_7           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ Cytogenetic_risk: Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Molecular_risk  : Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
+```
+
+Much better, now we only have 10 variables (columns) instead of 48 variables.
+
+Order the rows in 'cleanExpDes' by TCGA Patient ID:
+
+```r
+cleanExpDes <- cleanExpDes[order(cleanExpDes$TCGA_patient_id), ]
+head(cleanExpDes)
+```
+
+```
+##     TCGA_patient_id Sex Race FAB_subtype Age trisomy_8 del_5 del_7
+## 1              2803   F    W          M3  61     FALSE FALSE FALSE
+## 40             2805   M    W          M0  77     FALSE FALSE FALSE
+## 2              2806   M    W          M1  46     FALSE FALSE FALSE
+## 41             2807   F    W          M1  68     FALSE FALSE FALSE
+## 42             2808   M    W          M2  23     FALSE FALSE FALSE
+## 153            2810   F    B          M2  76     FALSE FALSE FALSE
+##     Cytogenetic_risk Molecular_risk
+## 1               Good           Good
+## 40      Intermediate   Intermediate
+## 2               Good           Good
+## 41      Intermediate   Intermediate
+## 42      Intermediate   Intermediate
+## 153             N.D.           N.D.
+```
+
+
+Save the output to file:
+
+```r
+write.table(cleanExpDes, "../data/experimental_design_cleaned.txt", sep = "\t", 
+    row.names = FALSE)
+```
+
+
+Ensure we can read the file back in correctly:
+
+```r
+test <- read.delim("../data/experimental_design_cleaned.txt")
+str(test)
+```
+
+```
+## 'data.frame':	179 obs. of  10 variables:
+##  $ TCGA_patient_id : int  2803 2805 2806 2807 2808 2810 2811 2812 2813 2814 ...
+##  $ Sex             : Factor w/ 2 levels "F","M": 1 2 2 1 2 1 2 1 2 1 ...
+##  $ Race            : Factor w/ 13 levels "A","B","H","NH/A",..: 12 12 12 12 12 2 12 2 12 12 ...
+##  $ FAB_subtype     : Factor w/ 9 levels "M0","M1","M2",..: 4 1 2 2 3 3 5 3 5 1 ...
+##  $ Age             : int  61 77 46 68 23 76 81 25 78 39 ...
+##  $ trisomy_8       : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_5           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ del_7           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ Cytogenetic_risk: Factor w/ 4 levels "Good","Intermediate",..: 1 2 1 2 2 3 2 2 4 4 ...
+##  $ Molecular_risk  : Factor w/ 4 levels "Good","Intermediate",..: 1 2 1 2 2 3 2 2 4 4 ...
+```
+
+```r
+head(test)
+```
+
+```
+##   TCGA_patient_id Sex Race FAB_subtype Age trisomy_8 del_5 del_7
+## 1            2803   F    W          M3  61     FALSE FALSE FALSE
+## 2            2805   M    W          M0  77     FALSE FALSE FALSE
+## 3            2806   M    W          M1  46     FALSE FALSE FALSE
+## 4            2807   F    W          M1  68     FALSE FALSE FALSE
+## 5            2808   M    W          M2  23     FALSE FALSE FALSE
+## 6            2810   F    B          M2  76     FALSE FALSE FALSE
+##   Cytogenetic_risk Molecular_risk
+## 1             Good           Good
+## 2     Intermediate   Intermediate
+## 3             Good           Good
+## 4     Intermediate   Intermediate
+## 5     Intermediate   Intermediate
+## 6             N.D.           N.D.
+```
+
+```r
+tail(test)
+```
+
+```
+##     TCGA_patient_id Sex Race FAB_subtype Age trisomy_8 del_5 del_7
+## 174            3006   M    W          M1  61     FALSE FALSE FALSE
+## 175            3007   M    W          M3  35      TRUE FALSE  TRUE
+## 176            3008   M    W          M1  22     FALSE FALSE FALSE
+## 177            3009   M    W          M4  23     FALSE FALSE FALSE
+## 178            3011   F    W          M1  21     FALSE FALSE FALSE
+## 179            3012   M    W          M3  53     FALSE FALSE FALSE
+##     Cytogenetic_risk Molecular_risk
+## 174     Intermediate   Intermediate
+## 175             Good           Good
+## 176     Intermediate   Intermediate
+## 177     Intermediate   Intermediate
+## 178     Intermediate   Intermediate
+## 179             Good           Good
+```
+
+
+Great, so we will use the `experimental_design_cleaned.txt` file our experimental design, where the 179 rows represent the patients for which we have RNA-seq data available, and are sorted by their TCGA patient ID. There are 10 columns which represent the key variables we want to include in our linear modelling and machine learning tasks.
