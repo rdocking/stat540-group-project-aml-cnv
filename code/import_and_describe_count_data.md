@@ -114,3 +114,10 @@ What I'd like to know though, is:
 
 - Are the counts raw read counts? 
 - Have they been normalized in any way?
+
+After a bit of digging, I determined that:
+
+- The raw counts come from the in-house pipeline of the GSC
+- By reading their documentation, it looks like fractional reads are counted, when a read only partially overlaps with an exon. Additionally, exons from all transcript models of a gene are collapsed.
+
+For our purposes, we can treat these as 'raw' counts of reads per gene model.
