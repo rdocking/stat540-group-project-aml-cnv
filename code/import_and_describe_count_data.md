@@ -14,26 +14,54 @@ Import Raw Data Files
 
 First, I'll import and compare the raw data files available at the [TCGA Data Portal Site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/). These files have already been downloaded and stored in the repository in the `data` sub-directory:
 
-```{r}
-rpkm_dat <- read.table('../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz',
-                       sep = "\t", header = TRUE, row.names = 1)
-count_dat <- read.table('../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz',
-                        sep = "\t", header = TRUE, row.names = 1)
+
+```r
+rpkm_dat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz", 
+    sep = "\t", header = TRUE, row.names = 1)
+count_dat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz", 
+    sep = "\t", header = TRUE, row.names = 1)
 ```
+
 
 Raw dimensions of the two data frames:
 
-```{r}
+
+```r
 dim(rpkm_dat)
+```
+
+```
+## [1] 20442   179
+```
+
+```r
 dim(count_dat)
 ```
 
+```
+## [1] 20442   179
+```
+
+
 Confirm that the rownames and column names of the two data frames are the same:
 
-```{r}
+
+```r
 identical(rownames(rpkm_dat), rownames(count_dat))
+```
+
+```
+## [1] TRUE
+```
+
+```r
 identical(colnames(rpkm_dat), colnames(count_dat))
 ```
+
+```
+## [1] TRUE
+```
+
 
 OK - the two data frames are equivalent in the row and column names.
 
@@ -42,11 +70,18 @@ Interpret Row and Column Names
 
 Next, to interpret the row and column names. The column names are fairly obviously the sample names identified in the experimental design sheet:
 
-```{r}
+
+```r
 head(colnames(count_dat))
 ```
 
-From the filename, the rownames seem to correspond to gene annotations from the [GO Annotation File Format 2.0](http://www.geneontology.org/GO.format.gaf-2_0.shtml). These will need to be explored a bit further, but there are measurements for `r nrow(count_dat)` different genes/isoforms.
+```
+## [1] "TCGA.AB.2803" "TCGA.AB.2807" "TCGA.AB.2963" "TCGA.AB.2826"
+## [5] "TCGA.AB.2867" "TCGA.AB.2818"
+```
+
+
+From the filename, the rownames seem to correspond to gene annotations from the [GO Annotation File Format 2.0](http://www.geneontology.org/GO.format.gaf-2_0.shtml). These will need to be explored a bit further, but there are measurements for 20442 different genes/isoforms.
 
 In the notes at the [data portal site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/), the text implies that the files downloaded above are *not* part of the standardized TCGA data releases, but were instead specifically created for the paper by the paper's authors (rather than the TCGA consortium itself).
 
