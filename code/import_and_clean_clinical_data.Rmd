@@ -35,7 +35,7 @@ Also available, as an Excel sheet, is a Supplementary table listing much of the 
 - Open in Excel, save as CSV
 
 ```{r}
-supp_d <- read.csv("../data/SuppTable01.update.2013.05.13.csv")
+supp_d <- read.csv("data/SuppTable01.update.2013.05.13.csv")
 str(supp_d, max.level = 0)
 ```
 
@@ -116,7 +116,7 @@ python parse_supplementary_table.py > experimental_design.csv
 
 Now I can read in the modified CSV file to get a cleaner data frame:
 ```{r}
-cleaned_data <- read.csv("../data/experimental_design.csv")
+cleaned_data <- read.csv("data/experimental_design.csv")
 ```
 
 This data frame is quite a bit smaller and simpler than the original:
@@ -180,13 +180,13 @@ head(cleanExpDes)
 
 Save the output to file:
 ```{r}
-write.table(cleanExpDes, "../data/experimental_design_cleaned.txt", sep = "\t",
+write.table(cleanExpDes, "data/experimental_design_cleaned.txt", sep = "\t",
             row.names = FALSE)
 ```
 
 Ensure we can read the file back in correctly:
 ```{r}
-test <- read.delim("../data/experimental_design_cleaned.txt")
+test <- read.delim("data/experimental_design_cleaned.txt")
 str(test)
 head(test)
 tail(test)

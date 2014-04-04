@@ -2,9 +2,9 @@
 
 # Import RNA Seq Data
 
-design <- read.table("data/clinical_patient_laml.tsv", sep = "\t", 
+design <- read.table("../data/clinical_patient_laml.tsv", sep = "\t", 
                      header = TRUE)
-RNA_seq_dat <- read.table("data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt",
+RNA_seq_dat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt",
                           sep = "\t", header = TRUE, row.names = 1)
 
 # Some inspection
