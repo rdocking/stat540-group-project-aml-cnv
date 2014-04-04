@@ -15,14 +15,14 @@ Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga
 
 
 ```r
+# To re-download data from TCGA portal site, uncomment this block
 # Require "ssl.verifypeer = FALSE" to avoid SSL certificate issues
-url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
-raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
-raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
-                                sep ='\t')
-# # Alternatively read saved file:
-# raw_clinical_data <- read.table("../data/clinical_patient_laml.tsv", header = TRUE, 
-#                                 sep = "\t")
+#url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
+#raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
+#raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, sep ='\t')
+# Read in raw clinical data:
+raw_clinical_data <- read.table("../data/clinical_patient_laml.tsv", header = TRUE, 
+                                 sep = "\t")
 ```
 
 
@@ -122,9 +122,10 @@ names(raw_clinical_data)
 
 This data-sheet has 78 columns, a lot more variables than we'll need for this project. The 200 rows represent the patients.
 
-Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:
+Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation.
 
-> *Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
+*Note:* We're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
+
 - Download the Supplementary file from [the paper website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx)
 - Open in Excel, save as CSV
 
@@ -141,6 +142,7 @@ str(supp_d, max.level = 0)
 
 
 As a first pass, we'll try to clean the `cytogenetic_abnormality` column from the raw clinical data into a simpler categorical variable:
+
 
 ```r
 summary(raw_clinical_data$cytogenetic_abnormality)
@@ -344,7 +346,7 @@ str(cleaned_data)
 ##  $ White_blood_cell_count               : num  1 29.4 34 57.1 2.1 29 51.8 4.1 4.3 86.4 ...
 ##  $ PB_blast_pct                         : int  NA 81 55 48 2 32 70 18 39 68 ...
 ##  $ WGS_subclones_detected               : int  NA NA NA NA NA 1 NA NA NA NA ...
-##  $ Cytogenetics                         : Factor w/ 125 levels "37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]",..: 47 13 74 72 69 51 46 53 15 100 ...
+##  $ Cytogenetics                         : Factor w/ 125 levels "37~49,XY,+Y,der(1)add(1)(p13)del(1)(q21q25),-5,der(7)inv(7)(p15q11.2)?inv(7)(q22q32),+17,add(17)(p13),+21,+mar[cp20]",..: 52 13 74 72 69 51 46 53 15 100 ...
 ##  $ trisomy_8                            : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_5                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 ##  $ del_7                                : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
@@ -466,6 +468,7 @@ dim(cleaned_data)
 
 We won't need all the variables stored in the experimental design file, so let's keep the most relevant variables for our analyses:
 
+
 ```r
 cleanExpDes <- cleaned_data[, c("TCGA_patient_id", "Sex", "Race", "FAB_subtype", 
     "Age", "trisomy_8", "del_5", "del_7", "Cytogenetic_risk", "Molecular_risk")]
@@ -485,6 +488,7 @@ str(cleanExpDes)
 ##  $ Cytogenetic_risk: Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ Molecular_risk  : Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
 ```
+
 
 Much better, now we only have 10 variables (columns) instead of 48 variables.
 

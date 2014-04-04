@@ -12,14 +12,14 @@ library(knitr)
 Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/):
 
 ```{r tidy=FALSE}
+# To re-download data from TCGA portal site, uncomment this block
 # Require "ssl.verifypeer = FALSE" to avoid SSL certificate issues
-url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
-raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
-raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, 
-                                sep ='\t')
-# # Alternatively read saved file:
-# raw_clinical_data <- read.table("../data/clinical_patient_laml.tsv", header = TRUE, 
-#                                 sep = "\t")
+#url <- "https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv"
+#raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
+#raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, sep ='\t')
+# Read in raw clinical data:
+raw_clinical_data <- read.table("../data/clinical_patient_laml.tsv", header = TRUE, 
+                                 sep = "\t")
 ```
 
 ```{r}
@@ -28,9 +28,10 @@ names(raw_clinical_data)
 ```
 This data-sheet has `r length(raw_clinical_data)` columns, a lot more variables than we'll need for this project. The `r nrow(raw_clinical_data)` rows represent the patients.
 
-Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation:
+Also available, as an Excel sheet, is a Supplementary table listing much of the same information, but with more annotation.
 
-> *Note that we're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
+*Note:* We're using the updated version as of 2013-05-13. Since the data is only available as an Excel sheet, we've saved the data in .csv format outside of R:*
+
 - Download the Supplementary file from [the paper website](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/SuppTable01.update.2013.05.13.xlsx)
 - Open in Excel, save as CSV
 
@@ -40,6 +41,7 @@ str(supp_d, max.level = 0)
 ```
 
 As a first pass, we'll try to clean the `cytogenetic_abnormality` column from the raw clinical data into a simpler categorical variable:
+
 ```{r}
 summary(raw_clinical_data$cytogenetic_abnormality)
 ```
@@ -163,6 +165,7 @@ dim(cleaned_data)
 ```
 
 We won't need all the variables stored in the experimental design file, so let's keep the most relevant variables for our analyses:
+
 ```{r}
 cleanExpDes <- cleaned_data[ , c("TCGA_patient_id", "Sex", "Race", 
                                  "FAB_subtype", "Age", "trisomy_8", "del_5",
@@ -170,6 +173,7 @@ cleanExpDes <- cleaned_data[ , c("TCGA_patient_id", "Sex", "Race",
                                  "Molecular_risk")]
 str(cleanExpDes)
 ```
+
 Much better, now we only have `r length(cleanExpDes)` variables (columns) instead of `r length(cleaned_data)` variables.
 
 Order the rows in 'cleanExpDes' by TCGA Patient ID:
