@@ -1,0 +1,23 @@
+Import and Describe Count Data
+==============================
+
+At [issue #7](https://github.com/rdocking/stat540-group-project-aml-cnv/issues/7), Dr. Pavlidis suggested using the count data for the experiment rather than the normalized RPKM data.
+
+My intent in this document is to download, import, and explore the read count data and try to figure out:
+
+- How it was generated
+- Whether any normalizations have been applied
+- How we can use it for the differential expression experiments
+
+Import Raw Data Files
+---------------------
+
+First, I'll import and compare the raw data files available at the [TCGA Data Portal Site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/). These files have already been downloaded and stored in the repository in the `data` sub-directory:
+
+```{r}
+rpkm_dat <- read.table('../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz',
+                       sep = "\t", header = TRUE, row.names = 1)
+count_dat <- read.table('../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz',
+                        sep = "\t", header = TRUE, row.names = 1)
+```
+
