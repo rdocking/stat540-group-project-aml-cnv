@@ -18,7 +18,7 @@ Read in the clinical data-sheet from the [TCGA Publication Website](https://tcga
 #raw_clinical_data <- getURL(url, ssl.verifypeer = FALSE)
 #raw_clinical_data <- read.table(text = raw_clinical_data, header = TRUE, sep ='\t')
 # Read in raw clinical data:
-raw_clinical_data <- read.table("../data/clinical_patient_laml.tsv", header = TRUE, 
+raw_clinical_data <- read.table("data/clinical_patient_laml.tsv", header = TRUE, 
                                  sep = "\t")
 ```
 
