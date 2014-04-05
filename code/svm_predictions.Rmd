@@ -46,7 +46,7 @@ dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good","Intermediate"
 **Make prelimary dataset with gene columns + prognosis + cyt risk.**
 ```{r}
 prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
-prelim <- dat_svm[,c(colnames(dat_svm_gene),"prognosis","Cytogenetic_risk")]
+prelim <- dat_svm[,c(colnames(prelim),"prognosis","Cytogenetic_risk")]
 ```
 
 **Prepare folds and confusion matrix for cross validation.**
@@ -84,7 +84,7 @@ for (f in 1:10) {
   # Prepare training and test sets
   dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"prognosis")]
   dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"prognosis")]
-  
+  plot(dat_svm_gene_test[, 1:2], bg=prelim_test_labels, pch=21, cex=1.5)
   # Build
   fit_svm <- ksvm(prognosis~.,dat_svm_gene_train)
   

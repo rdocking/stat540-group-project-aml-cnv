@@ -1,0 +1,157 @@
+Clean RNA-seq data
+==================
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
+
+## Load data and required libraries
+Load RNA-seq data and the experimental design files:
+```{r}
+rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz", sep = "\t", header = TRUE, row.names = 1)
+rDes <- read.delim("../data/experimental_design_cleaned.txt")
+```
+
+```{r}
+library(reshape2) # For reshaping data from wide to tall format
+library(ggplot2) # for plotting
+```
+
+
+## Data inspection
+```{r}
+str(rDat, max.level = 0)
+rDat[1:4, 1:4]
+head(names(rDat))
+head(rownames(rDat), n = 10)
+tail(rownames(rDat), n = 10)
+str(rDes, max.level = 0)
+head(rDes)
+```
+
+RNA-seq data: there are `r nrow(rDat)` transcripts (rows) for `r length(rDat)` patients (columns). The row names are strange, I will attempt to change them.
+
+Experimental design: there are `r nrow(rDes)` rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and `r length(rDat)` variables. Note the sample ID naming scheme does not match across `rDat` and `rDes`, so I will need to fix this.
+
+
+## Clean rDat
+Change sample names in `rDat` to match `rDes` by extracting substrings, i.e. extract the numbers in each sample name:
+```{r}
+names(rDat) <- regmatches(names(rDat), regexpr("(?<=AB.).*",
+                                                  names(rDat),
+                                                  perl = TRUE))
+head(names(rDat))
+```
+
+Reorder the columns (patients) to match the order of the experimental design file 'rDes$TCGA\_patient_id`:
+```{r}
+rDat <- rDat[ , order(names(rDat))]
+identical(names(rDat), as.character(rDes$TCGA_patient_id))
+```
+
+Now to fix the row names: some row names begin with "?", and each row name has the suffix "|", followed by an integer, then "_calculated". This naming scheme is explained [here](https://wiki.nci.nih.gov/display/TCGA/RNASeq+Data+Format+Specification), where the row names are: "valid HUGO name|GENEID (if no HUGO name, '?' is present)".
+
+Remove the rows with "?" in the row name:
+```{r}
+# "?" only present at the start of the row name:
+# rownames(rDat)[grep("[?]", rownames(rDat))]
+length(grep("[?]", rownames(rDat)))
+rDat <- rDat[grep("[?]", rownames(rDat), invert = TRUE), ]
+dim(rDat)
+```
+
+I attempted to remove substrings after and including the "|" symbol, but this was not allowed since I obtain non-unique row names. 
+```{r}
+(test <- tail(rownames(rDat)))
+gsub("[|].*$", "", test)
+rownames(rDat) <- gsub("[|].*$", "", rownames(rDat))
+```
+
+
+## Filtering
+Remove transcripts with RPKM = 0 across all samples:
+```{r}
+# Number of transcripts with RPKM = 0 for all samples
+nrow(rDat[rowSums(rDat) == 0, ])
+# Remove these transcripts
+rDat <- rDat[rowSums(rDat) != 0, ]
+dim(rDat)
+```
+This filter does not remove all RPKM values of 0. What do we do when RPKM = 0? Do we need to apply more filters for low RPKM values?
+
+Potential additional filters: How many transcripts would be left to analyse if we apply any one of the following filters?
+```{r}
+nrow(rDat)
+# 1. Keep rows where sum RPKM values across all samples > 5
+nrow(rDat[rowSums(rDat) > 5, ])
+# 2. Remove rows where at least one sample has RPKM value = 0
+nrow(rDat[apply(rDat, 1, prod) != 0, ])
+# 3. Remove rows where more than 50 samples have RPKM values < 1
+nrow(rDat[apply(rDat, 1, function(x)sum(abs(x) < 1) < 50), ])
+# 4. Keep rows where average expression per transcript > 5
+nrow(rDat[apply(rDat, 1, function(x)mean(abs(x) > 5)), ])
+```
+
+```{r include=FALSE}
+# # Apply the 1st filter, since it does not remove > 50% of the probes:
+# # Remove transcripts where sum of RPKM values across all samples is < 5
+# rDat <- rDat[rowSums(rDat) > 5, ]
+# dim(rDat)
+# head(rDat[1:5, 1:5])
+
+# # Apply 4th filter: Average expression per transcript > 5
+# rDat <- rDat[apply(rDat, 1, function(x)mean(abs(x) > 5)), ]
+```
+
+```{r include=FALSE}
+# # Drop rows where more than 3 samples have values less than or equal to 1
+# test <- rDat[1:10, 1:5]
+# test[apply(test, 1, function(x)sum(abs(x) <= 1) < 3), ]
+```
+
+I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 RPKM values may be instances where genes are completely deleted from the genome and thus no transcription can occur.
+
+
+## Density plot
+Check the density plot of RPKM values across all samples:
+```{r}
+rDatMelt <- melt(rDat, variable.name = "Sample", 
+                 value.name = "RPKM")
+head(rDatMelt)
+ggplot(rDatMelt, aes(RPKM)) +
+  geom_density()
+```
+
+The data has to be log transformed:
+```{r}
+ggplot(rDatMelt, aes(log(RPKM))) +
+  geom_density()
+```
+
+A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
+```{r}
+rDat <- rDat + 1
+```
+
+Now re-make the density plot:
+```{r fig.align='center'}
+rDat <- rDat + 1
+rDatMelt <- melt(rDat, variable.name = "Sample", 
+                 value.name = "RPKM")
+ggplot(rDatMelt, aes(log2(RPKM))) +
+  geom_density()  
+```
+
+
+## Save the cleaned RNA-seq data to file
+```{r}
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t",
+            row.names = TRUE)
+```
+
+Ensure we can read the data back in correctly:
+```{r}
+test <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+                   header = TRUE, check.names = FALSE)
+str(test, max.level = 0)
+head(test[1:5, 1:5])
+tail(test[1:5, 1:5])
+```
