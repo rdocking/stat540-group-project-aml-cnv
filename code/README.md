@@ -9,6 +9,8 @@ This directory contains:
 
 - RNA-seq RPKM data cleaning: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.html)
 
+  - RNA-seq RPKM data exploration: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_data.html)
+
   - RNA-seq count data description: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_describe_count_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_describe_count_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_describe_count_data.html)
 
 - Differential Expression I - Cytogenetic Risk: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rna_seq_diff_expr_analysis_RPKM.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rna_seq_diff_expr_analysis_RPKM.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rna_seq_diff_expr_analysis_RPKM.html)
