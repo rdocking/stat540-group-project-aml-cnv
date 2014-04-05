@@ -182,7 +182,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols, col = bre
 <img src="figure/unnamed-chunk-11.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
 
 
-So far, I cannot recreate the clear clusters identified using hierarchical clustering by reordering rDat by a single variable or multiple variables.
+So far, I cannot recreate the clear clusters identified using hierarchical clustering by reordering rDat by a single variable or multiple variables. I think the heatmap with hierarchical clustering is scaling the data somehow by default? I need to read the manual on the heatmap function more carefully!
 
 
 
