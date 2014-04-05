@@ -20,10 +20,9 @@ library(edgeR)
 Load RNA-seq data and the experimental design:
 
 ```r
-rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt", 
-    sep = "\t", header = TRUE, row.names = 1)
-
-rDes <- read.csv("../data/experimental_design.csv")
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    header = TRUE, check.names = FALSE)
+rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
 
 
@@ -34,53 +33,8 @@ str(rDat, max.level = 0)
 ```
 
 ```
-## 'data.frame':	20442 obs. of  179 variables:
+## 'data.frame':	20001 obs. of  179 variables:
 ##   [list output truncated]
-```
-
-```r
-rDat[1:4, 1:4]
-```
-
-```
-##                        TCGA.AB.2803 TCGA.AB.2807 TCGA.AB.2963 TCGA.AB.2826
-## ?|100132510_calculated       1.1250       0.3295       1.9477        2.735
-## ?|100134860_calculated      13.0095      15.0336       5.7934        4.625
-## ?|10357_calculated           0.2028       0.0831       0.2774        1.127
-## ?|10431_calculated          36.1781      17.8495      34.9591       29.438
-```
-
-```r
-head(names(rDat))
-```
-
-```
-## [1] "TCGA.AB.2803" "TCGA.AB.2807" "TCGA.AB.2963" "TCGA.AB.2826"
-## [5] "TCGA.AB.2867" "TCGA.AB.2818"
-```
-
-```r
-head(rownames(rDat), n = 10)
-```
-
-```
-##  [1] "?|100132510_calculated" "?|100134860_calculated"
-##  [3] "?|10357_calculated"     "?|10431_calculated"    
-##  [5] "?|114130_calculated"    "?|115669_calculated"   
-##  [7] "?|120126_calculated"    "?|1231_calculated"     
-##  [9] "?|127550_calculated"    "?|136157_calculated"
-```
-
-```r
-tail(rownames(rDat), n = 10)
-```
-
-```
-##  [1] "ZWINT|11130_calculated"      "ZXDA|7789_calculated"       
-##  [3] "ZXDB|158586_calculated"      "ZXDC|79364_calculated"      
-##  [5] "ZYG11B|79699_calculated"     "ZYX|7791_calculated"        
-##  [7] "ZZEF1|23140_calculated"      "ZZZ3|26009_calculated"      
-##  [9] "psiTPTE22|387590_calculated" "tAKR|389932_calculated"
 ```
 
 ```r
@@ -88,323 +42,18 @@ str(rDes, max.level = 0)
 ```
 
 ```
-## 'data.frame':	200 obs. of  48 variables:
+## 'data.frame':	179 obs. of  10 variables:
 ```
 
 
 
 
-RNA-seq data: there are 20442 transcripts (rows) for 179 patients (columns). The row names are strange, I will attempt to change them.
 
-Experimental design: there are 200 rows, representing information for each of the patients in the AML TCGA data set, and 179 variables, but I will only choose some variables for differential expression analysis. Note the sample ID naming scheme does not match across `rDat` and `rDes`, so I will need to fix this too.
 
-### Clean rDat
-Change sample names in `rDat` to match `rDes` by extracting substrings, i.e. extract the numbers in each sample name:
-
-```r
-names(rDat) <- regmatches(names(rDat), regexpr("(?<=AB.).*", names(rDat), perl = TRUE))
-head(names(rDat))
-```
-
-```
-## [1] "2803" "2807" "2963" "2826" "2867" "2818"
-```
-
-
-Now to fix the row names: some begin with "?" so I assume this means they cannot be associated with a gene. Also, each row name has the suffix "|", followed by an integer, then "_calculated". I will remove the rows with "?" in the row name first:
-
-```r
-# '?' only present at the start of the row name: rownames(rDat)[grep('[?]',
-# rownames(rDat))]
-length(grep("[?]", rownames(rDat)))
-```
-
-```
-## [1] 123
-```
-
-```r
-rDat <- rDat[grep("[?]", rownames(rDat), invert = TRUE), ]
-dim(rDat)
-```
-
-```
-## [1] 20319   179
-```
-
-
-In the row names, I attempted to remove substrings after and including the "|" symbol, but this was not allowed since I obtain non-unique row names. What does the integer in suffix of the row names mean?:
-
-```r
-# test <- tail(rownames(rDat)) gsub('[|].*$', '', test) rownames(rDat) <-
-# gsub('[|].*$', '', rownames(rDat))
-```
-
-
-
-**Filtering:** 
-Remove transcripts with RPKM = 0 across all samples:
-
-```r
-# Number of transcripts with RPKM = 0 for all samples
-nrow(rDat[rowSums(rDat) == 0, ])
-```
-
-```
-## [1] 318
-```
-
-```r
-# Remove these transcripts
-rDat <- rDat[rowSums(rDat) != 0, ]
-dim(rDat)
-```
-
-```
-## [1] 20001   179
-```
-
-This filter does not remove all RPKM values of 0. What do we do when RPKM = 0? Do we need to apply more filters for low RPKM values? Or do we add a small number to all RPKM values?
-
-Potential additional filters:
-
-```r
-nrow(rDat)
-```
-
-```
-## [1] 20001
-```
-
-```r
-# 1. Remove rows where sum RPKM values across all samples < 5
-nrow(rDat) - nrow(rDat[rowSums(rDat) < 5, ])
-```
-
-```
-## [1] 17441
-```
-
-```r
-# 2. Remove rows where at least one sample has RPKM value = 0; too stringent
-nrow(rDat) - nrow(rDat[apply(rDat, 1, prod) != 0, ])
-```
-
-```
-## [1] 7097
-```
-
-```r
-# 3. Remove rows where more than 50 samples have RPKM values < 1; too
-# stringent
-nrow(rDat) - nrow(rDat[apply(rDat, 1, function(x) sum(abs(x) < 1) < 50), ])
-```
-
-```
-## [1] 8690
-```
-
-I have actually run the differential expression analysis code right through using the 3rd filter (remove rows where more than 50 samples have RPKM values < 1), but I found almost no genes had logFC > 1, and only 8 genes were called as differentially expressed with FDR 1e-5, and they did not appear to be sex related. So I believe the 3rd filter is far too stringent.
-
-Instead, I have chosen to apply the 1st filter, since it does not remove > 50% of the probes:
-
-```r
-# Remove transcripts where sum of RPKM values across all samples is < 5
-rDat <- rDat[rowSums(rDat) > 5, ]
-dim(rDat)
-```
-
-```
-## [1] 17441   179
-```
-
-```r
-head(rDat[1:5, 1:5])
-```
-
-```
-##                             2803    2807   2963   2826   2867
-## A1BG-AS|503538_calculated 7.3159 10.3701 2.9940 3.5681 5.3165
-## A1BG|1_calculated         7.4715  7.5407 1.6134 1.9149 2.8357
-## A2LD1|87769_calculated    1.7760  1.0395 1.5691 0.9025 1.4967
-## A2ML1|144568_calculated   0.1024  0.0478 0.1885 0.0539 0.0829
-## A2M|2_calculated          5.4296  5.0108 0.6181 0.6500 2.5318
-```
-
-
-
-
-
-
-### Clean rDes
-I don't need all the variables stored in the experimental design file, so I will only keep the columns I want to test using a linear model for differential expression:
-
-```r
-rDes <- rDes[, c("TCGA_patient_id", "Sex", "Race", "FAB_subtype", "Age", "trisomy_8", 
-    "del_5", "del_7", "Cytogenetic_risk", "Molecular_risk")]
-str(rDes)
-```
-
-```
-## 'data.frame':	200 obs. of  10 variables:
-##  $ TCGA_patient_id : int  2803 2806 2870 2815 2872 2998 2914 2819 2875 2823 ...
-##  $ Sex             : Factor w/ 2 levels "F","M": 1 2 2 2 2 1 1 1 2 1 ...
-##  $ Race            : Factor w/ 13 levels "A","B","H","NH/A",..: 12 12 12 12 2 12 12 12 7 12 ...
-##  $ FAB_subtype     : Factor w/ 9 levels "M0","M1","M2",..: 4 2 2 5 4 4 3 3 3 4 ...
-##  $ Age             : int  61 46 76 49 42 68 22 52 43 61 ...
-##  $ trisomy_8       : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ del_5           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ del_7           : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
-##  $ Cytogenetic_risk: Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ Molecular_risk  : Factor w/ 4 levels "Good","Intermediate",..: 1 1 1 1 1 1 1 1 1 1 ...
-```
-
-Much better, now I only have 10 variables (columns).
-
-Now I need to subset the 200 patients in `rDes` by the 179 patients in `rDat`:
-
-```r
-rDes <- rDes[rDes$TCGA_patient_id %in% names(rDat), ]
-dim(rDes)
-```
-
-```
-## [1] 179  10
-```
-
-
-Next, I need to ensure `rDat` and `rDes` are in the same order:
-
-```r
-rDat <- rDat[, order(names(rDat))]
-head(rDat[1:5, 1:5])
-```
-
-```
-##                             2803   2805   2806    2807   2808
-## A1BG-AS|503538_calculated 7.3159 3.1563 5.8948 10.3701 5.0019
-## A1BG|1_calculated         7.4715 2.1048 4.7194  7.5407 3.3064
-## A2LD1|87769_calculated    1.7760 1.6495 1.1761  1.0395 1.0664
-## A2ML1|144568_calculated   0.1024 0.1126 0.1380  0.0478 0.0864
-## A2M|2_calculated          5.4296 0.8499 0.5144  5.0108 3.9734
-```
-
-```r
-rDes <- rDes[order(rDes$TCGA_patient_id), ]
-rDes$TCGA_patient_id <- as.character(rDes$TCGA_patient_id)
-head(rDes)
-```
-
-```
-##     TCGA_patient_id Sex Race FAB_subtype Age trisomy_8 del_5 del_7
-## 1              2803   F    W          M3  61     FALSE FALSE FALSE
-## 40             2805   M    W          M0  77     FALSE FALSE FALSE
-## 2              2806   M    W          M1  46     FALSE FALSE FALSE
-## 41             2807   F    W          M1  68     FALSE FALSE FALSE
-## 42             2808   M    W          M2  23     FALSE FALSE FALSE
-## 153            2810   F    B          M2  76     FALSE FALSE FALSE
-##     Cytogenetic_risk Molecular_risk
-## 1               Good           Good
-## 40      Intermediate   Intermediate
-## 2               Good           Good
-## 41      Intermediate   Intermediate
-## 42      Intermediate   Intermediate
-## 153             N.D.           N.D.
-```
-
-```r
-identical(names(rDat), rDes$TCGA_patient_id)
-```
-
-```
-## [1] TRUE
-```
-
-
-
-### Explore rDat
-Check the RNA-seq data using a sample-to-sample correlation heatmap:
-
-```r
-heatmap(cor(rDat), Rowv = NA, symm = TRUE, col = brewer.pal(n = 9, name = "Blues"))
-```
-
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
-
-Ok there are definitely groups of samples with correlated expression. I need to reorder the samples based on different variables to find if there are trends.
-
-Check the box plots:
-
-```r
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-head(rDatMelt)
-```
-
-```
-##   Sample   RPKM
-## 1   2803 7.3159
-## 2   2803 7.4715
-## 3   2803 1.7760
-## 4   2803 0.1024
-## 5   2803 5.4296
-## 6   2803 0.2918
-```
-
-```r
-ggplot(rDatMelt, aes(Sample, RPKM)) + geom_boxplot()
-```
-
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
-
-This is very messy, but it shows that log2 transformation is necessary:
-
-
-```r
-rDatMelt <- melt(log2(rDat), variable.name = "Sample", value.name = "RPKM")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-head(rDatMelt)
-```
-
-```
-##   Sample    RPKM
-## 1   2803  2.8710
-## 2   2803  2.9014
-## 3   2803  0.8286
-## 4   2803 -3.2877
-## 5   2803  2.4408
-## 6   2803 -1.7769
-```
-
-```r
-ggplot(rDatMelt, aes(Sample, RPKM)) + geom_boxplot()
-```
-
-```
-## Warning: Removed 162722 rows containing non-finite values (stat_boxplot).
-```
-
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
-
-Ok now we can see the results! No samples appear to stick out in terms of expression. But post-log2 transformation many RPKM values become negative. I'm not sure if this is a problem?
-
-
-### Differential expression analysis
+## Differential expression analysis
 I will use `voom` to perform differential expression analysis. From my experience, `voom` makes the most stringent calls for differential expression. 
 
-**Sex**
+**Sex**  
 First I will do a simple differential expression analysis: which genes are differentially expressed between males and females?
 
 ```r
@@ -448,9 +97,8 @@ head(design)
 rDatVoom <- voom(rDat, design, plot = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
-Looking good so far.
 
 Now find genes differentially expressed between males and females:
 
@@ -462,7 +110,36 @@ nrow(voomSex)
 ```
 
 ```
-## [1] 30
+## [1] 28
+```
+
+```r
+head(voomSex, n = 10)
+```
+
+```
+##                             logFC AveExpr      t    P.Value  adj.P.Val
+## XIST|7503_calculated       -6.580   5.292 -55.68 1.282e-115 2.565e-111
+## TSIX|9383_calculated       -4.527   4.298 -49.82 1.934e-107 1.935e-103
+## RPS4Y1|6192_calculated      6.549   5.648  37.57  2.907e-87  1.938e-83
+## DDX3Y|8653_calculated       4.792   4.698  36.96  3.999e-86  2.000e-82
+## EIF1AY|9086_calculated      4.081   4.327  34.40  3.339e-81  1.336e-77
+## KDM5D|8284_calculated       4.591   4.590  34.02  1.948e-80  6.492e-77
+## PRKY|5616_calculated        3.105   3.810  32.72  8.374e-78  2.393e-74
+## UTY|7404_calculated         2.909   3.687  31.14  1.609e-74  4.023e-71
+## CYorf15A|246126_calculated  4.001   4.274  30.33  8.783e-73  1.952e-69
+## CYorf15B|84663_calculated   3.923   4.234  29.16  3.264e-70  6.527e-67
+##                                B
+## XIST|7503_calculated       226.4
+## TSIX|9383_calculated       214.4
+## RPS4Y1|6192_calculated     176.9
+## DDX3Y|8653_calculated      175.6
+## EIF1AY|9086_calculated     165.9
+## KDM5D|8284_calculated      164.4
+## PRKY|5616_calculated       158.5
+## UTY|7404_calculated        151.6
+## CYorf15A|246126_calculated 148.8
+## CYorf15B|84663_calculated  143.4
 ```
 
 ```r
@@ -470,24 +147,32 @@ nrow(voomSex)
 ```
 
 ```
-##  [1] "RPS4Y1|6192_calculated"       "XIST|7503_calculated"        
-##  [3] "DDX3Y|8653_calculated"        "TSIX|9383_calculated"        
-##  [5] "KDM5D|8284_calculated"        "EIF1AY|9086_calculated"      
+##  [1] "XIST|7503_calculated"         "TSIX|9383_calculated"        
+##  [3] "RPS4Y1|6192_calculated"       "DDX3Y|8653_calculated"       
+##  [5] "EIF1AY|9086_calculated"       "KDM5D|8284_calculated"       
 ##  [7] "PRKY|5616_calculated"         "UTY|7404_calculated"         
-##  [9] "CYorf15A|246126_calculated"   "ZFY|7544_calculated"         
-## [11] "CYorf15B|84663_calculated"    "USP9Y|8287_calculated"       
-## [13] "TTTY15|64595_calculated"      "TTTY14|83869_calculated"     
-## [15] "NCRNA00185|55410_calculated"  "TMSB4Y|9087_calculated"      
+##  [9] "CYorf15A|246126_calculated"   "CYorf15B|84663_calculated"   
+## [11] "ZFY|7544_calculated"          "USP9Y|8287_calculated"       
+## [13] "TTTY15|64595_calculated"      "NCRNA00185|55410_calculated" 
+## [15] "TTTY14|83869_calculated"      "TMSB4Y|9087_calculated"      
 ## [17] "TTTY10|246119_calculated"     "BCORP1|286554_calculated"    
-## [19] "PRKX|5613_calculated"         "KDM5C|8242_calculated"       
-## [21] "ZRSR2|8233_calculated"        "RPS4X|6191_calculated"       
+## [19] "PRKX|5613_calculated"         "ZRSR2|8233_calculated"       
+## [21] "KDM5C|8242_calculated"        "RPS4X|6191_calculated"       
 ## [23] "KDM6A|7403_calculated"        "ZFX|7543_calculated"         
-## [25] "SRY|6736_calculated"          "NCRNA00183|554203_calculated"
-## [27] "PNPLA4|8228_calculated"       "XGPY2|100132596_calculated"  
-## [29] "RPS4Y2|140032_calculated"     "EIF1AX|1964_calculated"
+## [25] "PNPLA4|8228_calculated"       "NCRNA00183|554203_calculated"
+## [27] "SRY|6736_calculated"          "EIF1AX|1964_calculated"
 ```
 
-Ok XIST and TSIX are popping up, this is a promising result! Plus it turns out the top hit, RPS4Y1|6192_calculated is "Ribosomal Protein S4, Y-Linked 1"! So I must be doing something right :)
+```r
+# Lower the FDR threshold: how many genes do we find?
+nrow(topTable(fit, coef = "sexM", p.value = 0.01, n = Inf))
+```
+
+```
+## [1] 35
+```
+
+Ok XIST and TSIX are popping up, this is a promising result! Plus it turns out the top hit, XIST|7503_calculated is "Ribosomal Protein S4, Y-Linked 1", so I must be doing something right :)
 
 Can I plot the differentially expressed genes using a DGEList object and plotSmear function from `edgeR`?
 
@@ -498,11 +183,45 @@ plotSmear(dgeGlm, de.tags = voomSexgenes, ylab = "logFC", xlab = "AverageRPKM")
 abline(h = c(-1, 1), col = "blue")
 ```
 
-![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
-I'm concerned that some of the differentially expressed transcripts being called have negative logCPM values. I'm also concerned that I'm not applying the correct tests given I'm working with RPKM values instead of CPM values :S
+Why aren't all genes with > 1 and < -1 logFC not called as differentially expressed?
 
-Let's plot the top hits to see if I'm on the right track:
+I want to check the expression of the genes in the smear plot that had logFC < -1 between males and females yet were not called as differentially expressed:
+
+```r
+voomSexFCtest <- topTable(fit, coef = "sexM", n = Inf)
+voomSexFCtest$transcript <- rownames(voomSexFCtest)
+voomSexFCtest <- arrange(voomSexFCtest, logFC)
+nrow(voomSexFCtest)
+```
+
+```
+## [1] 20001
+```
+
+```r
+voomSexFCtest <- subset(voomSexFCtest, logFC < -1)
+nrow(voomSexFCtest)
+```
+
+```
+## [1] 2
+```
+
+```r
+voomSexFCtest
+```
+
+```
+##    logFC AveExpr      t    P.Value  adj.P.Val     B           transcript
+## 1 -6.580   5.292 -55.68 1.282e-115 2.565e-111 226.4 XIST|7503_calculated
+## 2 -4.527   4.298 -49.82 1.934e-107 1.935e-103 214.4 TSIX|9383_calculated
+```
+
+Ok this is really weird, why can't I find the genes on the smear plot? There should be 6 genes in total with logFC < -1 yet I can only find the 2 that were called as differentially expressed??? I'm not sure that I understand what the smear plot is showing anymore, given I can't find transcripts that meet a certain criteria given the results of this plot...
+
+Let's plot the top hits from differential expression analysis to see if I'm on the right track:
 
 ```r
 rDatvoomSex <- rDat[voomSexgenes[1:6], ]
@@ -523,13 +242,13 @@ head(rDatvoomSex)
 ```
 
 ```
-##   Transcript TCGA_patient_id     RPKM
-## 1     RPS4Y1            2803   0.0000
-## 2       XIST            2803 174.3137
-## 3      DDX3Y            2803   0.0052
-## 4       TSIX            2803  64.3488
-## 5      KDM5D            2803   0.0000
-## 6     EIF1AY            2803   0.0000
+##   Transcript TCGA_patient_id    RPKM
+## 1       XIST            2803 175.314
+## 2       TSIX            2803  65.349
+## 3     RPS4Y1            2803   1.000
+## 4      DDX3Y            2803   1.005
+## 5     EIF1AY            2803   1.000
+## 6      KDM5D            2803   1.000
 ```
 
 ```r
@@ -538,13 +257,13 @@ head(rDatvoomSex)
 ```
 
 ```
-##   TCGA_patient_id Transcript     RPKM Sex Race FAB_subtype Age trisomy_8
-## 1            2803     RPS4Y1   0.0000   F    W          M3  61     FALSE
-## 2            2803       XIST 174.3137   F    W          M3  61     FALSE
-## 3            2803      DDX3Y   0.0052   F    W          M3  61     FALSE
-## 4            2803       TSIX  64.3488   F    W          M3  61     FALSE
-## 5            2803      KDM5D   0.0000   F    W          M3  61     FALSE
-## 6            2803     EIF1AY   0.0000   F    W          M3  61     FALSE
+##   TCGA_patient_id Transcript    RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803       XIST 175.314   F    W          M3  61     FALSE
+## 2            2803       TSIX  65.349   F    W          M3  61     FALSE
+## 3            2803     RPS4Y1   1.000   F    W          M3  61     FALSE
+## 4            2803      DDX3Y   1.005   F    W          M3  61     FALSE
+## 5            2803     EIF1AY   1.000   F    W          M3  61     FALSE
+## 6            2803      KDM5D   1.000   F    W          M3  61     FALSE
 ##   del_5 del_7 Cytogenetic_risk Molecular_risk
 ## 1 FALSE FALSE             Good           Good
 ## 2 FALSE FALSE             Good           Good
@@ -556,14 +275,16 @@ head(rDatvoomSex)
 
 ```r
 ggplot(rDatvoomSex, aes(Transcript, RPKM, colour = Sex)) +
-  geom_boxplot()
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free")
 ```
 
-![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23.png) 
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
 
-So the top genes differentially expressed between males and females have no expression in one of the sexes. Fair enough. But this is not a very exciting result.
+So the top genes differentially expressed between males and females have almost no expression in one of the sexes. Given we only found 28 genes differentially expressed with an FDR of 1e-5, we can conclude that sex has limited influence on gene expression in AML patients.
 
-**Cytogenetic risk**
+
+**Cytogenetic risk**  
 Now to explore another variable, "Cytogenetic_risk". 
 
 ```r
@@ -597,7 +318,7 @@ str(rDesCRGIP)
 
 ```
 ## 'data.frame':	176 obs. of  10 variables:
-##  $ TCGA_patient_id : chr  "2803" "2805" "2806" "2807" ...
+##  $ TCGA_patient_id : int  2803 2805 2806 2807 2808 2811 2812 2813 2814 2815 ...
 ##  $ Sex             : Factor w/ 2 levels "F","M": 1 2 2 1 2 2 1 2 1 2 ...
 ##  $ Race            : Factor w/ 13 levels "A","B","H","NH/A",..: 12 12 12 12 12 12 2 12 12 12 ...
 ##  $ FAB_subtype     : Factor w/ 9 levels "M0","M1","M2",..: 4 1 2 2 3 5 3 5 1 5 ...
@@ -618,16 +339,16 @@ dim(rDesCRGIP)
 ```
 
 ```r
-rDatCRGIP <- rDat[, rDesCRGIP$TCGA_patient_id]
+rDatCRGIP <- rDat[, names(rDat) %in% rDesCRGIP$TCGA_patient_id]
 dim(rDatCRGIP)
 ```
 
 ```
-## [1] 17441   176
+## [1] 20001   176
 ```
 
 ```r
-identical(names(rDatCRGIP), rDesCRGIP$TCGA_patient_id)
+identical(names(rDatCRGIP), as.character(rDesCRGIP$TCGA_patient_id))
 ```
 
 ```
@@ -639,6 +360,7 @@ cytoRisk <- rDesCRGIP$Cytogenetic_risk
 ```
 
 
+Now I will make a model with a reference + treatment effect, where the intercept is the reference:
 
 ```r
 normFactor <- calcNormFactors(rDatCRGIP)
@@ -669,7 +391,7 @@ head(design)
 rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
 ```r
 fit <- lmFit(rDatCRGIPvoom, design)
@@ -680,7 +402,7 @@ nrow(voomCR)
 ```
 
 ```
-## [1] 774
+## [1] 667
 ```
 
 ```r
@@ -688,20 +410,20 @@ head(voomCR)
 ```
 
 ```
-##                         cytoRiskIntermediate cytoRiskPoor AveExpr      F
-## HOXA3|3200_calculated                  3.421        2.797  6.9596 111.89
-## HOXA4|3201_calculated                  3.190        2.464  0.7177 107.69
-## CPNE8|144402_calculated                3.618        3.816  2.8490 107.28
-## HOXA7|3204_calculated                  4.034        3.614  2.0014 106.74
-## HOXA6|3203_calculated                  4.103        3.515  3.3951 100.59
-## LPO|4025_calculated                   -3.435       -3.453  5.6259  84.13
+##                         cytoRiskIntermediate cytoRiskPoor AveExpr     F
+## CPNE8|144402_calculated                2.629        2.730   2.149 168.2
+## HOXA7|3204_calculated                  2.874        2.435   2.290 153.9
+## HOXA6|3203_calculated                  2.965        2.363   2.126 149.9
+## HOXA3|3200_calculated                  2.337        1.767   5.486 146.7
+## HOXA4|3201_calculated                  2.147        1.530   2.127 135.2
+## HOXA5|3202_calculated                  3.402        2.745   2.115 125.4
 ##                           P.Value adj.P.Val
-## HOXA3|3200_calculated   3.938e-32 6.869e-28
-## HOXA4|3201_calculated   2.576e-31 1.723e-27
-## CPNE8|144402_calculated 3.091e-31 1.723e-27
-## HOXA7|3204_calculated   3.952e-31 1.723e-27
-## HOXA6|3203_calculated   6.689e-30 2.333e-26
-## LPO|4025_calculated     2.116e-26 6.151e-23
+## CPNE8|144402_calculated 1.263e-41 2.526e-37
+## HOXA7|3204_calculated   2.043e-39 2.043e-35
+## HOXA6|3203_calculated   8.775e-39 5.850e-35
+## HOXA3|3200_calculated   2.919e-38 1.460e-34
+## HOXA4|3201_calculated   2.422e-36 9.690e-33
+## HOXA5|3202_calculated   1.284e-34 4.279e-31
 ```
 
 ```r
@@ -712,4 +434,154 @@ voomCRgenes <- rownames(voomCR)
 
 
 
+Genes differentially expressed between Good and Poor cytogenetic risk:
 
+```r
+voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-05, n = Inf)
+nrow(voomCRGP)
+```
+
+```
+## [1] 394
+```
+
+```r
+voomCRGPgenes <- rownames(voomCRGP)
+```
+
+
+Let's plot the top 6 hits to see if I'm on the right track:
+
+```r
+rDatvoomCR <- rDatCRGIP[voomCRGPgenes[1:6], ]
+dim(rDatvoomCR)
+```
+
+```
+## [1]   6 176
+```
+
+```r
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+```
+
+```
+##   Transcript TCGA_patient_id  RPKM
+## 1      CPNE8            2803 1.090
+## 2      HOXA9            2803 1.075
+## 3       RECK            2803 2.062
+## 4    PDE4DIP            2803 1.612
+## 5       SDPR            2803 2.369
+## 6      HOXA7            2803 1.013
+```
+
+```r
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+```
+
+```
+##   TCGA_patient_id Transcript  RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803      CPNE8 1.090   F    W          M3  61     FALSE
+## 2            2803      HOXA9 1.075   F    W          M3  61     FALSE
+## 3            2803       RECK 2.062   F    W          M3  61     FALSE
+## 4            2803    PDE4DIP 1.612   F    W          M3  61     FALSE
+## 5            2803       SDPR 2.369   F    W          M3  61     FALSE
+## 6            2803      HOXA7 1.013   F    W          M3  61     FALSE
+##   del_5 del_7 Cytogenetic_risk Molecular_risk
+## 1 FALSE FALSE             Good           Good
+## 2 FALSE FALSE             Good           Good
+## 3 FALSE FALSE             Good           Good
+## 4 FALSE FALSE             Good           Good
+## 5 FALSE FALSE             Good           Good
+## 6 FALSE FALSE             Good           Good
+```
+
+```r
+ggplot(rDatvoomCR, aes(Transcript, RPKM, colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free")  
+```
+
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+
+
+What about the hits with little logFC? Let's plot these:
+
+```r
+voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-05, n = Inf, sort.by = "logFC")
+```
+
+
+
+
+
+
+```r
+voomCRGPgenes <- rownames(voomCRGP)
+rDatvoomCR <- rDatCRGIP[tail(voomCRGPgenes), ]
+dim(rDatvoomCR)
+```
+
+```
+## [1]   6 176
+```
+
+```r
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", variable.name = "TCGA_patient_id", 
+    value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+```
+
+```
+##   Transcript TCGA_patient_id  RPKM
+## 1     ZSCAN1            2803 1.011
+## 2  LOC283050            2803 1.243
+## 3      OXCT2            2803 1.000
+## 4    TMEM190            2803 1.041
+## 5       ZIM2            2803 1.000
+## 6  LOC154761            2803 1.206
+```
+
+```r
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+```
+
+```
+##   TCGA_patient_id Transcript  RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803     ZSCAN1 1.011   F    W          M3  61     FALSE
+## 2            2803  LOC283050 1.243   F    W          M3  61     FALSE
+## 3            2803      OXCT2 1.000   F    W          M3  61     FALSE
+## 4            2803    TMEM190 1.041   F    W          M3  61     FALSE
+## 5            2803       ZIM2 1.000   F    W          M3  61     FALSE
+## 6            2803  LOC154761 1.206   F    W          M3  61     FALSE
+##   del_5 del_7 Cytogenetic_risk Molecular_risk
+## 1 FALSE FALSE             Good           Good
+## 2 FALSE FALSE             Good           Good
+## 3 FALSE FALSE             Good           Good
+## 4 FALSE FALSE             Good           Good
+## 5 FALSE FALSE             Good           Good
+## 6 FALSE FALSE             Good           Good
+```
+
+```r
+ggplot(rDatvoomCR, aes(Transcript, RPKM, colour = Cytogenetic_risk)) + geom_boxplot() + 
+    facet_wrap(~Transcript, scales = "free")
+```
+
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+
+
+Ok something is really up. Diffential expression is being called on transcripts with very small RPKM values. Look at the y axis: these values are NOT log transformed! This is very concerning.
+
+I believe I am not analysing the RPKM values correctly during differential expression analysis with voom. 
+
+I will complete differential expression analysis using read count data instead.
