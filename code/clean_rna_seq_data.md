@@ -3,7 +3,7 @@ Clean RNA-seq data
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
 
-**Load data**  
+## Load data and required libraries
 Load RNA-seq data and the experimental design files:
 
 ```r
@@ -13,7 +13,19 @@ rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
 
 
-**Data inspection**
+
+```r
+library(reshape2)  # For reshaping data from wide to tall format
+library(ggplot2)  # for plotting
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.0.3
+```
+
+
+
+## Data inspection
 
 ```r
 str(rDat, max.level = 0)
@@ -104,7 +116,7 @@ RNA-seq data: there are 20442 transcripts (rows) for 179 patients (columns). The
 Experimental design: there are 179 rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and 179 variables. Note the sample ID naming scheme does not match across `rDat` and `rDes`, so I will need to fix this.
 
 
-**Clean rDat**  
+## Clean rDat
 Change sample names in `rDat` to match `rDes` by extracting substrings, i.e. extract the numbers in each sample name:
 
 ```r
@@ -230,7 +242,7 @@ rownames(rDat) <- gsub("[|].*$", "", rownames(rDat))
 
 
 
-**Filtering:** 
+## Filtering
 Remove transcripts with RPKM = 0 across all samples:
 
 ```r
@@ -265,16 +277,16 @@ nrow(rDat)
 ```
 
 ```r
-# 1. Number of rows where sum RPKM values across all samples < 5
-nrow(rDat[rowSums(rDat) < 5, ])
+# 1. Keep rows where sum RPKM values across all samples > 5
+nrow(rDat[rowSums(rDat) > 5, ])
 ```
 
 ```
-## [1] 2560
+## [1] 17441
 ```
 
 ```r
-# 2. Remove rows where at least one sample has RPKM value = 0; too stringent
+# 2. Remove rows where at least one sample has RPKM value = 0
 nrow(rDat[apply(rDat, 1, prod) != 0, ])
 ```
 
@@ -283,17 +295,16 @@ nrow(rDat[apply(rDat, 1, prod) != 0, ])
 ```
 
 ```r
-# 3. Remove rows where more than 50 samples have RPKM values < 1; too
-# stringent
-nrow(rDat) - nrow(rDat[apply(rDat, 1, function(x) sum(abs(x) < 1) < 50), ])
+# 3. Remove rows where more than 50 samples have RPKM values < 1
+nrow(rDat[apply(rDat, 1, function(x) sum(abs(x) < 1) < 50), ])
 ```
 
 ```
-## [1] 8690
+## [1] 11311
 ```
 
 ```r
-# 4. Average expression per transcript > 5
+# 4. Keep rows where average expression per transcript > 5
 nrow(rDat[apply(rDat, 1, function(x) mean(abs(x) > 5)), ])
 ```
 
@@ -309,3 +320,123 @@ nrow(rDat[apply(rDat, 1, function(x) mean(abs(x) > 5)), ])
 
 
 I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 RPKM values may be instances where genes are completely deleted from the genome and thus no transcription can occur.
+
+
+## Density plot
+Check the density plot of RPKM values across all samples:
+
+```r
+rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
+```
+
+```
+## Using  as id variables
+```
+
+```r
+head(rDatMelt)
+```
+
+```
+##   Sample   RPKM
+## 1   2803 7.3159
+## 2   2803 7.4715
+## 3   2803 0.0000
+## 4   2803 1.7760
+## 5   2803 0.1024
+## 6   2803 5.4296
+```
+
+```r
+ggplot(rDatMelt, aes(RPKM)) + geom_density()
+```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+
+
+The data has to be log transformed:
+
+```r
+ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
+```
+
+```
+## Warning: Removed 541040 rows containing non-finite values (stat_density).
+```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+
+
+A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
+
+```r
+rDat <- rDat + 1
+```
+
+
+Now re-make the density plot:
+
+```r
+rDat <- rDat + 1
+rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
+```
+
+```
+## Using  as id variables
+```
+
+```r
+ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
+```
+
+<img src="figure/unnamed-chunk-15.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+
+
+
+## Save the cleaned RNA-seq data to file
+
+```r
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    row.names = TRUE)
+```
+
+
+Ensure we can read the data back in correctly:
+
+```r
+test <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    header = TRUE, check.names = FALSE)
+str(test, max.level = 0)
+```
+
+```
+## 'data.frame':	20001 obs. of  179 variables:
+##   [list output truncated]
+```
+
+```r
+head(test[1:5, 1:5])
+```
+
+```
+##                            2803  2805  2806   2807  2808
+## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
+## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
+## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
+## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
+## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+```
+
+```r
+tail(test[1:5, 1:5])
+```
+
+```
+##                            2803  2805  2806   2807  2808
+## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
+## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
+## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
+## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
+## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+```
+
