@@ -3,7 +3,17 @@ SVM Predictions
 
 ### Prep Work
 
-**First, run import_and_clean_clinical_data.Rmd and join_rna_seq_data_with_design.R.**
+**Load RNA Seq data and design, then merge.**
+```{r}
+rna_seq_dat <-read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+                            header = TRUE, check.names = FALSE)
+
+exp_dat <- read.table("../data/experimental_design_cleaned.txt", 
+                           sep = "\t", header = TRUE, row.names = 1)
+
+joined_dat <- cbind(exp_dat,t(rna_seq_dat))
+```
+
 
 **Load libraries.**
 ```{r}
@@ -13,12 +23,6 @@ library(taRifx)
 library(cvTools)
 ```
 
-**Now, let's remove the columns with NA values - we won't use them at this time.**
-```{r}
-complete_cols <- lapply(joined_dat,function(x) {all(!is.na(x))})
-dat_complete <- joined_dat[unlist(complete_cols)]
-```
-
 Part 1: Predicting Cytogenetic Risk
 -------------------------
 
@@ -26,12 +30,12 @@ Part 1: Predicting Cytogenetic Risk
 
 **First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
 ```{r}
-levels(dat_complete$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
+levels(joined_dat$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
 ```
 
 **Remove the rows with N.D.**
 ```{r}
-dat_filt <- subset(dat_complete,dat_complete$Cytogenetic_risk != "N.D.")
+dat_filt <- subset(joined_dat,joined_dat$Cytogenetic_risk != "N.D.")
 ```
 
 **Now, for the SVM, let's make a binary prognosis columns (TRUE for poor).**
