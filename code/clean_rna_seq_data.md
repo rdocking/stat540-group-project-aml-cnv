@@ -396,8 +396,8 @@ ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
 ## Save the cleaned RNA-seq data to file
 
 ```r
-write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
-    row.names = TRUE)
+# write.table(rDat, '../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt', sep =
+# '\t', row.names = TRUE)
 ```
 
 
