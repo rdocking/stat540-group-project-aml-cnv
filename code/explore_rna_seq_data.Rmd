@@ -1,0 +1,146 @@
+Exploratory analysis of RNA-seq data
+====================================
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
+
+Explore RNA-seq data using sample-to-sample correlation heatmaps and box plots.
+
+Load required libraries:
+```{r warning=FALSE, message=FALSE}
+library(RColorBrewer)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(scales) # scale functions for graphics, esp. alpha() function
+```
+
+Load required files, RNA-seq data and the experimental design:
+```{r}
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+                   header = TRUE, check.names = FALSE)
+rDes <- read.delim("../data/experimental_design_cleaned.txt")
+```
+
+Data inspection:
+```{r}
+str(rDat, max.level = 0)
+str(rDes, max.level = 0)
+```
+
+```{r include=FALSE}
+# More data inspection
+rDat[1:4, 1:4]
+head(names(rDat))
+head(rownames(rDat), n = 10)
+tail(rownames(rDat), n = 10)
+```
+
+
+**Density plot**
+Check the density plot of RPKM values across all samples:
+```{r}
+rDatMelt <- melt(rDat, variable.name = "Sample", 
+                 value.name = "RPKM")
+head(rDatMelt)
+ggplot(rDatMelt, aes(log(RPKM))) +
+  geom_density()
+```
+
+
+**Sample-to-sample correlation heatmaps**  
+I will reorder samples based on hierarchical clustering and different clinical variables to find if there are trends in RNA-seq expression values.
+
+Heatmap with hierarchical clustering:
+```{r fig.align='center', fig.height=10, fig.width=10}
+heatmap(cor(rDat), Rowv = TRUE, symm = TRUE,
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+Order the data based on sex:
+```{r fig.align='center'}
+# Palette for colour side bar
+# Cannot use RColorBrewer with < 3 variables
+pal <- c("#FB8072", "#80B1D3")
+
+# Create a colour side by making a vector of colours based on rDes$Sex
+# Create a new data frame with rDes$Sex and hexColours, then join with rDes
+mapCols <- data.frame(palette = pal, Sex = levels(rDes$Sex))
+rDesCol <- join(rDes, mapCols, by = "Sex")
+
+# Ensure samples in rDat are ordered in the same way as colours in rDesCol
+rDesColOrd <- arrange(rDesCol, Sex)
+sexCols <- unlist(as.character(rDesColOrd$palette))
+rDatLab <- rDat[ , order(rDesColOrd$TCGA_patient_id)]
+
+# Plot the heatmap with colour side bar
+heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = sexCols, 
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+Order the data based on cytogenetic risk:
+```{r fig.align='center'}
+pal <- brewer.pal(n = nlevels(rDes$Cytogenetic_risk), name = "Dark2")
+mapCols <- data.frame(palette = pal, 
+                      Cytogenetic_risk = levels(rDes$Cytogenetic_risk))
+rDesCol <- join(rDes, mapCols, by = "Cytogenetic_risk")
+rDesColOrd <- arrange(rDesCol, Cytogenetic_risk)
+crCols <- unlist(as.character(rDesColOrd$palette))
+rDatLab <- rDat[ , order(rDesColOrd$TCGA_patient_id)]
+heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols, 
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+Order the data based on FAB subtype:
+```{r fig.align='center'}
+pal <- brewer.pal(n = nlevels(rDes$FAB_subtype), name = "Set3")
+mapCols <- data.frame(palette = pal, FAB_subtype = levels(rDes$FAB_subtype))
+rDesCol <- join(rDes, mapCols, by = "FAB_subtype")
+rDesColOrd <- arrange(rDesCol, FAB_subtype)
+fabCols <- unlist(as.character(rDesColOrd$palette))
+rDatLab <- rDat[ , order(rDesColOrd$TCGA_patient_id)]
+heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols, 
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+Order the data based on cytogenetic risk, then sex, then race:
+```{r fig.align='center'}
+pal <- brewer.pal(n = nlevels(rDes$Cytogenetic_risk), name = "Dark2")
+mapCols <- data.frame(palette = pal, 
+                      Cytogenetic_risk = levels(rDes$Cytogenetic_risk))
+rDesCol <- join(rDes, mapCols, by = "Cytogenetic_risk")
+rDesColOrd <- arrange(rDesCol, Cytogenetic_risk, Sex, Race)
+crCols <- unlist(as.character(rDesColOrd$palette))
+rDatLab <- rDat[ , order(rDesColOrd$TCGA_patient_id)]
+heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols, 
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+Order the data based on FAB subtype, age, then sex:
+```{r fig.align='center'}
+pal <- brewer.pal(n = nlevels(rDes$FAB_subtype), name = "Set3")
+mapCols <- data.frame(palette = pal, FAB_subtype = levels(rDes$FAB_subtype))
+rDesCol <- join(rDes, mapCols, by = "FAB_subtype")
+rDesColOrd <- arrange(rDesCol, FAB_subtype, Age, Sex)
+fabCols <- unlist(as.character(rDesColOrd$palette))
+rDatLab <- rDat[ , order(rDesColOrd$TCGA_patient_id)]
+heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols, 
+        col = brewer.pal(n = 9, name = "Blues"))
+```
+
+So far, I cannot recreate the clear clusters identified using hierarchical clustering by reordering rDat by a single variable or multiple variables. I think the heatmap with hierarchical clustering is scaling the data somehow by default? I need to read the manual on the heatmap function more carefully!
+
+```{r include=FALSE}
+# # Heatmap of samples and gene expression:
+# rDatMatrix <- as.matrix(rDat[1:100])
+# heatmap(rDatMatrix, Rowv = NA, labRow = NA,
+#         xlab = "Samples",
+#         ylab = "Genes")
+
+# # Scale data first?
+# maxs <- apply(rDatMatrix, 2, max)
+# mins <- apply(rDatMatrix, 2, min)
+# rDatMatScale <- scale(rDatMatrix, center = mins, scale = maxs - mins)
+# heatmap(rDatMatScale, Rowv = NA, labRow = NA,
+#         xlab = "Samples", 
+#         ylab = "Genes")
+```
