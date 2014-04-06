@@ -1,5 +1,5 @@
-RNA-seq count data sample correlation heatmaps
-==============================================
+RNA-seq read count sample-to-sample correlation heatmaps
+========================================================
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
 
@@ -7,10 +7,10 @@ Explore cleaned RNA-seq read count data using sample-to-sample correlation heatm
 
 Load required libraries:
 ```{r warning=FALSE, message=FALSE}
-library(RColorBrewer)
-library(reshape2)
-library(plyr)
-library(ggplot2)
+library(RColorBrewer) # for better colour palettes
+library(reshape2) # for reshaping data from wide to tall format
+library(plyr) # data aggregation
+library(ggplot2) # for graphing
 library(scales) # scale functions for graphics, esp. alpha() function
 ```
 
@@ -39,13 +39,13 @@ tail(rownames(rDat), n = 10)
 I will reorder samples based on hierarchical clustering and different clinical variables to find if there are trends in RNA-seq expression values.
 
 Heatmap with hierarchical clustering:
-```{r readCount_SampleCorr_HierarchCluster_Heatmap, fig.align='center', fig.height=10, fig.width=10}
+```{r sampleCorr_HierarchCluster_Heatmap_readCount, fig.align='center', fig.height=10, fig.width=10}
 heatmap(cor(rDat), Rowv = TRUE, symm = TRUE,
         col = brewer.pal(n = 9, name = "Blues"))
 ```
 
 Order the data based on sex:
-```{r readCount_SampleCorr_ArrangeSex_Heatmap, fig.align='center'}
+```{r sampleCorr_ArrangeSex_Heatmap_readCount, fig.align='center'}
 # Palette for colour side bar
 # Cannot use RColorBrewer with < 3 variables
 pal <- c("#FB8072", "#80B1D3")
@@ -66,7 +66,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = sexCols,
 ```
 
 Order the data based on cytogenetic risk:
-```{r readCount_SampleCorr_ArrangeCytoRisk_Heatmap, fig.align='center'}
+```{r sampleCorr_ArrangeCytoRisk_Heatmap_readCount, fig.align='center'}
 pal <- brewer.pal(n = nlevels(rDes$Cytogenetic_risk), name = "Dark2")
 mapCols <- data.frame(palette = pal, 
                       Cytogenetic_risk = levels(rDes$Cytogenetic_risk))
@@ -79,7 +79,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols,
 ```
 
 Order the data based on FAB subtype:
-```{r readCount_SampleCorr_ArrangeFAB_Heatmap, fig.align='center'}
+```{r sampleCorr_ArrangeFAB_Heatmap_readCount, fig.align='center'}
 pal <- brewer.pal(n = nlevels(rDes$FAB_subtype), name = "Set3")
 mapCols <- data.frame(palette = pal, FAB_subtype = levels(rDes$FAB_subtype))
 rDesCol <- join(rDes, mapCols, by = "FAB_subtype")
@@ -91,7 +91,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols,
 ```
 
 Order the data based on cytogenetic risk, then sex, then race:
-```{r readCount_SampleCorr_ArrangeCytoRiskSexRace_Heatmap, fig.align='center'}
+```{r sampleCorr_ArrangeCytoRiskSexRace_Heatmap_readCount, fig.align='center'}
 pal <- brewer.pal(n = nlevels(rDes$Cytogenetic_risk), name = "Dark2")
 mapCols <- data.frame(palette = pal, 
                       Cytogenetic_risk = levels(rDes$Cytogenetic_risk))
@@ -104,7 +104,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols,
 ```
 
 Order the data based on FAB subtype, age, then sex:
-```{r readCount_SampleCorr_ArrangeFABAgeSex_Heatmap, fig.align='center'}
+```{r sampleCorr_ArrangeFABAgeSex_Heatmap_readCount, fig.align='center'}
 pal <- brewer.pal(n = nlevels(rDes$FAB_subtype), name = "Set3")
 mapCols <- data.frame(palette = pal, FAB_subtype = levels(rDes$FAB_subtype))
 rDesCol <- join(rDes, mapCols, by = "FAB_subtype")

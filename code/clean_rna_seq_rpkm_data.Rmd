@@ -1,7 +1,10 @@
-Clean RNA-seq data
-==================
+Clean RNA-seq RPKM data
+=======================
+
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
+
+This code applies filters to the RNA seq RPKM data and cleans row and column names.
 
 ## Load data and required libraries
 Load RNA-seq data and the experimental design files:
@@ -112,7 +115,7 @@ I have decided not to apply any additional filters to our data, since I believe 
 
 ## Density plot
 Check the density plot of RPKM values across all samples:
-```{r rpkmDensityPlot}
+```{r rpkm_DensityPlot}
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")
 head(rDatMelt)
@@ -121,7 +124,7 @@ ggplot(rDatMelt, aes(RPKM)) +
 ```
 
 The data has to be log transformed:
-```{r rpkmlog2DensityPlot}
+```{r rpkm_log2_DensityPlot}
 ggplot(rDatMelt, aes(log(RPKM))) +
   geom_density()
 ```
@@ -132,7 +135,7 @@ rDat <- rDat + 1
 ```
 
 Now re-make the density plot:
-```{r rpkmAdd1Log2DensityPlot}
+```{r rpkm_Add1Log2_DensityPlot}
 rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")

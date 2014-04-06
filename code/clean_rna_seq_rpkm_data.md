@@ -1,7 +1,10 @@
-Clean RNA-seq data
-==================
+Clean RNA-seq RPKM data
+=======================
+
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
+
+This code applies filters to the RNA seq RPKM data and cleans row and column names.
 
 ## Load data and required libraries
 Load RNA-seq data and the experimental design files:
@@ -351,7 +354,7 @@ head(rDatMelt)
 ggplot(rDatMelt, aes(RPKM)) + geom_density()
 ```
 
-![plot of chunk rpkmDensityPlot](figure/rpkmDensityPlot.png) 
+![plot of chunk rpkm_DensityPlot](figure/rpkm_DensityPlot.png) 
 
 
 The data has to be log transformed:
@@ -364,7 +367,7 @@ ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
 ## Warning: Removed 541040 rows containing non-finite values (stat_density).
 ```
 
-![plot of chunk rpkmlog2DensityPlot](figure/rpkmlog2DensityPlot.png) 
+![plot of chunk rpkm_log2_DensityPlot](figure/rpkm_log2_DensityPlot.png) 
 
 
 A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
@@ -389,7 +392,7 @@ rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
 ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
 ```
 
-![plot of chunk rpkmAdd1Log2DensityPlot](figure/rpkmAdd1Log2DensityPlot.png) 
+![plot of chunk rpkm_Add1Log2_DensityPlot](figure/rpkm_Add1Log2_DensityPlot.png) 
 
 
 
