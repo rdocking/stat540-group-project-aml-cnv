@@ -354,7 +354,7 @@ head(rDatMelt)
 ggplot(rDatMelt, aes(RPKM)) + geom_density()
 ```
 
-![plot of chunk rpkm_DensityPlot](figure/rpkm_DensityPlot.png) 
+![plot of chunk densityPlot_rpkm](figure/densityPlot_rpkm.png) 
 
 
 The data has to be log transformed:
@@ -367,7 +367,7 @@ ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
 ## Warning: Removed 541040 rows containing non-finite values (stat_density).
 ```
 
-![plot of chunk rpkm_log2_DensityPlot](figure/rpkm_log2_DensityPlot.png) 
+![plot of chunk densityPlot_rpkm_log2](figure/densityPlot_rpkm_log2.png) 
 
 
 A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
@@ -392,15 +392,15 @@ rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
 ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
 ```
 
-![plot of chunk rpkm_Add1Log2_DensityPlot](figure/rpkm_Add1Log2_DensityPlot.png) 
+![plot of chunk densityPlot_rpkm_Add1Log2](figure/densityPlot_rpkm_Add1Log2.png) 
 
 
 
 ## Save the cleaned RNA-seq data to file
 
 ```r
-# write.table(rDat, '../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt', sep =
-# '\t', row.names = TRUE)
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    row.names = TRUE)
 ```
 
 
@@ -423,11 +423,11 @@ head(test[1:5, 1:5])
 
 ```
 ##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
-## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
-## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
-## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
-## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
+## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
+## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
+## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
+## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
+## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
 ```
 
 ```r
@@ -436,10 +436,10 @@ tail(test[1:5, 1:5])
 
 ```
 ##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
-## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
-## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
-## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
-## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
+## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
+## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
+## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
+## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
+## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
 ```
 
