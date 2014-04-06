@@ -1,9 +1,9 @@
-Exploratory analysis of RNA-seq data
-====================================
+Exploratory analysis of RNA-seq count data
+==========================================
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
 
-Explore RNA-seq data using sample-to-sample correlation heatmaps and box plots.
+Explore cleaned RNA-seq read count data using sample-to-sample correlation heatmaps.
 
 Load required libraries:
 
@@ -19,7 +19,7 @@ library(scales)  # scale functions for graphics, esp. alpha() function
 Load required files, RNA-seq data and the experimental design:
 
 ```r
-rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
     header = TRUE, check.names = FALSE)
 rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
@@ -48,40 +48,6 @@ str(rDes, max.level = 0)
 
 
 
-
-**Density plot**
-Check the density plot of RPKM values across all samples:
-
-```r
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-head(rDatMelt)
-```
-
-```
-##   Sample  RPKM
-## 1   2803 9.316
-## 2   2803 9.472
-## 3   2803 2.000
-## 4   2803 3.776
-## 5   2803 2.102
-## 6   2803 7.430
-```
-
-```r
-ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
-```
-
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
-
-
-
 **Sample-to-sample correlation heatmaps**  
 I will reorder samples based on hierarchical clustering and different clinical variables to find if there are trends in RNA-seq expression values.
 
@@ -91,7 +57,7 @@ Heatmap with hierarchical clustering:
 heatmap(cor(rDat), Rowv = TRUE, symm = TRUE, col = brewer.pal(n = 9, name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-6.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_HierarchCluster_Heatmap.png" title="plot of chunk readCount_SampleCorr_HierarchCluster_Heatmap" alt="plot of chunk readCount_SampleCorr_HierarchCluster_Heatmap" style="display: block; margin: auto;" />
 
 
 Order the data based on sex:
@@ -115,7 +81,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = sexCols, col = bre
     name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-7.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_ArrangeSex_Heatmap.png" title="plot of chunk readCount_SampleCorr_ArrangeSex_Heatmap" alt="plot of chunk readCount_SampleCorr_ArrangeSex_Heatmap" style="display: block; margin: auto;" />
 
 
 Order the data based on cytogenetic risk:
@@ -131,7 +97,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols, col = brew
     name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-8.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_ArrangeCytoRisk_Heatmap.png" title="plot of chunk readCount_SampleCorr_ArrangeCytoRisk_Heatmap" alt="plot of chunk readCount_SampleCorr_ArrangeCytoRisk_Heatmap" style="display: block; margin: auto;" />
 
 
 Order the data based on FAB subtype:
@@ -147,7 +113,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols, col = bre
     name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-9.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_ArrangeFAB_Heatmap.png" title="plot of chunk readCount_SampleCorr_ArrangeFAB_Heatmap" alt="plot of chunk readCount_SampleCorr_ArrangeFAB_Heatmap" style="display: block; margin: auto;" />
 
 
 Order the data based on cytogenetic risk, then sex, then race:
@@ -163,7 +129,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = crCols, col = brew
     name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-10.png" title="plot of chunk unnamed-chunk-10" alt="plot of chunk unnamed-chunk-10" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_ArrangeCytoRiskSexRace_Heatmap.png" title="plot of chunk readCount_SampleCorr_ArrangeCytoRiskSexRace_Heatmap" alt="plot of chunk readCount_SampleCorr_ArrangeCytoRiskSexRace_Heatmap" style="display: block; margin: auto;" />
 
 
 Order the data based on FAB subtype, age, then sex:
@@ -179,10 +145,7 @@ heatmap(cor(rDatLab), Rowv = NA, symm = TRUE, ColSideColors = fabCols, col = bre
     name = "Blues"))
 ```
 
-<img src="figure/unnamed-chunk-11.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+<img src="figure/readCount_SampleCorr_ArrangeFABAgeSex_Heatmap.png" title="plot of chunk readCount_SampleCorr_ArrangeFABAgeSex_Heatmap" alt="plot of chunk readCount_SampleCorr_ArrangeFABAgeSex_Heatmap" style="display: block; margin: auto;" />
 
 
-So far, I cannot recreate the clear clusters identified using hierarchical clustering by reordering rDat by a single variable or multiple variables. I think the heatmap with hierarchical clustering is scaling the data somehow by default? I need to read the manual on the heatmap function more carefully!
-
-
-
+So far, I cannot recreate the clear clusters identified using hierarchical clustering by reordering rDat by a single variable or multiple variables. I think the heatmap with hierarchical clustering is scaling the data using default arguments? I need to read the manual on the heatmap function more carefully.
