@@ -19,13 +19,15 @@ library(RColorBrewer)
 ```
 
 
-Load RNA-seq data and the experimental design:
+Load RNA-seq data and the experimental design: NOTE: My loading didn't knit,
+even with the recommandations above, so you will have to fix the pathname to run this yourself.
+
 
 ```r
-rDes <- read.table("experimental_design_cleaned.txt", sep = "\t", header = TRUE, 
+rDes <- read.table("../data/experimental_design_cleaned.txt", sep = "\t", header = TRUE, 
     row.names = 1)  #might need to fix pathname
-rDat <- read.table("aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, 
-    row.names = 1)  #might need to fix pathname
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    header = TRUE, row.names = 1)  #might need to fix pathname
 ```
 
 
@@ -45,14 +47,13 @@ preparing for heatmap:
 HMprDes <- rDes
 HMprDes$sampleID <- paste0("X", rownames(rDes))
 hDat <- rDat
-
 colnames(hDat) <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, 
     sep = "."))
 HMprDes$HmID <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, sep = "."))
 ```
 
 
-Before reordering to investigate possible trends, I will first see how it clusteres without ordering.
+Before reordering to investigate possible trends, I will first see how it clusters without ordering.
 
 
 ```r
@@ -78,22 +79,7 @@ corMelt <- melt(cor(hDat), variable.name = "colname", value.name = "cor_coef")
 ```
 
 
-exploring data via boxplot:
 
-
-```r
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-ggplot(rDatMelt, aes(Sample, RPKM)) + geom_boxplot()
-```
-
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
 
 
 ### Differential expression analysis
@@ -136,9 +122,7 @@ ttfit_del7 <- topTable(fit, number = Inf, coef = "del_7TRUE", p.value = 1e-05)
 ```
 
 there are:
--6 hits for trisomy 8,
--14 hits for del 5, and
--14 hits for del 7.
+6 hits for trisomy 8, 14 hits for del 5, and 61 hits for del 7.
 
 Is there overlap between the hits?
 
@@ -146,6 +130,11 @@ Is there overlap between the hits?
 a <- length(intersect(rownames(ttfit_tris8), rownames(ttfit_del5)))
 b <- length(intersect(rownames(ttfit_tris8), rownames(ttfit_del7)))
 c <- length(intersect(rownames(ttfit_del5), rownames(ttfit_del7)))
+sum(a, b, c)
+```
+
+```
+## [1] 0
 ```
 
 there are: 0 overlapping genes.
@@ -161,6 +150,11 @@ c <- nrow(ttfit_d5d7 <- topTable(fit, number = Inf, coef = "del_5TRUE:del_7TRUE"
     p.value = 1e-05))
 d <- nrow(ttfit_t8d5d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5TRUE:del_7TRUE", 
     p.value = 1e-05))
+sum(a, b, c, d)
+```
+
+```
+## [1] 0
 ```
 
 
@@ -177,6 +171,11 @@ c <- nrow(ttfit_d5d7 <- topTable(fit, number = Inf, coef = "del_5TRUE:del_7TRUE"
     p.value = 1e-04))
 d <- nrow(ttfit_t8d5d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5TRUE:del_7TRUE", 
     p.value = 1e-04))
+sum(a, b, c, d)
+```
+
+```
+## [1] 1
 ```
 
 
@@ -188,6 +187,11 @@ Does it come up in any of the other lists?
 a <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_tris8)))
 b <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_del5)))
 c <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_del7)))
+sum(a, b, c)
+```
+
+```
+## [1] 0
 ```
 
 it occurs in 0 of the other lists. 
@@ -210,7 +214,7 @@ abline(h = c(-1, 1), col = "blue")
 
 #NOTE: Y axis label is wrong, and why is part of the graph yellow?
 
-Creating a boxplot with genes of interest for trisomy 8
+Creating a boxplot with the 6 genes of interest (FDR 1e-5) for trisomy 8
 
 
 ```r
@@ -232,7 +236,9 @@ tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 
 #plotting
 ggplot(tris8Dat, aes(Transcript, RPKM, colour = trisomy_8)) +
-  geom_boxplot()
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
 ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
@@ -245,7 +251,7 @@ Plotsmear of del_5 hits
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
 
 
-Creating a boxplot with genes of interest for del 7
+Creating a boxplot with the 14 genes of interest (FDR 1e-5) for del 5
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
 
@@ -256,9 +262,17 @@ Plotsmear of del_7 hits
 ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
 
-Creating a boxplot with genes of interest for del 7
-
+Creating a boxplot with genes of interest (FDR 1e-5) for del 7. Since there are 61 genes I will plot a few genes at a time:
 ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
+
+
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+
+
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
+
+
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22.png) 
 
 
 writing lists of genes of interest...

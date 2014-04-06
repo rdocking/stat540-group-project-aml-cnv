@@ -7,7 +7,7 @@ Differential expression analysis for trisomy 8, deletion 5 and deletion 7
 Use `voom + limma` to perform differential expression analysis on the RNA-seq data.
 
 First load required libraries.
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(lattice) # if you don't already have this loaded ...
 library(ggplot2) # we'll make figures with both
 library(reshape2) # for the function melt
@@ -21,9 +21,9 @@ Load RNA-seq data and the experimental design: NOTE: My loading didn't knit,
 even with the recommandations above, so you will have to fix the pathname to run this yourself.
 
 ```{r}
-rDes <- read.table("experimental_design_cleaned.txt", 
+rDes <- read.table("../data/experimental_design_cleaned.txt", 
                            sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
-rDat <- read.table("aml.rnaseq.gaf2.0_rpkm_cleaned.txt",
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt",
                           sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
 ```
 
@@ -42,12 +42,11 @@ preparing for heatmap:
 HMprDes <- rDes
 HMprDes$sampleID <- paste0("X", rownames(rDes))
 hDat <- rDat
-
 colnames(hDat) <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, sep = ".")) 
 HMprDes$HmID <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, sep = "."))
 ```
 
-Before reordering to investigate possible trends, I will first see how it clusteres without ordering.
+Before reordering to investigate possible trends, I will first see how it clusters without ordering.
 
 ```{r}
 heatmap(cor(hDat), margins = c(10, 10), scale="none", col = brewer.pal(n = 9, name = "Blues")) 
@@ -95,13 +94,12 @@ corMelt <- melt(cor(hDat), variable.name = "colname", value.name = "cor_coef")
 #will continue this...
 ```
 
-exploring data via boxplot:
-
-```{r}
-rDatMelt <- melt(rDat, variable.name = "Sample", 
-                 value.name = "RPKM")
-ggplot(rDatMelt, aes(Sample, RPKM)) +
-  geom_boxplot()
+```{r include=FALSE}
+# # exploring data via boxplot
+# rDatMelt <- melt(rDat, variable.name = "Sample", 
+#                  value.name = "RPKM")
+# ggplot(rDatMelt, aes(Sample, RPKM)) +
+#   geom_boxplot()
 ```
 
 ### Differential expression analysis
@@ -125,15 +123,14 @@ ttfit_del5 <- topTable(fit, number = Inf, coef = "del_5TRUE", p.value=1e-5)
 ttfit_del7 <- topTable(fit, number = Inf, coef = "del_7TRUE", p.value=1e-5)
 ```
 there are:
--`r nrow(ttfit_tris8)` hits for trisomy 8,
--`r nrow(ttfit_del5)` hits for del 5, and
--`r nrow(ttfit_del5)` hits for del 7.
+`r nrow(ttfit_tris8)` hits for trisomy 8, `r nrow(ttfit_del5)` hits for del 5, and `r nrow(ttfit_del7)` hits for del 7.
 
 Is there overlap between the hits?
 ```{r}
 a <- length(intersect(rownames(ttfit_tris8), rownames(ttfit_del5)))
 b <- length(intersect(rownames(ttfit_tris8), rownames(ttfit_del7)))
 c <- length(intersect(rownames(ttfit_del5), rownames(ttfit_del7)))
+sum(a, b, c)
 ```
 there are: `r sum(a, b, c)` overlapping genes.
 
@@ -143,6 +140,7 @@ a <- nrow(ttfit_t8d5 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5T
 b <- nrow(ttfit_t8d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_7TRUE", p.value=1e-5))
 c <- nrow(ttfit_d5d7 <- topTable(fit, number = Inf, coef = "del_5TRUE:del_7TRUE", p.value=1e-5))
 d <- nrow(ttfit_t8d5d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5TRUE:del_7TRUE", p.value=1e-5))
+sum(a, b, c, d)
 ```
 
 there are `r sum(a, b, c, d)` genes with differential expression influenced by interaction effects (with cutoff of 1e-5).
@@ -153,6 +151,7 @@ a <- nrow(ttfit_t8d5 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5T
 b <- nrow(ttfit_t8d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_7TRUE", p.value=1e-4))
 c <- nrow(ttfit_d5d7 <- topTable(fit, number = Inf, coef = "del_5TRUE:del_7TRUE", p.value=1e-4))
 d <- nrow(ttfit_t8d5d7 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE:del_5TRUE:del_7TRUE", p.value=1e-4))
+sum(a, b, c, d)
 ```
 
 there is `r sum(a, b, c, d)` gene with differential expression influenced by interaction effects. It is `r rownames(ttfit_t8d7)`
@@ -162,6 +161,7 @@ Does it come up in any of the other lists?
 a <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_tris8)))
 b <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_del5)))
 c <- length(intersect("KCNH6|81033_calculated", rownames(ttfit_del7)))
+sum(a, b, c)
 ```
 it occurs in `r sum(a, b, c)` of the other lists. 
 
@@ -179,7 +179,7 @@ abline(h = c(-1, 1), col = "blue")
 
 #NOTE: Y axis label is wrong, and why is part of the graph yellow?
 
-Creating a boxplot with genes of interest for trisomy 8
+Creating a boxplot with the `r length(voomTris8genes)` genes of interest (FDR 1e-5) for trisomy 8
 
 ```{r tidy=FALSE}
 #subsetting and reforming transcripts of interest from main RPKM matrix
@@ -200,7 +200,9 @@ tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 
 #plotting
 ggplot(tris8Dat, aes(Transcript, RPKM, colour = trisomy_8)) +
-  geom_boxplot()
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
 
@@ -216,7 +218,7 @@ plotSmear(dgeGlmD5, de.tags = voomDel5genes, ylab = "logFC", xlab = "AverageRPKM
 abline(h = c(-1, 1), col = "blue")
 ```
 
-Creating a boxplot with genes of interest for del 7
+Creating a boxplot with the `r length(voomDel5genes)` genes of interest (FDR 1e-5) for del 5
 
 ```{r echo = FALSE}
 del5Dat <- rDat[voomDel5genes,] #subsetting transcripts of interest from rDat
@@ -232,7 +234,9 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
 ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
-  geom_boxplot()
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
 *Exploring hit genes from del_7.*
@@ -247,10 +251,9 @@ plotSmear(dgeGlmD7, de.tags = voomDel7genes, ylab = "logFC", xlab = "AverageRPKM
 abline(h = c(-1, 1), col = "blue")
 ```
 
-Creating a boxplot with genes of interest for del 7
-
+Creating a boxplot with genes of interest (FDR 1e-5) for del 7. Since there are `r length(voomDel7genes)` genes I will plot a few genes at a time:
 ```{r echo = FALSE}
-del7Dat <- rDat[voomDel7genes,] #subsetting transcripts of interest from rDat
+del7Dat <- rDat[voomDel7genes[1:16],] #subsetting transcripts of interest from rDat
 del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
 del7Dat <- melt(del7Dat, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
@@ -263,7 +266,66 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
 ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
-  geom_boxplot()
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+```{r echo = FALSE}
+del7Dat <- rDat[voomDel7genes[17:32],] #subsetting transcripts of interest from rDat
+del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
+del7Dat <- melt(del7Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+
+del7Dat$TCGA_patient_id <- gsub("X", "", del7Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
+
+ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+```{r echo = FALSE}
+del7Dat <- rDat[voomDel7genes[33:48],] #subsetting transcripts of interest from rDat
+del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
+del7Dat <- melt(del7Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+
+del7Dat$TCGA_patient_id <- gsub("X", "", del7Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
+
+ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+```{r echo = FALSE}
+del7Dat <- rDat[voomDel7genes[49:61],] #subsetting transcripts of interest from rDat
+del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
+del7Dat <- melt(del7Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+
+del7Dat$TCGA_patient_id <- gsub("X", "", del7Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
+
+ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
 writing lists of genes of interest...
