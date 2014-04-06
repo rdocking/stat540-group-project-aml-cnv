@@ -223,7 +223,7 @@ head(rDatMelt)
 ggplot(rDatMelt, aes(ReadCount)) + geom_density()
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+![plot of chunk readCountDensityPlot](figure/readCountDensityPlot.png) 
 
 
 The data has to be log transformed:
@@ -236,7 +236,7 @@ ggplot(rDatMelt, aes(log(ReadCount))) + geom_density()
 ## Warning: Removed 541033 rows containing non-finite values (stat_density).
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+![plot of chunk readCountlog2DensityPlot](figure/readCountlog2DensityPlot.png) 
 
 
 A lot of genes have read count values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
@@ -261,8 +261,55 @@ rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "ReadCount")
 ggplot(rDatMelt, aes(log2(ReadCount))) + geom_density()
 ```
 
-<img src="figure/unnamed-chunk-11.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" style="display: block; margin: auto;" />
+![plot of chunk readCountAdd1Log2DensityPlot](figure/readCountAdd1Log2DensityPlot.png) 
 
+
+## Save cleaned read count data to file
+
+```r
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
+    row.names = TRUE)
+```
+
+
+Ensure we can read the data back in correctly:
+
+```r
+test <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
+    header = TRUE, check.names = FALSE)
+str(test, max.level = 0)
+```
+
+```
+## 'data.frame':	20001 obs. of  179 variables:
+##   [list output truncated]
+```
+
+```r
+head(test[1:5, 1:5])
+```
+
+```
+##                              2803   2805    2806    2807   2808
+## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
+## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
+## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
+## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
+## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
+```
+
+```r
+tail(test[1:5, 1:5])
+```
+
+```
+##                              2803   2805    2806    2807   2808
+## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
+## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
+## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
+## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
+## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
+```
 
 
 ## Differential expression analysis using voom
@@ -313,7 +360,7 @@ head(design)
 rDatVoom <- voom(rDat, design, plot = TRUE, lib.size = colSums(rDat) * normFactor)
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk rDatvoomMeanVarTrendPlot](figure/rDatvoomMeanVarTrendPlot.png) 
 
 
 Now find genes differentially expressed between males and females:
@@ -545,7 +592,7 @@ rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE, lib.size = colSums(rDatCRG
     normFactor)
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
+![plot of chunk rDatCRGIPvoomMeanVarTrendPlot](figure/rDatCRGIPvoomMeanVarTrendPlot.png) 
 
 ```r
 fit <- lmFit(rDatCRGIPvoom, design)
@@ -672,7 +719,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
+![plot of chunk CytoRisk_GoodvsPoor_TopSixBoxplot](figure/CytoRisk_GoodvsPoor_TopSixBoxplot.png) 
 
 
 Genes differentially expressed between Good and Intermediate cytogenetic risk:
@@ -759,7 +806,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23.png) 
+![plot of chunk CytoRisk_GoodvsInt_TopSixBoxplot](figure/CytoRisk_GoodvsInt_TopSixBoxplot.png) 
 
 
 How can we compare Intermediate and Poor risk? Create a contrast matrix:
@@ -897,7 +944,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-25](figure/unnamed-chunk-25.png) 
+![plot of chunk CytoRisk_IntvsPoor_TopSixBoxplot](figure/CytoRisk_IntvsPoor_TopSixBoxplot.png) 
 
 
 Create a Venn diagram to show which genes were differentially expressed:
@@ -911,7 +958,7 @@ vennPlot <- venn.diagram(deGenes, filename = NULL, force.unique = TRUE, fill = c
 grid.draw(vennPlot)
 ```
 
-![plot of chunk unnamed-chunk-26](figure/unnamed-chunk-26.png) 
+![plot of chunk CytoRiskDEA_allComparisons_FDR1e-5_VennDiagram](figure/CytoRiskDEA_allComparisons_FDR1e-5_VennDiagram.png) 
 
 
 Wow one gene is differentially expressed between all groups? What is it?!
@@ -973,5 +1020,5 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     geom_boxplot()
 ```
 
-![plot of chunk unnamed-chunk-28](figure/unnamed-chunk-28.png) 
+![plot of chunk CytoRiskDEA_allComparisons_commonGene_Boxplot](figure/CytoRiskDEA_allComparisons_commonGene_Boxplot.png) 
 

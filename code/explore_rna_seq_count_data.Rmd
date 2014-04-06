@@ -80,7 +80,7 @@ I have decided not to apply any additional filters to our data, since I believe 
 
 ## Density plot
 Check the density plot of read count values across all samples:
-```{r}
+```{r readCountDensityPlot}
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "ReadCount")
 head(rDatMelt)
@@ -89,7 +89,7 @@ ggplot(rDatMelt, aes(ReadCount)) +
 ```
 
 The data has to be log transformed:
-```{r}
+```{r readCountlog2DensityPlot}
 ggplot(rDatMelt, aes(log(ReadCount))) +
   geom_density()
 ```
@@ -100,7 +100,7 @@ rDat <- rDat + 1
 ```
 
 Now re-make the density plot:
-```{r fig.align='center'}
+```{r readCountAdd1Log2DensityPlot}
 rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "ReadCount")
@@ -108,6 +108,20 @@ ggplot(rDatMelt, aes(log2(ReadCount))) +
   geom_density()  
 ```
 
+## Save cleaned read count data to file
+```{r}
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
+            sep = "\t", row.names = TRUE)
+```
+
+Ensure we can read the data back in correctly:
+```{r}
+test <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
+                   sep = "\t", header = TRUE, check.names = FALSE)
+str(test, max.level = 0)
+head(test[1:5, 1:5])
+tail(test[1:5, 1:5])
+```
 
 ## Differential expression analysis using voom
 
@@ -126,7 +140,7 @@ normFactor <- calcNormFactors(rDat)
 ```
 
 Use `voom` to convert read count to log2-ReadCount ready for linear modelling:
-```{r}
+```{r rDatvoomMeanVarTrendPlot}
 design <- model.matrix(~ sex)
 # The intercept represents females
 head(design)
@@ -173,7 +187,7 @@ cytoRisk <- rDesCRGIP$Cytogenetic_risk
 ```
 
 I will make a model with a reference + treatment effect, where I will use "Good" risk as the intercept:
-```{r}
+```{r rDatCRGIPvoomMeanVarTrendPlot}
 normFactor <- calcNormFactors(rDatCRGIP)
 design <- model.matrix(~ cytoRisk)
 colnames(design)
@@ -191,11 +205,11 @@ voomCRgenes <- rownames(voomCR)
 ```
 
 ```{r include=FALSE}
-# Genes differentially expressed between Good and Intermediate or Poor cytogenetic risk:
-dgeGlm <- DGEList(counts = rDatCRGIP, group = cytoRisk)
-plotSmear(dgeGlm, de.tags = voomCRgenes)
-abline(h = c(-1, 1), col = "blue")
-# Ok this doesn't look right. There are genes coloured red with very little logFC? But hang on, plotSmear plots logCF between two experimental groups. It has chosen to plot Good against intermediate by default??? Confusing. I don't think you can use this plot when we are comparing 3 groups between each other.
+# # Genes differentially expressed between Good and Intermediate or Poor cytogenetic risk:
+# dgeGlm <- DGEList(counts = rDatCRGIP, group = cytoRisk)
+# plotSmear(dgeGlm, de.tags = voomCRgenes)
+# abline(h = c(-1, 1), col = "blue")
+# # Ok this doesn't look right. There are genes coloured red with very little logFC? But hang on, plotSmear plots logCF between two experimental groups. It has chosen to plot Good against intermediate by default??? Confusing. I don't think you can use this plot when we are comparing 3 groups between each other.
 ```
 
 Genes differentially expressed between Good and Poor cytogenetic risk:
@@ -206,7 +220,7 @@ head(voomCRGP)
 ```
 
 Plot top genes differentially expressed between Good and Poor cytogenetic risk:
-```{r}
+```{r CytoRisk_GoodvsPoor_TopSixBoxplot}
 voomCRGPgenes <- rownames(voomCRGP)
 rDatvoomCR <- rDatCRGIP[head(voomCRGPgenes), ]
 dim(rDatvoomCR)
@@ -234,7 +248,7 @@ head(voomCRGI)
 ```
 
 Plot top genes differentially expressed between Good and Intermediate cytogenetic risk:
-```{r}
+```{r CytoRisk_GoodvsInt_TopSixBoxplot}
 voomCRGIgenes <- rownames(voomCRGI)
 rDatvoomCR <- rDatCRGIP[head(voomCRGIgenes), ]
 dim(rDatvoomCR)
@@ -271,7 +285,7 @@ summary(resCont)
 ```
 
 Plot top genes differentially expressed between Intermediate and Poor cytogenetic risk:
-```{r}
+```{r CytoRisk_IntvsPoor_TopSixBoxplot}
 voomCRIPgenes <- rownames(voomCRIP)
 rDatvoomCR <- rDatCRGIP[head(voomCRIPgenes), ]
 dim(rDatvoomCR)
@@ -291,7 +305,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts),
 ```
 
 Create a Venn diagram to show which genes were differentially expressed:
-```{r}
+```{r CytoRiskDEA_allComparisons_FDR1e-5_VennDiagram}
 deGenes <- list(IntermedVsGood = voomCRGIgenes, 
                 PoorVsIntermed = voomCRIPgenes, 
                 PoorVsGood = voomCRGPgenes)
@@ -308,7 +322,7 @@ Wow one gene is differentially expressed between all groups? What is it?!
 ```
 
 It is a zinc finger protein on chromosome 7, which we know is commonly deleted in AML! Nice. Let's check its expression!
-```{r}
+```{r CytoRiskDEA_allComparisons_commonGene_Boxplot}
 rDatvoomCR <- rDatCRGIP[head(luckyGene), ]
 rDatvoomCR$Transcript <- rownames(rDatvoomCR)
 rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
