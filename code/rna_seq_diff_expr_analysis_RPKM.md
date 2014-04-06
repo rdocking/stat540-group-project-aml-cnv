@@ -97,7 +97,7 @@ head(design)
 rDatVoom <- voom(rDat, design, plot = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+![plot of chunk voomMeanVarTrendPlot_rpkm](figure/voomMeanVarTrendPlot_rpkm.png) 
 
 
 Now find genes differentially expressed between males and females:
@@ -183,7 +183,7 @@ plotSmear(dgeGlm, de.tags = voomSexgenes, ylab = "logFC", xlab = "AverageRPKM")
 abline(h = c(-1, 1), col = "blue")
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
+![plot of chunk plotSmear_Sex_rpkm](figure/plotSmear_Sex_rpkm.png) 
 
 Why aren't all genes with > 1 and < -1 logFC not called as differentially expressed?
 
@@ -276,10 +276,11 @@ head(rDatvoomSex)
 ```r
 ggplot(rDatvoomSex, aes(Transcript, RPKM, colour = Sex)) +
   geom_boxplot() +
-  facet_wrap(~ Transcript, scales = "free")
+  facet_wrap(~ Transcript, scales = "free")+
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
+![plot of chunk sex_MalevsFemale_TopSixBoxplot_rpkm](figure/sex_MalevsFemale_TopSixBoxplot_rpkm.png) 
 
 So the top genes differentially expressed between males and females have almost no expression in one of the sexes. Given we only found 28 genes differentially expressed with an FDR of 1e-5, we can conclude that sex has limited influence on gene expression in AML patients.
 
@@ -391,7 +392,7 @@ head(design)
 rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk rDatCRGIP_voomMeanVarTrendPlot_rpkm](figure/rDatCRGIP_voomMeanVarTrendPlot_rpkm.png) 
 
 ```r
 fit <- lmFit(rDatCRGIPvoom, design)
@@ -505,10 +506,11 @@ head(rDatvoomCR)
 ```r
 ggplot(rDatvoomCR, aes(Transcript, RPKM, colour = Cytogenetic_risk)) +
   geom_boxplot() +
-  facet_wrap(~ Transcript, scales = "free")  
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())  
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+![plot of chunk CytoRisk_GoodvsPoor_TopSixBoxplot_rpkm](figure/CytoRisk_GoodvsPoor_TopSixBoxplot_rpkm.png) 
 
 
 What about the hits with little logFC? Let's plot these:
@@ -574,10 +576,11 @@ head(rDatvoomCR)
 
 ```r
 ggplot(rDatvoomCR, aes(Transcript, RPKM, colour = Cytogenetic_risk)) + geom_boxplot() + 
-    facet_wrap(~Transcript, scales = "free")
+    facet_wrap(~Transcript, scales = "free") + theme(axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank())
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+![plot of chunk CytoRisk_GoodvsPoor_lowlogFC_Boxplot_rpkm](figure/CytoRisk_GoodvsPoor_lowlogFC_Boxplot_rpkm.png) 
 
 
 Ok something is really up. Diffential expression is being called on transcripts with very small RPKM values. Look at the y axis: these values are NOT log transformed! This is very concerning.
