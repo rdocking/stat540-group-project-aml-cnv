@@ -177,8 +177,6 @@ plotSmear(dgeGlmT8, de.tags = voomTris8genes, ylab = "logFC", xlab = "AverageRPK
 abline(h = c(-1, 1), col = "blue")
 ```
 
-#NOTE: Y axis label is wrong, and why is part of the graph yellow?
-
 Creating a boxplot with the `r length(voomTris8genes)` genes of interest (FDR 1e-5) for trisomy 8
 
 ```{r tidy=FALSE}
