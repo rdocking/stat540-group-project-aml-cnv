@@ -1,5 +1,5 @@
-Exploratory analysis of RNA-seq count data
-==========================================
+RNA-seq count data sample correlation heatmaps
+==============================================
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
 
