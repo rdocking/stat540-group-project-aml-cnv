@@ -4,8 +4,19 @@ PCA Analysis
 
 **First, run import_and_clean_clinical_data.Rmd and join_rna_seq_data_with_design.R.**
 ```{r}
-source(purl("code/import_and_clean_clinical_data.Rmd"))
-source("code/join_rna_seq_data_with_design.R")
+#rna_seq_dat <-read.table("data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
+rna_seq_dat <-read.table("data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
+
+rna_seq_dat_norm <- rna_seq_dat
+#rna_seq_dat_norm <- rna_seq_dat[,apply(rna_seq_dat, 2, var, na.rm=TRUE) != 0]
+#rna_seq_dat_norm <- rna_seq_dat[apply(t(rna_seq_dat), 2, var, na.rm=TRUE) != 0,]
+
+exp_dat <- read.table("data/experimental_design_cleaned.txt", 
+                           sep = "\t", header = TRUE, row.names = 1)
+
+joined_dat <- cbind(exp_dat,t(rna_seq_dat_norm))
+# source(purl("code/import_and_clean_clinical_data.Rmd"))
+# source("code/join_rna_seq_data_with_design.R")
 ```
 
 **Load libraries.**
@@ -33,12 +44,11 @@ dat.filt <- subset(dat.complete,dat.complete$Cytogenetic_risk != "N.D.")
 ```{r}
 dat.in <- dat.filt
 dat.in$prognosis <- mapvalues(dat.in$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
-)
 ```
 
 **Make prelimary dataset with gene columns + prognosis + cyt risk.**
 ```{r}
-prelim.in <- dat.in[,grepl(".*calculated",colnames(dat.in))]
+prelim.in <- dat.in[,grepl("_*calculated",colnames(dat.in))]
 gene.name <- colnames(prelim.in)
 prelim.in <- dat.in[,c(colnames(prelim.in),"prognosis","Cytogenetic_risk")]
 ```
@@ -146,7 +156,21 @@ run_svm(xtrain.supervised, xtest.supervised)
 
 #basic PCA
 princomp <- prcomp(prelim.in[,grepl(".*calculated",colnames(prelim.in))], center = T, scale = F)
-plot(princomp$x[test, 1:2], bg=ytest, pch=21, cex=1.5)
+summary(princomp)$importance[, 1:6] 
+library(geneplotter); 
+smoothScatter(princomp$x) #generates a smooth scatter plot that shows the density of the data points.
+selected_gene_1 <- (which(abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+sd(princomp$rotation[,1]))))
+
+selected_gene_2 <- (which(abs(princomp$rotation[,2])>abs(mean(princomp$rotation[,2])+sd(princomp$rotation[,2]))))
+selected_gene_3 <- (which(abs(princomp$rotation[,3])>abs(mean(princomp$rotation[,3])+sd(princomp$rotation[,3]))))
+library(grid)
+library(VennDiagram)
+
+gene.set <- list(first= selected_gene_1, second= selected_gene_2, third = selected_gene_3)
+venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue", "yellow"),force.unique)
+plot.new()
+grid.draw(venn.plot)
+
 xtrain.basic <- cbind(princomp$x[-test, 1:d], prelim.in[-test,c("prognosis","Cytogenetic_risk")])
 xtest.basic <- cbind(princomp$x[test, 1:d], prelim.in[test,c("prognosis","Cytogenetic_risk")])
 run_svm(xtrain.basic, xtest.basic)
@@ -158,7 +182,7 @@ library(reshape2)
 library(ggplot2)
  
 melted <- cbind(gene.name[1:100], melt((princomp$rotation[1:100,1:4])))
- 
+
 ggplot(data=melted) +geom_bar(aes(x=Var1[1:100], y=value[1:100], fill=gene.name[1:100]), stat="identity") + facet_wrap(~Var2)
 ```
 
@@ -166,12 +190,15 @@ ggplot(data=melted) +geom_bar(aes(x=Var1[1:100], y=value[1:100], fill=gene.name[
 **Prepare folds and confusion matrix for cross validation.**
 ```{r}
 k<- 5
+set.seed(1234)
 folds <- cvFolds(nrow(prelim.in), K = k)
 conf_matrix_ker <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
 conf_matrix_sup <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
 conf_matrix_basic <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
 conf_matrix_ker_R <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
 conf_matrix_ica <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+
+gene.list = list("1"="", "2"="", "3"="", "4"="", "5"="")
 
 ```
 
@@ -224,6 +251,9 @@ for (f in 1:k) {
   cat("basic PCA\n")
   #basic PCA
   princomp <- prcomp(prelim.in[,grepl(".*calculated",colnames(prelim.in))], center = T, scale = F)
+  selected_gene <- (which(abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+sd(princomp$rotation[,1]))))
+  gene.list$f <- selected_gene
+  
   xtrain.basic <- cbind(princomp$x[folds$subsets[folds$which!=f,], 1:d], prelim.in[folds$subsets[folds$which!=f,],c("prognosis","Cytogenetic_risk")])
   xtest.basic <- cbind(princomp$x[folds$subsets[folds$which==f,], 1:d], prelim.in[folds$subsets[folds$which==f,],c("prognosis","Cytogenetic_risk")])
   fit_svm <- ksvm(prognosis~.,xtrain.basic)
@@ -258,6 +288,10 @@ for (f in 1:k) {
 
 **Process CV results.**
 ```{r}
+venn.plot <- venn.diagram(gene.list, filename = NULL, fill = c("red", "blue", "yellow", "green", "orange"),force.unique)
+plot.new()
+grid.draw(venn.plot)
+
 (sens_svm_basic <- conf_matrix_basic[1,1]/sum(conf_matrix_basic[1,]))
 (spec_svm_basic <- conf_matrix_basic[2,2]/sum(conf_matrix_basic[2,]))
 
@@ -280,4 +314,6 @@ barplot(c(counts$sensetivity, counts$specificty), main="preformance of SVM on PC
     legend = c("Basic PCA","Kernelized PCA","Supervised PCA"), beside=TRUE)
 
 ```
+
+
 
