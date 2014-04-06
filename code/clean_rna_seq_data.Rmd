@@ -112,7 +112,7 @@ I have decided not to apply any additional filters to our data, since I believe 
 
 ## Density plot
 Check the density plot of RPKM values across all samples:
-```{r}
+```{r rpkmDensityPlot}
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")
 head(rDatMelt)
@@ -121,7 +121,7 @@ ggplot(rDatMelt, aes(RPKM)) +
 ```
 
 The data has to be log transformed:
-```{r}
+```{r rpkmlog2DensityPlot}
 ggplot(rDatMelt, aes(log(RPKM))) +
   geom_density()
 ```
@@ -132,7 +132,7 @@ rDat <- rDat + 1
 ```
 
 Now re-make the density plot:
-```{r fig.align='center'}
+```{r rpkmAdd1Log2DensityPlot}
 rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")

@@ -351,7 +351,7 @@ head(rDatMelt)
 ggplot(rDatMelt, aes(RPKM)) + geom_density()
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+![plot of chunk rpkmDensityPlot](figure/rpkmDensityPlot.png) 
 
 
 The data has to be log transformed:
@@ -364,7 +364,7 @@ ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
 ## Warning: Removed 541040 rows containing non-finite values (stat_density).
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+![plot of chunk rpkmlog2DensityPlot](figure/rpkmlog2DensityPlot.png) 
 
 
 A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
@@ -389,7 +389,7 @@ rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
 ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
 ```
 
-<img src="figure/unnamed-chunk-15.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" style="display: block; margin: auto;" />
+![plot of chunk rpkmAdd1Log2DensityPlot](figure/rpkmAdd1Log2DensityPlot.png) 
 
 
 
@@ -420,11 +420,11 @@ head(test[1:5, 1:5])
 
 ```
 ##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
-## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
-## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
-## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
-## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
+## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
+## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
+## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
+## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
 ```
 
 ```r
@@ -433,10 +433,10 @@ tail(test[1:5, 1:5])
 
 ```
 ##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
-## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
-## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
-## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
-## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
+## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
+## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
+## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
+## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
 ```
 
