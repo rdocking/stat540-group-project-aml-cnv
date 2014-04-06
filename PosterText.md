@@ -2,10 +2,14 @@ STAT540 poster text
 ===================
 
 ## Title:
-Using RNA-Seq Data to Predict Large-scale Copy-number Alterations in Acute Myeloid Leukemia
+Using RNA-Seq data to predict large-scale copy number alterations in Acute Myeloid Leukemia
 
 ## Authors:
 Carmen Bayly, Lauren Chong, Rod Docking, Fatemeh Dorri, Emily Hindalong, Rebecca Johnston.
+
+## Research question:
+- Hypothesis:
+- Aim:
 
 ## Introduction:
 Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or array-comparative genomic hybridization (aCGH), both of which are technically limiting.
