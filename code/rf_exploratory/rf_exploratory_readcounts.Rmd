@@ -122,6 +122,8 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
 rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
 rf.labels <- factor(rf.labels)
+rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
+rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
 ```
 
