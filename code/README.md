@@ -29,3 +29,4 @@ This directory contains:
 
 - PCA feature selection: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_feature_selection.rmd)
 
+- Random forest predictions: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.Rmd)
