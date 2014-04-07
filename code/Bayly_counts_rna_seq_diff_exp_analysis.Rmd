@@ -75,7 +75,7 @@ head(modelMat_noInt)
 
 Now find genes differentially expressed between deletion type:
 ```{r}
-dat.voomed <- voom(rDat, modelMat_noInt, plot = TRUE, lib.size = colSums(rDat))
+dat.voomed <- voom(rDat, modelMat_noInt, plot = TRUE, lib.size = colSums(rDat)*normFactor)
 fit_lm <- lmFit(dat.voomed, modelMat_noInt)
 fit <- eBayes(fit_lm)
 ```
@@ -273,8 +273,6 @@ ggplot(del5Dat2, aes(Transcript, log2(Counts), colour = del_5)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
-PPP2CA seems to differentiate well. however, it is also the second highest row index on the topTable , so this might not be the best results filtering method.
-
 *Exploring hit genes from del_7.*
 TopTable for genes from del_7.
 There are `r nrow(ttfit_del7)`, so I will explore the head an tail.
@@ -426,6 +424,11 @@ sgDat$Transcript <- gsub("[|].*$", "", sgDat$Transcript) #shortening transcript 
 sgDat <- merge(sgDat, miniDes, by = "TCGA_patient_id") #merging
 
 ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_5)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
