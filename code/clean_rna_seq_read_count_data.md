@@ -246,10 +246,10 @@ rownames(rDat) <- gsub("[|].*$", "", rownames(rDat))
 
 
 ## Filtering
-Remove transcripts with RPKM = 0 across all samples:
+Remove transcripts with read count = 0 across all samples:
 
 ```r
-# Number of transcripts with RPKM = 0 for all samples
+# Number of transcripts with read count = 0 for all samples
 nrow(rDat[rowSums(rDat) == 0, ])
 ```
 
@@ -267,7 +267,7 @@ dim(rDat)
 ## [1] 20001   179
 ```
 
-This filter does not remove all RPKM values of 0. What do we do when RPKM = 0? Do we need to apply more filters for low RPKM values?
+This filter does not remove all read count values of 0. What do we do when read count = 0? Do we need to apply more filters for low read count values?
 
 Potential additional filters: How many transcripts would be left to analyse if we apply any one of the following filters?
 
@@ -280,7 +280,7 @@ nrow(rDat)
 ```
 
 ```r
-# 1. Keep rows where sum RPKM values across all samples > 5
+# 1. Keep rows where sum read count values across all samples > 5
 nrow(rDat[rowSums(rDat) > 5, ])
 ```
 
@@ -289,7 +289,7 @@ nrow(rDat[rowSums(rDat) > 5, ])
 ```
 
 ```r
-# 2. Remove rows where at least one sample has RPKM value = 0
+# 2. Remove rows where at least one sample has read count value = 0
 nrow(rDat[apply(rDat, 1, prod) != 0, ])
 ```
 
@@ -298,7 +298,7 @@ nrow(rDat[apply(rDat, 1, prod) != 0, ])
 ```
 
 ```r
-# 3. Remove rows where more than 50 samples have RPKM values < 1
+# 3. Remove rows where more than 50 samples have read count values < 1
 nrow(rDat[apply(rDat, 1, function(x) sum(abs(x) < 1) < 50), ])
 ```
 
@@ -316,14 +316,14 @@ nrow(rDat[apply(rDat, 1, function(x) mean(abs(x) > 5)), ])
 ```
 
 
-I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 RPKM values may be instances where genes are completely deleted from the genome and thus no transcription can occur.
+I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 read count values may be instances where genes are completely deleted from the genome and thus no transcription can occur.
 
 
 ## Density plot
-Check the density plot of RPKM values across all samples:
+Check the density plot of read count values across all samples:
 
 ```r
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
+rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "readCount")
 ```
 
 ```
@@ -335,17 +335,17 @@ head(rDatMelt)
 ```
 
 ```
-##   Sample    RPKM
-## 1   2803  792.14
-## 2   2803 1139.18
-## 3   2803    0.00
-## 4   2803  194.50
-## 5   2803   24.36
-## 6   2803  982.14
+##   Sample readCount
+## 1   2803    792.14
+## 2   2803   1139.18
+## 3   2803      0.00
+## 4   2803    194.50
+## 5   2803     24.36
+## 6   2803    982.14
 ```
 
 ```r
-ggplot(rDatMelt, aes(RPKM)) + geom_density()
+ggplot(rDatMelt, aes(readCount)) + geom_density()
 ```
 
 ![plot of chunk densityPlot_readCount](figure/densityPlot_readCount.png) 
@@ -354,7 +354,7 @@ ggplot(rDatMelt, aes(RPKM)) + geom_density()
 The data has to be log transformed:
 
 ```r
-ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
+ggplot(rDatMelt, aes(log(readCount))) + geom_density()
 ```
 
 ```
@@ -364,7 +364,7 @@ ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
 ![plot of chunk densityPlot_readCount_log2](figure/densityPlot_readCount_log2.png) 
 
 
-A lot of genes have RPKM values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
+A lot of genes have read count values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
 
 ```r
 rDat <- rDat + 1
@@ -375,7 +375,7 @@ Now re-make the density plot:
 
 ```r
 rDat <- rDat + 1
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
+rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "readCount")
 ```
 
 ```
@@ -383,7 +383,7 @@ rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
 ```
 
 ```r
-ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
+ggplot(rDatMelt, aes(log2(readCount))) + geom_density()
 ```
 
 ![plot of chunk densityPlot_readCount_Add1Log2](figure/densityPlot_readCount_Add1Log2.png) 
