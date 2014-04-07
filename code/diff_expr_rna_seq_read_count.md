@@ -1,27 +1,31 @@
-Explore RNA seq read count data
-===============================
+Differential expression analysis of RNA seq read count data
+===========================================================
 
 > To knit .rmd file, read data files in using "../data"  
 > To run chunks in Rstudio, read data files in using "./data"
+
+This code performs differential expression analysis on cleaned RNA-seq read count data. In particular, it tests whether there is differential expression between **sexes** (Male vs. Female) and the different **cytogenetic risk** groups (Good vs. Intermediate vs. Poor) using `voom`.
+
 
 ## Load data and required libraries
 Load RNA-seq data and the experimental design files:
 
 ```r
-rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz", 
-    sep = "\t", header = TRUE, row.names = 1)
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
+    header = TRUE, check.names = FALSE)
 rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
 
 
+Load required libraries:
 
 ```r
-library(reshape2)  # For reshaping data from wide to tall format
-library(ggplot2)  # for plotting
-library(RColorBrewer)
-library(plyr)
-library(limma)
-library(edgeR)
+library(reshape2)  # for reshaping data from wide to tall format
+library(ggplot2)  # for graphing
+library(RColorBrewer)  # for better colour palettes
+library(plyr)  # data aggregation
+library(limma)  # fit linear models
+library(edgeR)  # differential expression analysis of RNA-seq data
 library(VennDiagram)  # for `venn.plot` function
 ```
 
@@ -34,7 +38,7 @@ str(rDat, max.level = 0)
 ```
 
 ```
-## 'data.frame':	20442 obs. of  179 variables:
+## 'data.frame':	20001 obs. of  179 variables:
 ##   [list output truncated]
 ```
 
@@ -43,11 +47,11 @@ rDat[1:4, 1:4]
 ```
 
 ```
-##                        TCGA.AB.2803 TCGA.AB.2807 TCGA.AB.2963 TCGA.AB.2826
-## ?|100132510_calculated         14.0          4.0        31.82        32.00
-## ?|100134860_calculated        339.4        382.7       198.44       113.44
-## ?|10357_calculated              5.0          2.0         8.98        26.12
-## ?|10431_calculated           1638.1        788.5      2078.18      1253.20
+##                             2803  2805   2806   2807
+## A1BG-AS|503538_calculated  794.1 431.6  893.2 1097.4
+## A1BG|1_calculated         1141.2 405.4 1006.7 1123.7
+## A1CF|29974_calculated        2.0   2.0    2.0    3.0
+## A2LD1|87769_calculated     196.5 229.1  181.8  113.1
 ```
 
 ```r
@@ -55,8 +59,7 @@ head(names(rDat))
 ```
 
 ```
-## [1] "TCGA.AB.2803" "TCGA.AB.2807" "TCGA.AB.2963" "TCGA.AB.2826"
-## [5] "TCGA.AB.2867" "TCGA.AB.2818"
+## [1] "2803" "2805" "2806" "2807" "2808" "2810"
 ```
 
 ```r
@@ -64,11 +67,11 @@ head(rownames(rDat), n = 10)
 ```
 
 ```
-##  [1] "?|100132510_calculated" "?|100134860_calculated"
-##  [3] "?|10357_calculated"     "?|10431_calculated"    
-##  [5] "?|114130_calculated"    "?|115669_calculated"   
-##  [7] "?|120126_calculated"    "?|1231_calculated"     
-##  [9] "?|127550_calculated"    "?|136157_calculated"
+##  [1] "A1BG-AS|503538_calculated" "A1BG|1_calculated"        
+##  [3] "A1CF|29974_calculated"     "A2LD1|87769_calculated"   
+##  [5] "A2ML1|144568_calculated"   "A2M|2_calculated"         
+##  [7] "A4GALT|53947_calculated"   "A4GNT|51146_calculated"   
+##  [9] "AAA1|404744_calculated"    "AAAS|8086_calculated"
 ```
 
 ```r
@@ -113,203 +116,7 @@ head(rDes)
 ```
 
 
-RNA-seq data: there are 20442 transcripts (rows) for 179 patients (columns). The row names are strange, I will attempt to change them.
-
-Experimental design: there are 179 rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and 179 variables. Note the sample ID naming scheme does not match across `rDat` and `rDes`, so I will need to fix this.
-
-
-## Clean rDat
-Change sample names in `rDat` to match `rDes` by extracting substrings, i.e. extract the numbers in each sample name:
-
-```r
-names(rDat) <- regmatches(names(rDat), regexpr("(?<=AB.).*", names(rDat), perl = TRUE))
-head(names(rDat))
-```
-
-```
-## [1] "2803" "2807" "2963" "2826" "2867" "2818"
-```
-
-
-Reorder the columns (patients) to match the order of the experimental design file 'rDes$TCGA\_patient_id`:
-
-```r
-rDat <- rDat[, order(names(rDat))]
-identical(names(rDat), as.character(rDes$TCGA_patient_id))
-```
-
-```
-## [1] TRUE
-```
-
-
-Now to fix the row names: some row names begin with "?", and each row name has the suffix "|", followed by an integer, then "_calculated". This naming scheme is explained [here](https://wiki.nci.nih.gov/display/TCGA/RNASeq+Data+Format+Specification), where the row names are: "valid HUGO name|GENEID (if no HUGO name, '?' is present)".
-
-Remove the rows with "?" in the row name:
-
-```r
-# '?' only present at the start of the row name: rownames(rDat)[grep('[?]',
-# rownames(rDat))]
-length(grep("[?]", rownames(rDat)))
-```
-
-```
-## [1] 123
-```
-
-```r
-rDat <- rDat[grep("[?]", rownames(rDat), invert = TRUE), ]
-dim(rDat)
-```
-
-```
-## [1] 20319   179
-```
-
-
-
-## Filtering
-Remove transcripts with read count = 0 across all samples:
-
-```r
-# Number of transcripts with read count = 0 for all samples
-nrow(rDat[rowSums(rDat) == 0, ])
-```
-
-```
-## [1] 318
-```
-
-```r
-# Remove these transcripts
-rDat <- rDat[rowSums(rDat) != 0, ]
-dim(rDat)
-```
-
-```
-## [1] 20001   179
-```
-
-
-I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 read count values may be instances where genes are completely deleted from the genome and thus no transcription can occur.
-
-
-## Density plot
-Check the density plot of read count values across all samples:
-
-```r
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "ReadCount")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-head(rDatMelt)
-```
-
-```
-##   Sample ReadCount
-## 1   2803    792.14
-## 2   2803   1139.18
-## 3   2803      0.00
-## 4   2803    194.50
-## 5   2803     24.36
-## 6   2803    982.14
-```
-
-```r
-ggplot(rDatMelt, aes(ReadCount)) + geom_density()
-```
-
-![plot of chunk readCountDensityPlot](figure/readCountDensityPlot.png) 
-
-
-The data has to be log transformed:
-
-```r
-ggplot(rDatMelt, aes(log(ReadCount))) + geom_density()
-```
-
-```
-## Warning: Removed 541033 rows containing non-finite values (stat_density).
-```
-
-![plot of chunk readCountlog2DensityPlot](figure/readCountlog2DensityPlot.png) 
-
-
-A lot of genes have read count values < 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in `rDat`:
-
-```r
-rDat <- rDat + 1
-```
-
-
-Now re-make the density plot:
-
-```r
-rDat <- rDat + 1
-rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "ReadCount")
-```
-
-```
-## Using  as id variables
-```
-
-```r
-ggplot(rDatMelt, aes(log2(ReadCount))) + geom_density()
-```
-
-![plot of chunk readCountAdd1Log2DensityPlot](figure/readCountAdd1Log2DensityPlot.png) 
-
-
-## Save cleaned read count data to file
-
-```r
-write.table(rDat, "../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
-    row.names = TRUE)
-```
-
-
-Ensure we can read the data back in correctly:
-
-```r
-test <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
-    header = TRUE, check.names = FALSE)
-str(test, max.level = 0)
-```
-
-```
-## 'data.frame':	20001 obs. of  179 variables:
-##   [list output truncated]
-```
-
-```r
-head(test[1:5, 1:5])
-```
-
-```
-##                              2803   2805    2806    2807   2808
-## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
-## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
-## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
-## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
-## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
-```
-
-```r
-tail(test[1:5, 1:5])
-```
-
-```
-##                              2803   2805    2806    2807   2808
-## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
-## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
-## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
-## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
-## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
-```
+RNA-seq data: there are 20001 transcripts (rows) for 179 patients (columns). Experimental design: there are 179 rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and 179 variables.
 
 
 ## Differential expression analysis using voom
@@ -360,7 +167,7 @@ head(design)
 rDatVoom <- voom(rDat, design, plot = TRUE, lib.size = colSums(rDat) * normFactor)
 ```
 
-![plot of chunk rDatvoomMeanVarTrendPlot](figure/rDatvoomMeanVarTrendPlot.png) 
+![plot of chunk voomMeanVarTrendPlot_readCount](figure/voomMeanVarTrendPlot_readCount.png) 
 
 
 Now find genes differentially expressed between males and females:
@@ -467,7 +274,7 @@ tail(topTable(fit, coef = "sexM", n = Inf))
 
 ```
 ##                              logFC AveExpr        t P.Value adj.P.Val
-## CAT|847_calculated      -0.0064283   9.302 -0.04436  0.9647    0.9987
+## CAT|847_calculated      -0.0064284   9.302 -0.04436  0.9647    0.9987
 ## MYO15B|80022_calculated  0.0026243   9.178  0.02468  0.9803    0.9987
 ## FTL|2512_calculated     -0.0053514   9.611 -0.04017  0.9680    0.9987
 ## TGOLN2|10618_calculated -0.0009195   9.347 -0.01540  0.9877    0.9987
@@ -592,7 +399,7 @@ rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE, lib.size = colSums(rDatCRG
     normFactor)
 ```
 
-![plot of chunk rDatCRGIPvoomMeanVarTrendPlot](figure/rDatCRGIPvoomMeanVarTrendPlot.png) 
+![plot of chunk voomMeanVarTrendPlot_readCount_CRGIP](figure/voomMeanVarTrendPlot_readCount_CRGIP.png) 
 
 ```r
 fit <- lmFit(rDatCRGIPvoom, design)
@@ -632,10 +439,9 @@ voomCRgenes <- rownames(voomCR)
 ```
 
 
+Therefore, there are 817 genes differentially expressed between Good vs. Intermediate and Poor cytogenetic risks.
 
-
-
-Genes differentially expressed between Good and Poor cytogenetic risk:
+Which genes are differentially expressed between Good vs. Poor cytogenetic risk?
 
 ```r
 voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-05, n = Inf)
@@ -660,8 +466,9 @@ head(voomCRGP)
 ## LPO|4025_calculated      -4.1998  3.9162  -9.691 4.562e-18 1.303e-14 30.46
 ```
 
+Therefore there are 418 genes are differentially expressed between Good vs. Poor cytogenetic risk.
 
-Plot top genes differentially expressed between Good and Poor cytogenetic risk:
+Plot top 6 genes differentially expressed between Good vs. Poor cytogenetic risk:
 
 ```r
 voomCRGPgenes <- rownames(voomCRGP)
@@ -719,10 +526,10 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk CytoRisk_GoodvsPoor_TopSixBoxplot](figure/CytoRisk_GoodvsPoor_TopSixBoxplot.png) 
+![plot of chunk cytoRisk_GoodvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_read_count](figure/cytoRisk_GoodvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_read_count.png) 
 
 
-Genes differentially expressed between Good and Intermediate cytogenetic risk:
+Which genes are differentially expressed between Good vs. Intermediate cytogenetic risk?
 
 ```r
 voomCRGI <- topTable(fit, coef = "cytoRiskIntermediate", p.value = 1e-05, n = Inf)
@@ -747,8 +554,9 @@ head(voomCRGI)
 ## LPO|4025_calculated    -4.040  3.9162 -12.02 1.073e-24 3.575e-21 45.47
 ```
 
+Therefore there are 509 genes differentially expressed between Good vs. Intermediate cytogenetic risk.
 
-Plot top genes differentially expressed between Good and Intermediate cytogenetic risk:
+Plot top 6 genes differentially expressed between Good vs. Intermediate cytogenetic risk:
 
 ```r
 voomCRGIgenes <- rownames(voomCRGI)
@@ -806,7 +614,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk CytoRisk_GoodvsInt_TopSixBoxplot](figure/CytoRisk_GoodvsInt_TopSixBoxplot.png) 
+![plot of chunk cytoRisk_GoodvsInt_TopSixDEgenes_FDR1e-5_Boxplot_readCount](figure/cytoRisk_GoodvsInt_TopSixDEgenes_FDR1e-5_Boxplot_readCount.png) 
 
 
 How can we compare Intermediate and Poor risk? Create a contrast matrix:
@@ -885,8 +693,9 @@ summary(resCont)
 # <- rownames(rDatCRGIP)[which(resCont[ , 'PoorVsInt'] > 0)]
 ```
 
+Therefore there are 148 genes differentially expressed between Intermediate and Poor cytogenetic risk.
 
-Plot top genes differentially expressed between Intermediate and Poor cytogenetic risk:
+Plot top 6 genes differentially expressed between Intermediate and Poor cytogenetic risk:
 
 ```r
 voomCRIPgenes <- rownames(voomCRIP)
@@ -944,7 +753,7 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     axis.ticks.x = element_blank())
 ```
 
-![plot of chunk CytoRisk_IntvsPoor_TopSixBoxplot](figure/CytoRisk_IntvsPoor_TopSixBoxplot.png) 
+![plot of chunk cytoRisk_IntvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_readCount](figure/cytoRisk_IntvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_readCount.png) 
 
 
 Create a Venn diagram to show which genes were differentially expressed:
@@ -958,7 +767,7 @@ vennPlot <- venn.diagram(deGenes, filename = NULL, force.unique = TRUE, fill = c
 grid.draw(vennPlot)
 ```
 
-![plot of chunk CytoRiskDEA_allComparisons_FDR1e-5_VennDiagram](figure/CytoRiskDEA_allComparisons_FDR1e-5_VennDiagram.png) 
+![plot of chunk cytoRiskDEA_AllComparisons_FDR1e-5_VennDiagram_readCount](figure/cytoRiskDEA_AllComparisons_FDR1e-5_VennDiagram_readCount.png) 
 
 
 Wow one gene is differentially expressed between all groups? What is it?!
@@ -1020,5 +829,5 @@ ggplot(rDatvoomCR, aes(Transcript, log2(Read_counts), colour = Cytogenetic_risk)
     geom_boxplot()
 ```
 
-![plot of chunk CytoRiskDEA_allComparisons_commonGene_Boxplot](figure/CytoRiskDEA_allComparisons_commonGene_Boxplot.png) 
+![plot of chunk cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm](figure/cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm.png) 
 
