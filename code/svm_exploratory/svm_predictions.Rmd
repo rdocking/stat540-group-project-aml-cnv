@@ -1,0 +1,478 @@
+SVM Predictions
+========================================================
+
+### Prep Work
+
+**Load RNA Seq data and design, then merge. I will use the read counts data for this analysis.**
+```{r}
+rna_seq_dat <-read.table("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", 
+                            header = TRUE, check.names = FALSE)
+
+exp_dat <- read.table("../../data/experimental_design_cleaned.txt", 
+                           sep = "\t", header = TRUE, row.names = 1)
+
+joined_dat <- cbind(exp_dat,t(rna_seq_dat))
+```
+
+**Load libraries.**
+```{r}
+library(plyr)
+library(kernlab)
+library(taRifx)
+library(cvTools)
+library(VennDiagram)
+library(limma)
+```
+
+**Helper functions.**
+```{r}
+# Function to choose features by selecting the top loadings in PCA
+# input.dat: training data set
+# input.labels: true outcomes for training data
+fs.pca <- function(input.dat, input.labels) {
+  pca.res <- prcomp(input.dat)
+  top.features <- sort(abs(pca.res$rotation[,1]), decreasing = TRUE)[1:10]
+  return(names(top.features))
+}
+```
+
+```{r}
+# Function to select features using linear models
+# input.dat: training data set
+# input.labels: true outcomes for training data
+fs.lm <- function(input.dat, input.labels) {
+  norm.factor <- calcNormFactors(input.dat)
+  design <- model.matrix(~input.labels)
+  colnames(design) <- c("Intercept", "Label")
+  dat.voomed <- voom(input.dat, design, lib.size = colSums(input.dat) * norm.factor)
+  fit <- lmFit(dat.voomed, design)
+  ebFit <- eBayes(fit)
+  hits <- topTable(ebFit, n = Inf, coef = "Label")
+  train.features <- rownames(hits)[1:50]
+  return(train.features)
+}
+```
+
+Part 1: Predicting Cytogenetic Risk
+-------------------------
+
+### Part 1a: Data prep
+
+**First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
+```{r}
+levels(joined_dat$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
+```
+
+**Remove the rows with N.D.**
+```{r}
+dat_filt <- subset(joined_dat,joined_dat$Cytogenetic_risk != "N.D.")
+```
+
+**Now, for the SVM, let's make a binary prognosis columns (TRUE for poor).**
+```{r}
+dat_svm <- dat_filt
+dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(FALSE,FALSE,TRUE), warn_missing = TRUE)
+```
+
+### Part 1b: Predict using just most correlated gene features
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+```{r}
+prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
+prelim <- dat_svm[,c(colnames(prelim),"prognosis","Cytogenetic_risk")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+```
+
+**Prepare list for top genes.**
+```{r}
+top_genes_per_fold <- list()
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:5) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim[folds$subsets[folds$which==f],]
+  prelim_test_labels <- prelim_test$prognosis
+  
+  # *** Narrow the feature set by finding the genes most correlated with risk in the test set ***
+  
+  # Get just gene columns
+  gene_cols <- prelim_train[,grepl(".*calculated",colnames(prelim_train))]
+  
+  # Get correlations
+  gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$Cytogenetic_risk),gene_cols,method="spearman")))
+  
+  # Sort
+  gene_corrs_sort <- sort(gene_corrs, f= ~ -V1, drop=FALSE)
+  
+  # Grab top 10
+  gene_corrs_top <- gene_corrs_sort[1:10,,drop=FALSE]
+  top_genes_per_fold <- c(top_genes_per_fold,rownames(gene_corrs_top))
+  
+  # *** Do SVM ***
+  
+  # Prepare training and test sets
+  dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"prognosis")]
+  dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"prognosis")]
+  
+  # Build
+  fit_svm <- ksvm(prognosis~.,dat_svm_gene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_gene_test,type="response")
+  
+  # Process
+  results <- table(prelim_test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+**Explore the genes selected in each fold.**
+```{r}
+fold1 <- top_genes_per_fold[1:10];
+fold2 <- top_genes_per_fold[11:20];
+fold3 <- top_genes_per_fold[21:30];
+fold4 <- top_genes_per_fold[31:40];
+fold5 <- top_genes_per_fold[41:50];
+
+folds <- list(Fold1=fold1,Fold2=fold2,Fold3=fold3,Fold4=fold4,Fold5=fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL,force.unique=TRUE,ext.text=FALSE,margin=0.1)
+grid.draw(venn_plot)
+
+intersection <- unlist(intersect(fold1,intersect(fold2,intersect(fold3,intersect(fold4,fold5)))))
+```
+
+### Part 1c: Predict using top PCA loadings
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+```{r}
+prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
+prelim <- dat_svm[,c(colnames(prelim),"prognosis","Cytogenetic_risk")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+```
+
+**Prepare list for top genes.**
+```{r}
+selections_per_fold <- list()
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:5) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim[folds$subsets[folds$which==f],]
+  prelim_test_labels <- prelim_test$prognosis
+  
+  # *** Narrow the feature set by finding the top PCA loadings ***
+  
+  # Get just gene columns
+  gene_cols <- prelim_train[,grepl(".*calculated",colnames(prelim_train))]
+  
+  # Do PCA
+  selections <- fs.pca(gene_cols,prelim_train$prognosis)
+  selections_per_fold <- c(selections_per_fold,selections)
+  
+  # *** Do SVM ***
+  
+  # Prepare training and test sets
+  dat_svm_gene_train <- prelim_train[,c(selections,"prognosis")]
+  dat_svm_gene_test <- prelim_test[,c(selections,"prognosis")]
+  
+  # Build
+  fit_svm <- ksvm(prognosis~.,dat_svm_gene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_gene_test,type="response")
+  
+  # Process
+  results <- table(prelim_test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+**Explore the genes selected in each fold.**
+```{r}
+fold1 <- selections_per_fold[1:10];
+fold2 <- selections_per_fold[11:20];
+fold3 <- selections_per_fold[21:30];
+fold4 <- selections_per_fold[31:40];
+fold5 <- selections_per_fold[41:50];
+
+folds <- list(Fold1=fold1,Fold2=fold2,Fold3=fold3,Fold4=fold4,Fold5=fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL,force.unique=TRUE,ext.text=FALSE,margin=0.1)
+grid.draw(venn_plot)
+
+intersection <- unlist(intersect(fold1,intersect(fold2,intersect(fold3,intersect(fold4,fold5)))))
+```
+
+### Part 1d: Predict using differentially expressed features (according to linear model analysis)
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+```{r}
+prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
+prelim <- dat_svm[,c(colnames(prelim),"prognosis","Cytogenetic_risk")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+```
+
+**Prepare list for top genes.**
+```{r}
+selections_per_fold <- list()
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:5) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim[folds$subsets[folds$which==f],]
+  prelim_test_labels <- prelim_test$prognosis
+  
+  # *** Narrow the feature set by finding the top PCA loadings ***
+  
+  # Get just gene columns
+  gene_cols <- prelim_train[,grepl(".*calculated",colnames(prelim_train))]
+  
+  # Do lm selection
+  selections <- fs.lm(gene_cols,prelim_train$prognosis)
+  selections_per_fold <- c(selections_per_fold,selections)
+  
+  # *** Do SVM ***
+  
+  # Prepare training and test sets
+  dat_svm_gene_train <- prelim_train[,c(selections,"prognosis")]
+  dat_svm_gene_test <- prelim_test[,c(selections,"prognosis")]
+  
+  # Build
+  fit_svm <- ksvm(prognosis~.,dat_svm_gene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_gene_test,type="response")
+  
+  # Process
+  results <- table(prelim_test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+**Explore the genes selected in each fold.**
+```{r}
+fold1 <- selections_per_fold[1:10];
+fold2 <- selections_per_fold[11:20];
+fold3 <- selections_per_fold[21:30];
+fold4 <- selections_per_fold[31:40];
+fold5 <- selections_per_fold[41:50];
+
+folds <- list(Fold1=fold1,Fold2=fold2,Fold3=fold3,Fold4=fold4,Fold5=fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL,force.unique=TRUE,ext.text=FALSE,margin=0.1)
+grid.draw(venn_plot)
+
+intersection <- unlist(intersect(fold1,intersect(fold2,intersect(fold3,intersect(fold4,fold5)))))
+```
+
+### Part 1e: Predict using just non-gene features
+
+**Get non-gene predictors + prognosis.**
+```{r}
+dat_svm_nongene <- dat_svm[,c("Sex","Race","FAB_subtype","Age","prognosis")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(dat_svm_nongene), K = 10)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:10) {
+
+  # Divide preliminary dataset into train and test sets.
+  dat_svm_nongene_train <- dat_svm_nongene[folds$subsets[folds$which!=f,],]
+  dat_svm_nongene_test <- dat_svm_nongene[folds$subsets[folds$which==f],]
+  test_labels <- dat_svm_nongene_test$prognosis
+  
+  # Build SVM
+  fit_svm <- ksvm(prognosis~.,dat_svm_nongene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_nongene_test,type="response")
+  
+  # Process
+  results <- table(test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+Part 2: Predicting Cytogenetic Features (trisomy_8, del_5, and del_7)
+-------------------------
+
+### Part 2a: Data prep
+
+**Copy th original data and factorize the features columns (trisomy_8/del_5/del_7).**
+```{r}
+dat_svm <- joined_dat
+dat_svm$trisomy_8 <- as.factor(dat_svm$trisomy_8)
+dat_svm$del_5 <- as.factor(dat_svm$del_5)
+dat_svm$del_7 <- as.factor(dat_svm$del_7)
+```
+
+### Part 2n: Predict using just most correlated gene features
+
+**Make prelimary dataset with gene columns + trisomy_8/del_5/del_7 (toggle).**
+```{r}
+prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
+#prelim <- dat_svm[,c(colnames(prelim),"trisomy_8")]
+prelim <- dat_svm[,c(colnames(prelim),"del_5")]
+#prelim <- dat_svm[,c(colnames(prelim),"del_7")]
+```
+
+**Prepare folds and confusion matrix for cross validation.**
+```{r}
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePresent","trueAbsent"),c("predPresent","predAbsent")))
+```
+
+**Prepare list for top genes.**
+```{r}
+top_genes_per_fold <- list()
+```
+
+**Perform cross validation.**
+```{r}
+for (f in 1:5) {
+
+  # Divide preliminary dataset into train and test sets.
+  prelim_train <- prelim[folds$subsets[folds$which!=f,],]
+  prelim_test <- prelim[folds$subsets[folds$which==f],]
+  #prelim_test_labels <- prelim_test$trisomy_8
+  prelim_test_labels <- prelim_test$del_5
+  #prelim_test_labels <- prelim_test$del_7
+  
+  # *** Narrow the feature set by finding the genes most correlated with risk in the test set ***
+  
+  # Get just gene columns
+  gene_cols <- prelim_train[,grepl(".*calculated",colnames(prelim_train))]
+  
+  # Get correlations
+  #gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$trisomy_8),gene_cols,method="spearman")))
+  gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$del_5),gene_cols,method="spearman")))
+  #gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$del_7),gene_cols,method="spearman")))
+  
+  # Sort
+  gene_corrs_sort <- sort(gene_corrs, f= ~ -V1, drop=FALSE)
+  
+  # Grab top 10
+  gene_corrs_top <- gene_corrs_sort[1:10,,drop=FALSE]
+  top_genes_per_fold <- c(top_genes_per_fold,rownames(gene_corrs_top))
+  
+  # *** Do SVM ***
+  
+  # Prepare training and test sets
+  #dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"trisomy_8")]
+  #dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"trisomy_8")]
+  dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"del_5")]
+  dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"del_5")]
+  #dat_svm_gene_train <- prelim_train[,c(rownames(gene_corrs_top),"del_7")]
+  #dat_svm_gene_test <- prelim_test[,c(rownames(gene_corrs_top),"del_7")]
+  
+  # Build
+  #fit_svm <- ksvm(trisomy_8~.,dat_svm_gene_train)
+  fit_svm <- ksvm(del_5~.,dat_svm_gene_train)
+  #fit_svm <- ksvm(del_7~.,dat_svm_gene_train)
+  
+  # Predict
+  pred_svm <- predict(fit_svm,newdata=dat_svm_gene_test,type="response")
+  
+  # Process
+  results <- table(prelim_test_labels,pred_svm)
+  
+  conf_matrix[1,1] <- conf_matrix[1,1] + results[2,2]
+  conf_matrix[1,2] <- conf_matrix[1,2] + results[2,1]
+  conf_matrix[2,1] <- conf_matrix[2,1] + results[1,2]
+  conf_matrix[2,2] <- conf_matrix[2,2] + results[1,1] 
+}
+```
+
+**Process CV results.**
+```{r}
+sens_svm <- conf_matrix[1,1]/sum(conf_matrix[1,])
+spec_svm <- conf_matrix[2,2]/sum(conf_matrix[2,])
+```
+
+**Explore the genes selected in each fold.**
+```{r}
+fold1 <- top_genes_per_fold[1:10];
+fold2 <- top_genes_per_fold[11:20];
+fold3 <- top_genes_per_fold[21:30];
+fold4 <- top_genes_per_fold[31:40];
+fold5 <- top_genes_per_fold[41:50];
+
+folds <- list(Fold1=fold1,Fold2=fold2,Fold3=fold3,Fold4=fold4,Fold5=fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL,force.unique=TRUE,ext.text=FALSE,cat.cex=1.5)
+grid.draw(venn_plot)
+```
