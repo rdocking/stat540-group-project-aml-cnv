@@ -25,7 +25,7 @@ This directory contains:
 
 - Differential Expression II - Karyotypic Events: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.html) [R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.R)
 
-- SVM predictions: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_predictions.Rmd)
+- SVM predictions: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions.Rmd)
 
 - PCA feature selection: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_feature_selection.rmd)
 
