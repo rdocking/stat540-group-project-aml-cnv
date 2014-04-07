@@ -1,0 +1,14 @@
+Trisomy8, corrs:
+0.5789474
+0.9875
+
+NEIL2|252969_calculated KIAA1967|57805_calculated R3HCC1|203069_calculated DOCK5|80005_calculated BIN3|55909_calculated POLR3D|661_calculated PPP2R2A|5520_calculated TSNARE1|203062_calculated ZNF7|7553_calculated HEATR7A|727957_calculated COMMD5|28991_calculated IKBKB|3551_calculated
+
+Trisomy8, lm:
+0.6842105
+0.96875
+
+NEIL2|252969_calculated PPP2R2A|5520_calculated ZNF7|7553_calculated KIAA1967|57805_calculated R3HCC1|203069_calculated TSNARE1|203062_calculated C8orf55|51337_calculated ZFP41|286128_calculated
+
+NEIL2|252969_calculated KIAA1967|57805_calculated R3HCC1|203069_calculated PPP2R2A|5520_calculated TSNARE1|203062_calculated ZNF7|7553_calculated
+

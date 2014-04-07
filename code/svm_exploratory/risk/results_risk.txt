@@ -1,0 +1,14 @@
+Risk, corrs:
+0.3571429
+0.9626866
+
+ZNF498|221785_calculated ORAI2|80228_calculated FAM45A|404636_calculated HK2|3099_calculated TBX1|6899_calculated DEPDC7|91614_calculated CFD|1675_calculated PYGB|5834_calculated KRT17|3872_calculated MICALL2|79778_calculated CMTM7|112616_calculated TRIM36|55521_calculated
+
+Risk, lm:
+0.547619
+0.9552239
+
+SCD|6319_calculated STYXL1|51657_calculated PDAP1|11333_calculated LUC7L2|51631_calculated GSTK1|373156_calculated
+
+
+
