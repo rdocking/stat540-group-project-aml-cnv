@@ -341,7 +341,7 @@ miniDes$"TCGA_patient_id" <- rownames(rDes)
 tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 
 #plotting
-ggplot(tris8Dat, aes(Transcript, Counts, colour = trisomy_8)) +
+ggplot(tris8Dat, aes(Transcript, log2(Counts), colour = trisomy_8)) +
   geom_boxplot() +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
