@@ -44,7 +44,7 @@ names(rDat) <- regmatches(names(rDat), regexpr("(?<=AB.).*",
 head(names(rDat))
 ```
 
-Reorder the columns (patients) to match the order of the experimental design file 'rDes$TCGA\_patient_id`:
+Reorder the columns (patients) to match the order of the experimental design file `rDes$TCGA\_patient_id`:
 ```{r}
 rDat <- rDat[ , order(names(rDat))]
 identical(names(rDat), as.character(rDes$TCGA_patient_id))
