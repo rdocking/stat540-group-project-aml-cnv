@@ -1,7 +1,7 @@
 Random forest exploratory analysis
 ========================================================
 
-Load the data and metadata. In this analysis, I will be using the cleaned RPKM data.
+Load the data and metadata. In this analysis, I will be using the cleaned read count data.
 
 Load libraries:
 
@@ -59,7 +59,7 @@ library(VennDiagram)
 ```r
 rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
-rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, 
+rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", row.names = 1, 
     check.names = FALSE)
 ```
 
@@ -180,13 +180,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.8523
+## [1] 0.8011
 ## 
 ## $sens
-## [1] 0.9403
+## [1] 0.903
 ## 
 ## $spec
-## [1] 0.5714
+## [1] 0.4762
 ```
 
 ```r
@@ -212,13 +212,13 @@ cv.trisomy8.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9553
+## [1] 0.8994
 ## 
 ## $sens
-## [1] 0.9875
+## [1] 0.9688
 ## 
 ## $spec
-## [1] 0.6842
+## [1] 0.3158
 ```
 
 ```r
@@ -242,13 +242,13 @@ cv.del5.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9721
+## [1] 0.9385
 ## 
 ## $sens
-## [1] 0.9877
+## [1] 0.9816
 ## 
 ## $spec
-## [1] 0.8125
+## [1] 0.5
 ```
 
 ```r
@@ -272,13 +272,13 @@ cv.del7.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9497
+## [1] 0.9218
 ## 
 ## $sens
 ## [1] 0.981
 ## 
 ## $spec
-## [1] 0.7143
+## [1] 0.4762
 ```
 
 ```r

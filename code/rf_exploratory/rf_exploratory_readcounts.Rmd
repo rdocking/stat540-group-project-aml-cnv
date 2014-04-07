@@ -1,7 +1,7 @@
 Random forest exploratory analysis
 ========================================================
 
-Load the data and metadata. In this analysis, I will be using the cleaned RPKM data.
+Load the data and metadata. In this analysis, I will be using the cleaned read count data.
 
 Load libraries:
 ```{r}
@@ -18,7 +18,7 @@ library(VennDiagram)
 ```{r}
 rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
-rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, check.names = FALSE)
+rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", row.names = 1, check.names = FALSE)
 ```
 
 
