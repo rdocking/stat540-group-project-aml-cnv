@@ -8,7 +8,7 @@ This code applies filters to the RNA seq RPKM data and cleans row and column nam
 
 ## Load data and required libraries
 Load RNA-seq data and the experimental design files:
-```{r}
+```{r message=FALSE, warning=FALSE}
 rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz", sep = "\t", header = TRUE, row.names = 1)
 rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
@@ -115,7 +115,7 @@ I have decided not to apply any additional filters to our data, since I believe 
 
 ## Density plot
 Check the density plot of RPKM values across all samples:
-```{r rpkm_DensityPlot}
+```{r densityPlot_rpkm}
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")
 head(rDatMelt)
@@ -124,7 +124,7 @@ ggplot(rDatMelt, aes(RPKM)) +
 ```
 
 The data has to be log transformed:
-```{r rpkm_log2_DensityPlot}
+```{r densityPlot_rpkm_log2}
 ggplot(rDatMelt, aes(log(RPKM))) +
   geom_density()
 ```
@@ -135,7 +135,7 @@ rDat <- rDat + 1
 ```
 
 Now re-make the density plot:
-```{r rpkm_Add1Log2_DensityPlot}
+```{r densityPlot_rpkm_Add1Log2}
 rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")
@@ -146,8 +146,8 @@ ggplot(rDatMelt, aes(log2(RPKM))) +
 
 ## Save the cleaned RNA-seq data to file
 ```{r}
-# write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t",
-#             row.names = TRUE)
+write.table(rDat, "../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t",
+            row.names = TRUE)
 ```
 
 Ensure we can read the data back in correctly:
