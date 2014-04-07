@@ -172,7 +172,7 @@ miniDes$"TCGA_patient_id" <- rownames(rDes)
 tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 
 #plotting
-ggplot(tris8Dat, aes(Transcript, RPKM, colour = trisomy_8)) +
+ggplot(tris8Dat, aes(Transcript, log2(RPKM), colour = trisomy_8)) +
   geom_boxplot() +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -211,7 +211,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(RPKM), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -232,7 +232,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(RPKM), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -253,7 +253,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(RPKM), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -291,7 +291,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -310,7 +310,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -329,7 +329,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -348,7 +348,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, RPKM, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
