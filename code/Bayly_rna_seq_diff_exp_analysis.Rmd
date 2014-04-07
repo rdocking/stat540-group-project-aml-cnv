@@ -92,6 +92,14 @@ Trying to find commonalities in most highly correlated samples. More to be done 
 ```{r}
 corMelt <- melt(cor(hDat), variable.name = "colname", value.name = "cor_coef")
 #will continue this...
+nrow(corMelt)
+corMelt <- subset(corMelt, RPKM < 1)
+corMelt <- order(corMelt, decreasing = FALSE)
+corMelt$rep <- c(1,2)
+corMelt <- subset(corMelt, rep != 2)
+#now we have a list of all correlation coefficients with names containing information. 
+#It may have been better, for this, to only have sample names.
+#then we could basically grep 1 sample (for a given cutoff) and get back all other samples with high correlation to that one.
 ```
 
 ```{r include=FALSE}
@@ -166,6 +174,12 @@ sum(a, b, c)
 it occurs in `r sum(a, b, c)` of the other lists. 
 
 *Exploring hit genes from trisomy_8.*
+topTable for Trisomy 8
+
+```{r}
+(ttfit_tris8)
+```
+
 Plotsmear of trisomy_8 hits. NOTE: plotsmear scales differently with different glms, though the counts are the same. Ideally they should be made to scale the same, so that only the colored points shift between them.
 
 ```{r tidy=FALSE}
@@ -205,6 +219,12 @@ ggplot(tris8Dat, aes(Transcript, RPKM, colour = trisomy_8)) +
 
 
 *Exploring hit genes from del_5.*
+TopTable for del_5
+
+```{r}
+(ttfit_del5)
+```
+
 Plotsmear of del_5 hits
 
 ```{r echo = FALSE}
@@ -237,7 +257,37 @@ ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
 
+Removing genes with max RPKM less than 8
+```{r echo = FALSE}
+del5Dat <- rDat[voomDel5genes,] #subsetting transcripts of interest from rDat
+del5Dat <- del5Dat[(apply(del5Dat, 1, max) > 8),] #or something like this
+del5Dat$Transcript <- rownames(del5Dat) #creating a transcript group
+del5Dat <- melt(del5Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+
+del5Dat$TCGA_patient_id <- gsub("X", "", del5Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
+
+ggplot(del5Dat, aes(Transcript, RPKM, colour = del_5)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+
 *Exploring hit genes from del_7.*
+TopTable for genes from del_7
+
+```{r}
+head(ttfit_del7)
+nrow(ttfit_del7)
+tail(ttfit_del7)
+```
+
 Plotsmear of del_7 hits
 
 ```{r echo = FALSE}
