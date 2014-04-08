@@ -54,7 +54,7 @@ We aimed to determine if RNA-seq expression profiles were predictive of cytogene
 2.	Gene selection using linear modelling
 3.	Gene selection using correlations
 
-We then trained two types of classifiers—random forests and support vector machines (SVMs).
+We then trained two types of classifiers: random forests and support vector machines (SVMs).
 
 ## Results:
 
