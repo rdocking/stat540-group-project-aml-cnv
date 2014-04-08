@@ -386,9 +386,6 @@ grid.draw(venn.plot)
 
 ## 4) Train RF to predict cytogenetic risk, use correlations for feature selection
 
-Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to poor and not poor:
-
-
 Run a 5-fold cross-validation for the data:
 
 ```r
@@ -442,13 +439,11 @@ grid.draw(venn.plot)
 First look at trisomy 8:
 
 ```r
-cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), rf.levels, 
+cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), 
     K = 5, fs.method = "corr")
 ```
 
-```
-## Error: missing values in object
-```
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-132.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-133.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-134.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-135.png) 
 
 ```r
 cv.trisomy8.res[1:3]
@@ -456,13 +451,13 @@ cv.trisomy8.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9553
+## [1] 0.9609
 ## 
 ## $sens
 ## [1] 0.6842
 ## 
 ## $spec
-## [1] 0.9875
+## [1] 0.9938
 ```
 
 ```r
@@ -474,7 +469,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-136.png) 
 
 ```r
 
@@ -483,23 +478,23 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "NEIL2|252969_calculated"   "PPP2R2A|5520_calculated"  
-## [3] "ZNF7|7553_calculated"      "KIAA1967|57805_calculated"
-## [5] "R3HCC1|203069_calculated"  "TSNARE1|203062_calculated"
-## [7] "C8orf55|51337_calculated"  "ZFP41|286128_calculated"
+##  [1] "NEIL2|252969_calculated"   "KIAA1967|57805_calculated"
+##  [3] "R3HCC1|203069_calculated"  "DOCK5|80005_calculated"   
+##  [5] "BIN3|55909_calculated"     "POLR3D|661_calculated"    
+##  [7] "PPP2R2A|5520_calculated"   "TSNARE1|203062_calculated"
+##  [9] "ZNF7|7553_calculated"      "HEATR7A|727957_calculated"
+## [11] "COMMD5|28991_calculated"   "IKBKB|3551_calculated"
 ```
 
 
 Next look at deletions of chromosome 5:
 
 ```r
-cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), rf.levels, K = 5, 
-    fs.method = "corr")
+cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), 
+    K = 5, fs.method = "corr")
 ```
 
-```
-## Error: missing values in object
-```
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-141.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-142.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-143.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-144.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-145.png) 
 
 ```r
 cv.del5.res[1:3]
@@ -507,10 +502,10 @@ cv.del5.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9721
+## [1] 0.9385
 ## 
 ## $sens
-## [1] 0.8125
+## [1] 0.4375
 ## 
 ## $spec
 ## [1] 0.9877
@@ -525,7 +520,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-146.png) 
 
 ```r
 
@@ -534,25 +529,18 @@ grid.draw(venn.plot)
 ```
 
 ```
-##  [1] "KDM3B|51780_calculated"        "EIF4EBP3|8637_calculated"     
-##  [3] "PCBD2|84105_calculated"        "KIAA0141|9812|1of2_calculated"
-##  [5] "PFDN1|5201_calculated"         "RBM22|55696_calculated"       
-##  [7] "ZMAT2|153527_calculated"       "CSNK1A1|1452_calculated"      
-##  [9] "PPP2CA|5515_calculated"        "WDR55|54853_calculated"       
-## [11] "CATSPER3|347732_calculated"    "HARS|3035_calculated"
+## [1] "DSCAM|1826_calculated"
 ```
 
 
 Next look at deletions of chromosome 7:
 
 ```r
-cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), rf.levels, K = 5, 
-    fs.method = "corr")
+cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), 
+    K = 5, fs.method = "corr")
 ```
 
-```
-## Error: missing values in object
-```
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-152.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-153.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-154.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-155.png) 
 
 ```r
 cv.del7.res[1:3]
@@ -578,7 +566,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-156.png) 
 
 ```r
 
@@ -587,11 +575,11 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "LUC7L2|51631_calculated"   "PDAP1|11333_calculated"   
-## [3] "MKRN1|23608_calculated"    "SLC25A13|10165_calculated"
-## [5] "GATAD1|57798_calculated"   "GSTK1|373156_calculated"  
-## [7] "STYXL1|51657_calculated"   "SUMF2|25870_calculated"   
-## [9] "CASP2|835_calculated"
+## [1] "MKRN1|23608_calculated"  "LUC7L2|51631_calculated"
+## [3] "GSTK1|373156_calculated" "PDAP1|11333_calculated" 
+## [5] "FSCN3|29999_calculated"  "CASP2|835_calculated"   
+## [7] "PRKAG2|51422_calculated" "CPSF4|10898_calculated" 
+## [9] "ARF5|381_calculated"
 ```
 
 

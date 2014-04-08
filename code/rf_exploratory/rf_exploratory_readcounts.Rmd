@@ -21,6 +21,13 @@ rownames(rDes) <- rDes$TCGA_patient_id
 rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", row.names = 1, check.names = FALSE)
 ```
 
+Preprocess data (normalize and log2) using voom:
+```{r}
+norm.factor <- calcNormFactors(rDat)
+dat.voomed <- voom(rDat, design = NULL, lib.size = colSums(rDat) * norm.factor)
+rDatNorm <- dat.voomed$E
+```
+
 
 ## 1) Functions for cross-validation
 ```{r}

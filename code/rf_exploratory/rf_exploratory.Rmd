@@ -192,9 +192,6 @@ grid.draw(venn.plot)
 
 ## 4) Train RF to predict cytogenetic risk, use correlations for feature selection
 
-Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to poor and not poor:
-
-
 Run a 5-fold cross-validation for the data:
 ```{r}
 cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
@@ -213,7 +210,7 @@ grid.draw(venn.plot)
 
 First look at trisomy 8:
 ```{r}
-cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), rf.levels, K = 5, fs.method = "corr")
+cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "corr")
 cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
@@ -226,7 +223,7 @@ grid.draw(venn.plot)
 
 Next look at deletions of chromosome 5:
 ```{r}
-cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), rf.levels, K = 5, fs.method = "corr")
+cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "corr")
 cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
@@ -239,7 +236,7 @@ grid.draw(venn.plot)
 
 Next look at deletions of chromosome 7:
 ```{r}
-cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), rf.levels, K = 5, fs.method = "corr")
+cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "corr")
 cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
