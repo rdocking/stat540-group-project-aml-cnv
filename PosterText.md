@@ -71,6 +71,7 @@ We then trained two types of classifiers: random forests and support vector mach
 - Linear model-based feature-selection outperformed the correlation-based feature selection, as assessed by the downstream classifier performance
 - Random Forests slightly out-performed SVMs in classification accuracy
 - The classifiers trained to predict 'intermediate' and 'good' cytogenetic risk showed high sensitivity and specificity. The classifiers trained to predict del5 and del7 also showed good results.
+- The observed high performance of the 'good' classifiers is expected; this class makes up the most homogeneous set of cases.
 
 ## Bibliography:
 
