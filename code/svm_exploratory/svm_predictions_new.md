@@ -123,7 +123,8 @@ svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
         
         pred.svm <- predict(fit.svm, newdata = test.dat, type = "response")
         
-        results <- table(test.labels, pred.svm)
+        results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.svm, 
+            levels = c(0, 1)), dnn = c("obs", "pred"))
         
         conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
         conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
@@ -177,13 +178,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.858
+## [1] NaN
 ## 
 ## $sens
-## [1] 0.5476
+## [1] NaN
 ## 
 ## $spec
-## [1] 0.9552
+## [1] NaN
 ```
 
 ```r
@@ -418,13 +419,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.8239
+## [1] NaN
 ## 
 ## $sens
-## [1] 0.4524
+## [1] NaN
 ## 
 ## $spec
-## [1] 0.9403
+## [1] NaN
 ```
 
 ```r
@@ -672,10 +673,10 @@ cv.risk.res[1:3]
 ## [1] 0.983
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.9394
 ## 
 ## $spec
-## [1] 0.9394
+## [1] 0.993
 ```
 
 ```r
@@ -733,10 +734,10 @@ cv.risk.res[1:3]
 ## [1] 0.9602
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.8182
 ## 
 ## $spec
-## [1] 0.8182
+## [1] 0.993
 ```
 
 ```r

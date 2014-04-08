@@ -99,7 +99,11 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
     
     pred.rf <- predict(fit.rf, newdata = test.dat, type = "response")
       
-    results <- table(test.labels, pred.rf)
+    results <- table(
+      factor(test.labels, levels = c(0,1)),
+      factor(pred.rf, levels = c(0,1)),
+      dnn = c("obs", "pred")
+    )
   
     conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
     conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]

@@ -34,7 +34,8 @@ fs.lm <- function(input.dat, input.labels) {
   fit <- lmFit(dat.voomed, design)
   ebFit <- eBayes(fit)
   hits <- topTable(ebFit, n = Inf, coef = "Label")
-  train.features <- hits$ID[1:25]
+#  train.features <- hits$ID[1:25]
+  train.features <- rownames(hits)[1:25]
   return(train.features)
 }
 ```
@@ -95,8 +96,12 @@ svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
     
     pred.svm <- predict(fit.svm, newdata = test.dat, type = "response")
       
-    results <- table(test.labels, pred.svm)
-  
+    results <- table(
+      factor(test.labels, levels = c(0,1)),
+      factor(pred.svm, levels = c(0,1)),
+      dnn = c("obs", "pred")
+    )
+    
     conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
     conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
     conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]

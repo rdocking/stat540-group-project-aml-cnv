@@ -137,7 +137,8 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm",
         
         pred.rf <- predict(fit.rf, newdata = test.dat, type = "response")
         
-        results <- table(test.labels, pred.rf)
+        results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.rf, 
+            levels = c(0, 1)), dnn = c("obs", "pred"))
         
         conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
         conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
@@ -300,13 +301,18 @@ cv.del5.res[1:3]
 all.results[["lm.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
+pdf("../../poster/rf_venn.pdf")
 plot.new()
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-96.png) 
+```
+## pdf 
+##   2
+```
 
 ```r
 
@@ -641,10 +647,10 @@ cv.risk.res[1:3]
 ## [1] 0.9659
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.8485
 ## 
 ## $spec
-## [1] 0.8485
+## [1] 0.993
 ```
 
 ```r
@@ -696,10 +702,10 @@ cv.risk.res[1:3]
 ## [1] 0.9602
 ## 
 ## $sens
-## [1] 0.986
+## [1] 0.8485
 ## 
 ## $spec
-## [1] 0.8485
+## [1] 0.986
 ```
 
 ```r
@@ -944,10 +950,10 @@ show(all.results)
 ## [1] 0.9659
 ## 
 ## $lm.good$sens
-## [1] 0.993
+## [1] 0.8485
 ## 
 ## $lm.good$spec
-## [1] 0.8485
+## [1] 0.993
 ## 
 ## 
 ## $corr.good
@@ -955,10 +961,10 @@ show(all.results)
 ## [1] 0.9602
 ## 
 ## $corr.good$sens
-## [1] 0.986
+## [1] 0.8485
 ## 
 ## $corr.good$spec
-## [1] 0.8485
+## [1] 0.986
 ## 
 ## 
 ## $lm.intermediate
