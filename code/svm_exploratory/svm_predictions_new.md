@@ -7,25 +7,11 @@ Load libraries:
 
 ```r
 library(kernlab)
-```
-
-```
-## Warning: package 'kernlab' was built under R version 3.0.2
-```
-
-```r
 library(cvTools)
 ```
 
 ```
 ## Loading required package: lattice
-```
-
-```
-## Warning: package 'lattice' was built under R version 3.0.2
-```
-
-```
 ## Loading required package: robustbase
 ```
 
@@ -42,32 +28,17 @@ library(caret)
 ```
 
 ```
-## Warning: package 'caret' was built under R version 3.0.2
+## Warning: package 'caret' was built under R version 3.0.3
 ```
 
 ```
 ## Loading required package: ggplot2
 ```
 
-```
-## Warning: package 'ggplot2' was built under R version 3.0.2
-```
-
 ```r
 library(plyr)
-```
-
-```
-## Warning: package 'plyr' was built under R version 3.0.2
-```
-
-```r
 library(limma)
 library(VennDiagram)
-```
-
-```
-## Warning: package 'VennDiagram' was built under R version 3.0.2
 ```
 
 ```
@@ -98,7 +69,8 @@ fs.lm <- function(input.dat, input.labels) {
     fit <- lmFit(dat.voomed, design)
     ebFit <- eBayes(fit)
     hits <- topTable(ebFit, n = Inf, coef = "Label")
-    train.features <- hits$ID[1:25]
+    # train.features <- hits$ID[1:25]
+    train.features <- rownames(hits)[1:25]
     return(train.features)
 }
 ```
@@ -736,7 +708,62 @@ grid.draw(venn.plot)
 ```
 
 
-## 6) Train svm to predict "Intermediate" cytogenetic risk, use linear models for feature selection
+## 7) Train svm to predict "Good" cytogenetic risk, using correlations for feature selection
+
+Run a 5-fold cross-validation for the data:
+
+```r
+cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "corr")
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.9602
+## 
+## $sens
+## [1] 0.993
+## 
+## $spec
+## [1] 0.8182
+```
+
+```r
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-19.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
+```
+
+
+## 8) Train svm to predict "Intermediate" cytogenetic risk, use linear models for feature selection
 
 Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to intermediate and not intermediate:
 
@@ -790,7 +817,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
 
 ```r
 
@@ -804,5 +831,60 @@ grid.draw(venn.plot)
 ##  [5] "HOXB6|3216_calculated"    "HOXB5|3215_calculated"   
 ##  [7] "NKX2-3|159296_calculated" "IQCE|23288_calculated"   
 ##  [9] "EVPL|2125_calculated"     "C7orf50|84310_calculated"
+```
+
+
+## 9) Train svm to predict "Intermediate" cytogenetic risk, using correlations for feature selection
+
+Run a 5-fold cross-validation for the data:
+
+```r
+cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "corr")
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.7841
+## 
+## $sens
+## [1] 0.8515
+## 
+## $spec
+## [1] 0.6933
+```
+
+```r
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
 ```
 

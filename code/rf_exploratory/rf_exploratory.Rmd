@@ -166,9 +166,11 @@ cv.del5.res[1:3]
 all.results[["lm.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
+pdf("../../poster/rf_venn.pdf")
 plot.new()
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
+dev.off()
 
 (common.fts.del5 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
 ```
