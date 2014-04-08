@@ -2,7 +2,7 @@ PCA Analysis
 ================
 
 ```{r}
-setwd("/Users/fdorri/Documents/UBC/courses/STAT540/workspace/finalProject/stat540-group-project-aml-cnv/code")
+#setwd("/Users/fdorri/Documents/UBC/courses/STAT540/workspace/finalProject/stat540-group-project-aml-cnv/code")
 rna_seq_dat_rpkm <-read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 rna_seq_dat_read <-read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 
