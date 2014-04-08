@@ -1,0 +1,225 @@
+Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+========================================================
+
+> This code is for plotting hits of interest from the DEA of the 3key deletion genotypes (trisomy 8, del 5 and del 7).
+> It performs differential expression analysis on cleaned RNA-seq read count data, and when given abrreviated hit names, 
+> it finds the full names, prepares the appropriate data matrix for plotting and then boxplots them.
+
+## Load data and required libraries
+Load RNA-seq data and the experimental design files:
+```{r Load data}
+rDes <- read.table("../data/experimental_design_cleaned.txt", 
+                           sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
+                          sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+```
+
+Load required libraries:
+```{r Load libraries, warning=FALSE, message=FALSE}
+library(ggplot2) # we'll make figures with both
+library(reshape2) # for the function melt
+library(limma)
+library(edgeR)
+#library(RColorBrewer)
+```
+
+Both the design matrix and the data matrix have already been cleaned, filtered and inspected.
+
+Apply scale normalization:
+```{r Apply scale normalization}
+normFactor <- calcNormFactors(rDat)
+```
+
+Preparing model matrix:
+```{r Preparing model matrix}
+#Preparing Model matrices for Voom normalization-------------
+modelMat_noInt <- model.matrix(~ trisomy_8*del_5*del_7, rDes)
+#The intercept represents a group with all samples without deletion of interest.
+#this group changes depending on the deletion, since some samples share multiple deletions.
+head(modelMat_noInt)
+```
+
+Finding genes differentially expressed between deletion type:
+```{r Vooming and Limming and Baysing - oh my!}
+dat.voomed <- voom(rDat, modelMat_noInt, plot = TRUE, lib.size = colSums(rDat)*normFactor)
+fit_lm <- lmFit(dat.voomed, modelMat_noInt)
+fit <- eBayes(fit_lm)
+```
+
+Making topTables for the hits (with no interaction)
+```{r topTabling the hits}
+ttfit_tris8 <- topTable(fit, number = Inf, coef = "trisomy_8TRUE", p.value=1e-5)
+ttfit_del5 <- topTable(fit, number = Inf, coef = "del_5TRUE", p.value=1e-5)
+ttfit_del7 <- topTable(fit, number = Inf, coef = "del_7TRUE", p.value=1e-5)
+```
+there are:
+`r nrow(ttfit_tris8)` hits for trisomy 8, `r nrow(ttfit_del5)` hits for del 5, and `r nrow(ttfit_del7)` hits for del 7.
+
+*Retrieving boxplots for the 4 hits of trisomy 8*
+```{r Trisomy 8: Preparing hits for boxplots}
+(ttfit_tris8)
+
+voomTris8genes <- rownames(ttfit_tris8)
+tris8Dat <- rDat[voomTris8genes,]
+tris8Dat$Transcript <- rownames(tris8Dat) #creating a transcript group
+tris8Dat <- melt(tris8Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "Counts")
+
+#cleaup molten counts data
+tris8Dat$TCGA_patient_id <- gsub("X", "", tris8Dat$TCGA_patient_id)
+tris8Dat$Transcript <- gsub("[|].*$", "", tris8Dat$Transcript)
+
+#preparing a small design matrix and merging
+miniDes <- rDes[,c("trisomy_8", "del_5" , "del_7")]
+miniDes$"TCGA_patient_id" <- rownames(rDes)
+tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
+```
+
+Boxplot for trisomy 8 genes
+```{r Trisomy 8: Boxplots}
+#plotting
+ggplot(tris8Dat, aes(Transcript, log2(Counts), colour = trisomy_8)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        aspect.ratio = 2) +
+   ggtitle("Hits for Trisomy 8")
+```
+
+*Retrieving hit genes from del_5.*
+
+Getting full names of genes for plotting (note they all use caps).
+```{r Del 5: Retreiving full hit names for a list}
+(ttfit_del5)
+#higher
+a <- grep("COL5A1", rownames(ttfit_del5))
+b <- grep("CEACAM1", rownames(ttfit_del5))
+c <- grep("CREB3L3", rownames(ttfit_del5))
+
+#lower
+d <- grep("RBM22", rownames(ttfit_del5))
+e <- grep("KDM3B", rownames(ttfit_del5))
+f <- grep("HARS", rownames(ttfit_del5))
+
+#alltogether
+del5_index <- c(a, b, c, d, e, f)
+
+#list of rownames for plugging back into the system
+voomDel5genes <- rownames(ttfit_del5[del5_index,])
+```
+
+This is just the plumbing for graph-making.
+```{r Del 5: Preparing hits for boxplots}
+del5Dat <- rDat[voomDel5genes,] #subsetting transcripts of interest from rDat
+del5Dat$Transcript <- rownames(del5Dat) #creating a transcript group
+del5Dat <- melt(del5Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "Counts")
+
+#cleaup molten counts data
+del5Dat$TCGA_patient_id <- gsub("X", "", del5Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
+```
+
+This is for the actual plot.
+```{r Del 5: Boxplots}
+ggplot(del5Dat, aes(Transcript, log2(Counts), colour = del_5)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        aspect.ratio = 2) +
+  ggtitle("Hits for Del 5")
+```
+
+*Exploring hit genes from del_7.*
+TopTable for genes from del_7.
+There are `r nrow(ttfit_del7)`, so I will explore the head an tail.
+
+```{r Del 7: Retreiving full hit names for a list}
+head(ttfit_del7)
+nrow(ttfit_del7)
+
+#higher
+a <- grep("CDCP1", rownames(ttfit_del7))
+b <- grep("FAM169A", rownames(ttfit_del7))
+c <- grep("BEND4", rownames(ttfit_del7))
+
+#lower
+d <- grep("LUC7L2", rownames(ttfit_del7))
+e <- grep("MKRN1", rownames(ttfit_del7))
+f <- grep("SLC25A13", rownames(ttfit_del7))
+
+#alltogether
+(del7_index <- c(a, b, c, d, e, f))
+
+#list of rownames for plugging back into the system
+voomDel7genes <- rownames(ttfit_del7[del7_index,])
+```
+
+This is just the plumbing for graph-making.
+```{r Del 7: Preparing hits for boxplots}
+del7Dat <- rDat[voomDel7genes,] #subsetting transcripts of interest from rDat
+del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
+del7Dat <- melt(del7Dat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "Counts")
+
+#cleaup molten counts data
+del7Dat$TCGA_patient_id <- gsub("X", "", del7Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
+del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
+```
+
+```{r Del 7: Boxplots}
+ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        aspect.ratio = 2) +
+  ggtitle("Hits for Del 7")
+```
+
+*Investigating hit shared by del_5 and del_7*
+adj. P. Values hit shared by del_5 and del_7
+
+```{r Del 5 & Del 7: retrieving hit and preparing for boxplotting, echo = TRUE}
+#Retrieving full hit name
+(SharedGene <- intersect(rownames(ttfit_del5), rownames(ttfit_del7)))
+
+#preparing hit for boxplot
+sgDat <- rDat[SharedGene, ] #subsetting transcripts of interest from rDat
+sgDat$Transcript <- rownames(sgDat) #creating a transcript group
+sgDat <- melt(sgDat, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "Counts")
+
+#cleaup molten counts data
+sgDat$TCGA_patient_id <- gsub("X", "", sgDat$TCGA_patient_id) #removing the "X" preceding patient ID names
+sgDat$Transcript <- gsub("[|].*$", "", sgDat$Transcript) #shortening transcript names
+
+#miniDes already made while exploring trisomy 8.
+sgDat <- merge(sgDat, miniDes, by = "TCGA_patient_id") #merging
+```
+
+```{r Del 5 & Del 7: Boxplots using both groupings}
+ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_5)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        aspect.ratio = 2) +
+  ggtitle("Collagen, type V, alpha 1: del 5 grouping")
+
+ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_7)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
+        aspect.ratio = 2) +
+  ggtitle("Collagen, type V, alpha 1: del 7 grouping")
+```
+
