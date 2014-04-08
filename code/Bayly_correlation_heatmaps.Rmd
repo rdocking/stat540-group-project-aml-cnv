@@ -1,0 +1,177 @@
+Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+========================================================
+
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
+
+This code performs differential expression analysis on cleaned RNA-seq read count data. In particular, it tests whether there is differential expression between different *deletions* (trisomy 8, del 5 and del 7) using `voom`.
+
+
+## Load data and required libraries
+Load RNA-seq data and the experimental design files:
+```{r}
+rDes <- read.table("../data/experimental_design_cleaned.txt", 
+                           sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
+                          sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+```
+
+Load required libraries:
+```{r warning=FALSE, message=FALSE}
+library(lattice) # if you don't already have this loaded ...
+library(ggplot2) # we'll make figures with both
+library(reshape2) # for the function melt
+library(limma)
+library(edgeR)
+library(car)
+library(RColorBrewer)
+library(plyr) # data aggregation
+library(scales) # scale functions for graphics, esp. alpha() function
+```
+
+## Data inspection
+```{r}
+str(rDat, max.level = 0)
+rDat[1:4, 1:4]
+head(names(rDat))
+head(rownames(rDat), n = 10)
+tail(rownames(rDat), n = 10)
+str(rDes, max.level = 0)
+head(rDes)
+```
+
+Both the design matrix and the data matrix have already been cleaned and filtered. 
+
+RNA-seq data: there are `r nrow(rDat)` transcripts (rows) for `r length(rDat)` patients (columns). Experimental design: there are `r nrow(rDes)` rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and `r length(rDat)` variables.
+
+### Differential expression analysis
+
+I will use `voom` to perform differential expression analysis.
+
+```{r fig.height=10, fig.width=10}
+HMprDes <- rDes
+HMprDes$sampleID <- paste0("X", rownames(rDes))
+hDat <- rDat
+colnames(hDat) <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, sep = ".")) 
+HMprDes$HmID <- with(HMprDes, paste(sampleID, Sex, Race, Age, FAB_subtype, sep = "."))
+```
+
+Before reordering to investigate possible trends, I will first see how it clusters without ordering.
+
+```{r}
+heatmap(cor(hDat), margins = c(10, 10), scale="none", col = brewer.pal(n = 9, name = "Blues")) 
+```
+
+There certainly seems to be groups of high correlation. 
+Let's see if any of the following variables could be responsible for this. 
+
+```{r echo = FALSE}
+#order: Sex
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Sex"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by sex") 
+
+#order: Race
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Race"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by race") 
+
+#order: FAB_Subtype
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"FAB_subtype"], HMprDes[,"Sex"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by FAB_Subtype") 
+
+#order: Age
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Age"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by age") 
+
+#order: Molecular_risk
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Molecular_risk"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by Molecular_risk") 
+```
+I do get correlations..
+
+As you can see, the labels don't line up with the color scheme. they must have gotten uncoupled
+souwehere along the way. Trying to fix....
+
+Note:
+HMprDes is the design matrix with an extra column containing sample names with extra info pasted on the end.
+
+Order the data based on Sex:
+```{r sampleCorr_ArrangeSex_Heatmap_readCount, fig.align='center'}
+pal <- c("#FB8072", "#80B1D3")
+mapCols <- data.frame(palette = pal, Sex = levels(HMprDes$Sex))
+HMprDesCol <- join(HMprDes, mapCols, by = "Sex")
+head(HMprDesCol)
+HMprDesColOrd <- arrange(HMprDesCol, Sex)
+sexCols <- unlist(as.character(HMprDesColOrd$palette))
+
+#CarmenCode with Rebecca Colors
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Sex"]), ]$HmID)]), 
+        Rowv = NA, Colv = NA, margins = c(10, 10), scale="none", 
+        ColSideColors = sexCols, 
+        col = brewer.pal(n = 9, name = "Blues")) 
+```
+
+Order the data based on FAB_subtype
+```{r sampleCorr_ArrangeFAB_Heatmap_readCount, fig.align='center'}
+pal <- brewer.pal(n = nlevels(HMprDes$FAB_subtype), name = "Set3")
+mapCols <- data.frame(palette = pal, FAB_subtype = levels(HMprDes$FAB_subtype))
+HMprDesCol <- join(HMprDes, mapCols, by = "FAB_subtype")
+HMprDesColOrd <- arrange(HMprDesCol, FAB_subtype)
+fabCols <- unlist(as.character(HMprDesColOrd$palette))
+
+#CarmenCode with Rebecca Colors
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"FAB_subtype"]), ]$HmID)]), 
+        Rowv = NA,
+        margins = c(10, 10), scale="none", 
+        ColSideColors = fabCols,
+        symm = TRUE,
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by FAB_Subtype") 
+```
+
+Order based on Cytogenetic risk
+```{r sampleCorr_ArrangeCytoRisk_Heatmap_readCount, fig.align='center'}
+pal <- brewer.pal(n = nlevels(HMprDes$Cytogenetic_risk), name = "Dark2")
+mapCols <- data.frame(palette = pal, 
+                      Cytogenetic_risk = levels(HMprDes$Cytogenetic_risk))
+HMprDesCol <- join(HMprDes, mapCols, by = "Cytogenetic_risk")
+HMprDesColOrd <- arrange(HMprDesCol, Cytogenetic_risk)
+crCols <- unlist(as.character(HMprDesColOrd$palette))
+
+#CarmenCode with Rebecca Colors
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Cytogenetic_risk"]), ]$HmID)]), 
+        Rowv = NA,
+        margins = c(10, 10), scale="none", 
+        ColSideColors = crCols,
+        symm = TRUE,
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by Cytogenetic_risk") 
+```
+
+Order based on Cytogenetic risk
+```{r sampleCorr_ArrangeMolcRisk_Heatmap_readCount, fig.align='center'}
+pal <- brewer.pal(n = nlevels(HMprDes$Cytogenetic_risk), name = "Dark2")
+mapCols <- data.frame(palette = pal, 
+                      Cytogenetic_risk = levels(HMprDes$Cytogenetic_risk))
+HMprDesCol <- join(HMprDes, mapCols, by = "Cytogenetic_risk")
+HMprDesColOrd <- arrange(HMprDesCol, Cytogenetic_risk)
+crCols <- unlist(as.character(HMprDesColOrd$palette))
+
+#CarmenCode with Rebecca Colors
+heatmap(cor(hDat[,(HMprDes[order(HMprDes[,"Cytogenetic_risk"]), ]$HmID)]), 
+        Rowv = NA,
+        margins = c(10, 10), scale="none", 
+        ColSideColors = crCols,
+        symm = TRUE,
+        col = brewer.pal(n = 9, name = "Blues"),
+        main = "Ordered by Cytogenetic_risk") 
+```

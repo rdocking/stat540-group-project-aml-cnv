@@ -75,7 +75,7 @@ head(modelMat_noInt)
 
 Now find genes differentially expressed between deletion type:
 ```{r}
-dat.voomed <- voom(rDat, modelMat_noInt, plot = TRUE, lib.size = colSums(rDat))
+dat.voomed <- voom(rDat, modelMat_noInt, plot = TRUE, lib.size = colSums(rDat)*normFactor)
 fit_lm <- lmFit(dat.voomed, modelMat_noInt)
 fit <- eBayes(fit_lm)
 ```
@@ -156,7 +156,7 @@ miniDes$"TCGA_patient_id" <- rownames(rDes)
 tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 
 #plotting
-ggplot(tris8Dat, aes(Transcript, Counts, colour = trisomy_8)) +
+ggplot(tris8Dat, aes(Transcript, log2(Counts), colour = trisomy_8)) +
   geom_boxplot() +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -195,7 +195,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, Counts, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(Counts), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -216,7 +216,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, Counts, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(Counts), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -238,7 +238,7 @@ del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat, aes(Transcript, Counts, colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(Counts), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -267,13 +267,11 @@ del5Dat2$Transcript <- gsub("[|].*$", "", del5Dat2$Transcript) #shortening trans
 miniDesdel5 <- miniDes[-c(94, 10, 42)] #[-c(94, 10, 42),]
 del5Dat2 <- merge(del5Dat2, miniDesdel5, by = "TCGA_patient_id") #merging
 
-ggplot(del5Dat2, aes(Transcript, Counts, colour = del_5)) +
+ggplot(del5Dat2, aes(Transcript, log2(Counts), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
-
-PPP2CA seems to differentiate well. however, it is also the second highest row index on the topTable , so this might not be the best results filtering method.
 
 *Exploring hit genes from del_7.*
 TopTable for genes from del_7.
@@ -310,7 +308,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, Counts, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -329,7 +327,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, Counts, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -357,7 +355,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, Counts, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -380,7 +378,7 @@ del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcr
 #miniDes already made while exploring trisomy 8.
 del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(del7Dat, aes(Transcript, Counts, colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
@@ -425,7 +423,12 @@ sgDat$Transcript <- gsub("[|].*$", "", sgDat$Transcript) #shortening transcript 
 #miniDes already made while exploring trisomy 8.
 sgDat <- merge(sgDat, miniDes, by = "TCGA_patient_id") #merging
 
-ggplot(sgDat, aes(Transcript, Counts, colour = del_5)) +
+ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_5)) +
+  geom_boxplot()  +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())

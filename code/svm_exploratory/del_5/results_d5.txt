@@ -1,0 +1,14 @@
+Del5, corrs:
+0
+1
+
+B3GALT5|10317_calculated GALNT13|114805_calculated DSCAM|1826_calculated
+
+Del5, lm:
+0.625
+0.9877301
+
+KDM3B|51780_calculated EIF4EBP3|8637_calculated PCBD2|84105_calculated KIAA0141|9812|1of2_calculated PFDN1|5201_calculated RBM22|55696_calculated ZMAT2|153527_calculated CSNK1A1|1452_calculated PPP2CA|5515_calculated WDR55|54853_calculated CATSPER3|347732_calculated HARS|3035_calculated
+
+
+
