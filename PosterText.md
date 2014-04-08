@@ -21,6 +21,8 @@ However, detection of copy-number variants (CNVs) using RNA-seq data alone is qu
 
 ## Methods:
 
+### Data Sets
+
 We have re-analyzed data made available through a recent publication by The Cancer Genome Atlas (3). The data-set consists of RPKM measurements made from RNA-seq libraries from 179 patients with AML, with matched clinical data noting CNV events observed through standard cytogenetics.
 
 The specific aim of the project is to classify samples according to either their *cytogenetic risk status*, or to predict the *presence or absence of three recurrent CNV events*.
@@ -28,6 +30,20 @@ The specific aim of the project is to classify samples according to either their
 There are three levels of cytogenetic risk status according to current treatment guidelines: good, intermediate, and poor risk. These different classes correspond to the presence or absence of specific CNV events. In addition, three of the most commonly recurrent CNV events are trisomy 8 (+8), complete or partial deletion of chromosome 5 (-5/del(5q)), and complete or partial deletion of chromosome 7 (-7/del(7q)). We used the cytogenetic risk status made available by the authors, and scored each sample for presence of the three specific CNV events:
 
 (Insert table showing breakdown of sample classes).
+
+The data set was filtered to remove transcripts where the measured RPKM was 0 across all samples, and log2-transformed.
+
+### Differential Expression
+
+We used `voom` (4) to test for differential expression between:
+
+1. Genes differentially expressed between Good, Intermediate, and Poor cytogenetic risk.
+2. Genes differentially expressed in samples containing or lacking the three specific CNV events.
+
+In both cases, we set a FDR of 1e-05, and examined the observed hits for potential biological relevance.
+
+### Machine Learning
+
 
 
   
@@ -49,4 +65,4 @@ There are three levels of cytogenetic risk status according to current treatment
 
 3. The Cancer Genome Atlas Research Network. Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. N. Engl. J. Med. 368, 2059–2074 (2013). [PMID: 23634996](http://www.ncbi.nlm.nih.gov/pubmed/?term=23634996)
 
-
+4.	Law CW, Chen Y, Shi W, Smyth GK. Voom: precision weights unlock linear model analysis tools for RNA-seq read counts. Genome Biol. 2014 Feb 3;15(2):R29. 
