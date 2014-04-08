@@ -48,12 +48,14 @@ In both cases, we set a FDR of 1e-05, and examined the observed hits for overlap
 
 ### Machine Learning
 
-We applied several different machine-learning approaches to classify the samples. First, we used Principal Component Analysis (PCA) to ...
+We aimed to determine if RNA-seq expression profiles were predictive of cytogenetic risk and abnormalities. We explored multiple strategies for feature selection, including both unsupervised and supervised methods:
 
-Next, we built a Support Vector Machine (SVM) model to...
+1.	PCA transformation
+2.	Gene selection using linear modelling
+3.	Gene selection using correlations
 
-Finally, we used Random Forest (RF) to...
- 
+We then trained two types of classifiers—random forests and support vector machines (SVMs).
+
 ## Results:
 
 
