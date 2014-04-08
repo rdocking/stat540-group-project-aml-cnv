@@ -6,9 +6,6 @@ setwd("/Users/fdorri/Documents/UBC/courses/STAT540/workspace/finalProject/stat54
 rna_seq_dat_rpkm <-read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 rna_seq_dat_read <-read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 
-#rna_seq_dat_norm <- rna_seq_dat
-#rna_seq_dat_norm <- rna_seq_dat[,apply(rna_seq_dat, 2, var, na.rm=TRUE) != 0]
-#rna_seq_dat_norm <- rna_seq_dat[apply(t(rna_seq_dat), 2, var, na.rm=TRUE) != 0,]
 
 exp_dat <- read.table("../data/experimental_design_cleaned.txt", 
                            sep = "\t", header = TRUE, row.names = 1)
@@ -29,16 +26,15 @@ library(VennDiagram)
 ```
 **Now, let's remove the columns with NA values - we won't use them at this time.**
 ```{r}
-complete.cols.rpkm <- lapply(joined_dat_rpkm,function(x) {all(!is.na(x))})
-dat.complete.rpkm <- joined_dat_rpkm[unlist(complete.cols.rpkm)]
+#complete.cols.rpkm <- lapply(joined_dat_rpkm,function(x) {all(!is.na(x))})
+#dat.complete.rpkm <- joined_dat_rpkm[unlist(complete.cols.rpkm)]
+dat.complete.rpkm <- joined_dat_rpkm
 
-complete.cols.read <- lapply(joined_dat_read,function(x) {all(!is.na(x))})
-dat.complete.read <- joined_dat_read[unlist(complete.cols.read)]
+# complete.cols.read <- lapply(joined_dat_read,function(x) {all(!is.na(x))})
+# dat.complete.read <- joined_dat_read[unlist(complete.cols.read)]
+dat.complete.read <- joined_dat_read
 ```
-**First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
-```{r}
-levels(dat.complete.rpkm$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
-levels(dat.complete.read$Cytogenetic_risk) <- c("Poor","Intermediate","Good","N.D.")
+
 
 ```
 **Remove the rows with N.D.**
@@ -129,7 +125,7 @@ run_svm <- function(x.tr, x.ts){
 ```{r}
 cross_validate <- function(prelim_in, d){ 
   k<- 5
-  set.seed(1234)
+  set.seed(540)
   folds <- cvFolds(nrow(prelim.in.read), K = k)
   conf_matrix_ker <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
   conf_matrix_sup <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
@@ -138,15 +134,22 @@ cross_validate <- function(prelim_in, d){
     
     x.ts <- t(data.matrix(prelim.in[folds$subsets[folds$which==f,],grepl(".*calculated",colnames(prelim.in))]))
     ytest <- prelim.in[folds$subsets[folds$which==f,],c("prognosis")]
+    ytest <- as.numeric(levels(ytest))[ytest]
     x.tr <- t(data.matrix(prelim.in[folds$subsets[folds$which!=f,],grepl(".*calculated",colnames(prelim.in))]))
     ytrain <- prelim.in[folds$subsets[folds$which!=f,],c("prognosis")]
-    
+    ytrain <- as.numeric(levels(ytrain))[ytrain]
+    cat(ytest,"\n")
+
     #kernel PCA
-    res <- kernel_pca((x.tr), (x.ts),  as.numeric(levels(ytrain))[ytrain], d, FALSE)
+    res <- kernel_pca((x.tr), (x.ts),  ytrain, d, FALSE)
     xtrain <- t(res$tr.dat)
     xtest <- t(res$ts.dat)
-    xtrain <- cbind(xtrain, prelim.in[folds$subsets[folds$which!=f,],c("prognosis","Cytogenetic_risk")])
-    xtest <- cbind(xtest, prelim.in[folds$subsets[folds$which==f,],c("prognosis","Cytogenetic_risk")])
+    ytr <- prelim.in[folds$subsets[folds$which!=f,],c("prognosis")]
+    ytr <- as.numeric(levels(ytr))[ytr]
+    xtrain <- cbind(xtrain, prognosis=ytr)
+    yts <- prelim.in[folds$subsets[folds$which==f,],c("prognosis")]
+    yts <- as.numeric(levels(yts))[yts]
+    xtest <- cbind(xtest, prognosis=yts)
   
     fit_svm <- ksvm(prognosis~.,xtrain)
     pred_svm <- predict(fit_svm,newdata=xtest,type="response")
@@ -161,7 +164,7 @@ cross_validate <- function(prelim_in, d){
     ###############
     #supervised PCA
     cat("supervised PCA\n")
-    sup.res <- kernel_pca((x.tr), (x.ts), as.numeric(levels(ytrain))[ytrain], d, TRUE)
+    sup.res <- kernel_pca((x.tr), (x.ts), ytrain, d, TRUE)
     sup.ts <- t(sup.res$ts.dat)
     sup.tr <- t(sup.res$tr.dat)
     xtrain.supervised <- cbind(sup.tr, prelim.in[folds$subsets[folds$which!=f,],c("prognosis","Cytogenetic_risk")])
@@ -169,6 +172,7 @@ cross_validate <- function(prelim_in, d){
     
     fit_svm <- ksvm(prognosis~.,xtrain.supervised)
     pred_svm <- predict(fit_svm,newdata=xtest.supervised,type="response")
+    
   
     results.sup <- table(ytest,pred_svm)
     
@@ -209,51 +213,51 @@ prepareData  <- function(g, prDat, prDes ){
 ```
 
 
-```{r}
-#main part
-
-prelim.in <- prelim.in.read
-gene.name <- gene.name.read
-
-read.results <- cross_validate(prelim.in, 20)
-conf_matrix_basic <- read.results$basic
-conf_matrix_ker <- read.results$ker
-conf_matrix_sup <- read.results$sup
-
-
-#process CV results
-
-(sens_svm_basic <- conf_matrix_basic[1,1]/sum(conf_matrix_basic[1,]))
-(spec_svm_basic <- conf_matrix_basic[2,2]/sum(conf_matrix_basic[2,]))
-
-
-(sens_svm_ker <- conf_matrix_ker[1,1]/sum(conf_matrix_ker[1,]))
-(spec_svm_ker <- conf_matrix_ker[2,2]/sum(conf_matrix_ker[2,]))
-
-
-(sens_svm_sup <- conf_matrix_sup[1,1]/sum(conf_matrix_sup[1,]))
-(spec_svm_sup <- conf_matrix_sup[2,2]/sum(conf_matrix_sup[2,]))
-counts <- data.frame(sensetivity = c(sens_svm_basic,sens_svm_ker,sens_svm_sup ), specificty=c(spec_svm_basic,spec_svm_ker,spec_svm_sup))
-row.names(counts) <- c("Basic PCA","Kernelized PCA","Supervised PCA")
-counts
-
-barplot(c(counts$sensetivity, counts$specificty), main="preformance of SVM on PCa versions", xlab="Number of Gears", col=c("red", "blue", "green"), legend = c("Basic PCA","Kernelized PCA","Supervised PCA"), beside=TRUE)
-
-princomp <- prcomp(prelim.in[,grepl(".*calculated",colnames(prelim.in))], center = T, scale = F)
-smoothScatter(princomp$x) #generates a smooth scatter plot that shows the density of the data points.
-selected_gene_1 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+1*sd(princomp$rotation[,1]))))
-selected_gene_2 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,2])>abs(mean(princomp$rotation[,2])+1*sd(princomp$rotation[,2]))))
-selected_gene_3 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,3])>abs(mean(princomp$rotation[,3])+1*sd(princomp$rotation[,3]))))
-plot.new()
-gene.set <- list(First_PC= selected_gene_1, Second_PC= selected_gene_2, Third_PC = selected_gene_3)
-venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue", "yellow"),force.unique)
-
-grid.draw(venn.plot)
-
-barplot(princomp$sd^2, main ="PCA Eigen Values")  
-
-intersection_read <- intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3)
-```
+# ```{r}
+# #main part
+# 
+# prelim.in <- prelim.in.read
+# gene.name <- gene.name.read
+# 
+# read.results <- cross_validate(prelim.in, 20)
+# conf_matrix_basic <- read.results$basic
+# conf_matrix_ker <- read.results$ker
+# conf_matrix_sup <- read.results$sup
+# 
+# 
+# #process CV results
+# 
+# (sens_svm_basic <- conf_matrix_basic[1,1]/sum(conf_matrix_basic[1,]))
+# (spec_svm_basic <- conf_matrix_basic[2,2]/sum(conf_matrix_basic[2,]))
+# 
+# 
+# (sens_svm_ker <- conf_matrix_ker[1,1]/sum(conf_matrix_ker[1,]))
+# (spec_svm_ker <- conf_matrix_ker[2,2]/sum(conf_matrix_ker[2,]))
+# 
+# 
+# (sens_svm_sup <- conf_matrix_sup[1,1]/sum(conf_matrix_sup[1,]))
+# (spec_svm_sup <- conf_matrix_sup[2,2]/sum(conf_matrix_sup[2,]))
+# counts <- data.frame(sensetivity = c(sens_svm_basic,sens_svm_ker,sens_svm_sup ), specificty=c(spec_svm_basic,spec_svm_ker,spec_svm_sup))
+# row.names(counts) <- c("Basic PCA","Kernelized PCA","Supervised PCA")
+# counts
+# 
+# barplot(c(counts$sensetivity, counts$specificty), main="preformance of SVM on PCa versions", xlab="Number of Gears", col=c("red", "blue", "green"), legend = c("Basic PCA","Kernelized PCA","Supervised PCA"), beside=TRUE)
+# 
+# princomp <- prcomp(prelim.in[,grepl(".*calculated",colnames(prelim.in))], center = T, scale = F)
+# smoothScatter(princomp$x) #generates a smooth scatter plot that shows the density of the data points.
+# selected_gene_1 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+1*sd(princomp$rotation[,1]))))
+# selected_gene_2 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,2])>abs(mean(princomp$rotation[,2])+1*sd(princomp$rotation[,2]))))
+# selected_gene_3 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,3])>abs(mean(princomp$rotation[,3])+1*sd(princomp$rotation[,3]))))
+# plot.new()
+# gene.set <- list(First_PC= selected_gene_1, Second_PC= selected_gene_2, Third_PC = selected_gene_3)
+# venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue", "yellow"),force.unique)
+# 
+# grid.draw(venn.plot)
+# 
+# barplot(princomp$sd^2, main ="PCA Eigen Values")  
+# 
+# intersection_read <- intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3)
+# ```
 **RPKM data analysis**
 ```{r}
 
@@ -296,7 +300,7 @@ grid.draw(venn.plot)
 
 barplot(princomp$sd^2, main ="PCA Eigen Values")  
 
-intersection_rpkm <- intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3)
+intersection_rpkm <- union(union(selected_gene_1, selected_gene_2), selected_gene_3)-intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3)
 ```
 ```{r}
 #comparing Read-count and RPKM data 

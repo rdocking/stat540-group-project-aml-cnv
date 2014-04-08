@@ -6,9 +6,6 @@ setwd("/Users/fdorri/Documents/UBC/courses/STAT540/workspace/finalProject/stat54
 rna_seq_dat_rpkm <-read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 rna_seq_dat_read <-read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 
-#rna_seq_dat_norm <- rna_seq_dat
-#rna_seq_dat_norm <- rna_seq_dat[,apply(rna_seq_dat, 2, var, na.rm=TRUE) != 0]
-#rna_seq_dat_norm <- rna_seq_dat[apply(t(rna_seq_dat), 2, var, na.rm=TRUE) != 0,]
 
 exp_dat <- read.table("../data/experimental_design_cleaned.txt", 
                            sep = "\t", header = TRUE, row.names = 1)
@@ -29,16 +26,15 @@ library(VennDiagram)
 ```
 **Now, let's remove the columns with NA values - we won't use them at this time.**
 ```{r}
-complete.cols.rpkm <- lapply(joined_dat_rpkm,function(x) {all(!is.na(x))})
-dat.complete.rpkm <- joined_dat_rpkm[unlist(complete.cols.rpkm)]
+#complete.cols.rpkm <- lapply(joined_dat_rpkm,function(x) {all(!is.na(x))})
+#dat.complete.rpkm <- joined_dat_rpkm[unlist(complete.cols.rpkm)]
+dat.complete.rpkm <- joined_dat_rpkm
 
-complete.cols.read <- lapply(joined_dat_read,function(x) {all(!is.na(x))})
-dat.complete.read <- joined_dat_read[unlist(complete.cols.read)]
+# complete.cols.read <- lapply(joined_dat_read,function(x) {all(!is.na(x))})
+# dat.complete.read <- joined_dat_read[unlist(complete.cols.read)]
+dat.complete.read <- joined_dat_read
 ```
-**First, let's reorder the factor levels for Molecular_risk so they make sense.**
-```{r}
-levels(dat.complete.rpkm$Molecular_risk) <- c("Poor","Intermediate","Good","N.D.")
-levels(dat.complete.read$Molecular_risk) <- c("Poor","Intermediate","Good","N.D.")
+
 
 ```
 **Remove the rows with N.D.**
@@ -129,7 +125,7 @@ run_svm <- function(x.tr, x.ts){
 ```{r}
 cross_validate <- function(prelim_in, d){ 
   k<- 5
-  set.seed(1234)
+  set.seed(540)
   folds <- cvFolds(nrow(prelim.in.read), K = k)
   conf_matrix_ker <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
   conf_matrix_sup <- matrix(0,nrow=2,ncol=2,dimnames=list(c("truePoor","trueNotPoor"),c("predPoor","predNotPoor")))
@@ -138,11 +134,16 @@ cross_validate <- function(prelim_in, d){
     
     x.ts <- t(data.matrix(prelim.in[folds$subsets[folds$which==f,],grepl(".*calculated",colnames(prelim.in))]))
     ytest <- prelim.in[folds$subsets[folds$which==f,],c("prognosis")]
+    ytest <- as.numeric(levels(ytest))[ytest]
     x.tr <- t(data.matrix(prelim.in[folds$subsets[folds$which!=f,],grepl(".*calculated",colnames(prelim.in))]))
     ytrain <- prelim.in[folds$subsets[folds$which!=f,],c("prognosis")]
+    ytrain <- as.numeric(levels(ytrain))[ytrain]
+    cat(ytest,"\n")
+    cat(nrow(which(ytest=="1")))
+    cat(nrow(which(ytest=="0")))
     
     #kernel PCA
-    res <- kernel_pca((x.tr), (x.ts),  as.numeric(levels(ytrain))[ytrain], d, FALSE)
+    res <- kernel_pca((x.tr), (x.ts),  ytrain, d, FALSE)
     xtrain <- t(res$tr.dat)
     xtest <- t(res$ts.dat)
     xtrain <- cbind(xtrain, prelim.in[folds$subsets[folds$which!=f,],c("prognosis","Molecular_risk")])
@@ -161,7 +162,7 @@ cross_validate <- function(prelim_in, d){
     ###############
     #supervised PCA
     cat("supervised PCA\n")
-    sup.res <- kernel_pca((x.tr), (x.ts), as.numeric(levels(ytrain))[ytrain], d, TRUE)
+    sup.res <- kernel_pca((x.tr), (x.ts), ytrain, d, TRUE)
     sup.ts <- t(sup.res$ts.dat)
     sup.tr <- t(sup.res$tr.dat)
     xtrain.supervised <- cbind(sup.tr, prelim.in[folds$subsets[folds$which!=f,],c("prognosis","Molecular_risk")])
@@ -296,7 +297,7 @@ grid.draw(venn.plot)
 
 barplot(princomp$sd^2, main ="PCA Eigen Values")  
 
-intersection_rpkm <- intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3)
+intersection_rpkm <- setdiff(union(union(selected_gene_1, selected_gene_2), selected_gene_3),intersect(intersect(selected_gene_1, selected_gene_2), selected_gene_3))
 ```
 ```{r}
 #comparing Read-count and RPKM data 
@@ -313,8 +314,6 @@ des <- exp_dat[rownames(prelim.in),]
 stripplot(gExp ~ Cytogenetic_risk | intersection[1:9] , prepareData(intersection[1:9], t(data), (des)), jitter.data = TRUE, auto.key = TRUE, type = c('p', 'a'), grid = TRUE, main= "Interesting hits")
 stripplot(gExp ~ Molecular_risk| intersection[1:9] , prepareData(intersection[1:4], t(data), (des)), jitter.data = TRUE, auto.key = TRUE, type = c('p', 'a'), grid = TRUE, main= "Interesting hits")
 ```
-
-
 
 
 

@@ -74,10 +74,10 @@ dat.filt.read <- subset(dat.complete.read, dat.complete.read$Cytogenetic_risk !=
 ```r
 dat.in.read <- dat.filt.read
 dat.in.read$prognosis <- mapvalues(dat.in.read$Cytogenetic_risk, c("Good", "Intermediate", 
-    "Poor"), c(1, 0, 0), warn_missing = TRUE)
+    "Poor"), c(0, 1, 0), warn_missing = TRUE)
 dat.in.rpkm <- dat.filt.rpkm
 dat.in.rpkm$prognosis <- mapvalues(dat.in.rpkm$Cytogenetic_risk, c("Good", "Intermediate", 
-    "Poor"), c(1, 0, 0), warn_missing = TRUE)
+    "Poor"), c(0, 1, 0), warn_missing = TRUE)
 ```
 
 
@@ -353,53 +353,53 @@ rpkm.results <- cross_validate(prelim.in, 20)
 ```
 
 ```
-## 1 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 
+## 0 0 1 1 0 0 1 0 1 0 1 1 0 1 0 1 1 0 1 1 0 1 1 0 0 1 1 0 0 0 0 0 0 0 0 1 
 ## Flag is false
 ## Eigen values = 3.097e+19 2.251e+19 6.338e+18 1.364e+18 2.369e+17 1.467e+17 1.034e+17 4.26e+16 3.033e+16 1.728e+16 1.256e+16 8.594e+15 5.361e+15 4.715e+15 3.106e+15 1.868e+15 1.519e+15 1.293e+15 1.095e+15 7.985e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 7.294e+19 90808 88488 68221 68161 64784 52421 46776 41987 40677 39794 38325 34208 33864 32029 29737 29235 27310 24926 22716 
+## Eigen values = 4.663e+19 818270 55584 52074 43880 41419 32097 31507 29994 28228 26343 24742 22940 22162 20580 18559 15402 14373 14038 14030 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 
+## 1 0 0 1 1 0 1 1 0 0 0 1 1 1 1 1 0 0 1 1 1 1 1 0 0 0 0 1 0 1 1 1 1 1 1 
 ## Flag is false
 ## Eigen values = 3.261e+19 2.059e+19 8.025e+18 1.812e+18 3.295e+17 2.022e+17 1.188e+17 3.931e+16 3.372e+16 2.361e+16 1.423e+16 7.582e+15 5.743e+15 4.101e+15 3.227e+15 1.761e+15 1.453e+15 1.097e+15 9.347e+14 8.47e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 9.843e+19 275983 101709 87423 85122 76562 65309 61001 59043 55144 54292 53657 51659 47598 44458 43572 39336 38499 38452 32899 
+## Eigen values = 9.922e+19 1553390 127914 88386 88124 75560 61805 58743 56888 54209 50619 48087 41459 38724 35811 33187 32488 32361 29439 27777 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+## 1 1 1 0 1 1 0 0 1 0 1 0 1 0 1 1 1 0 0 0 1 1 1 1 1 0 1 0 1 1 1 1 0 1 0 
 ## Flag is false
 ## Eigen values = 2.794e+19 2.139e+19 5.985e+18 1.637e+18 2.837e+17 1.568e+17 7.886e+16 3.344e+16 2.437e+16 1.873e+16 1.222e+16 6.149e+15 5.801e+15 4.806e+15 2.461e+15 2.08e+15 1.57e+15 1.332e+15 9.391e+14 8.723e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 7.363e+19 133344 109845 65395 65156 64012 63407 59008 48813 44863 44741 39799 38289 27982 27918 26242 23832 23145 20473 20259 
+## Eigen values = 5.177e+19 1136392 45979 38526 37905 33994 30920 26795 23874 23768 23589 22177 21294 21022 20323 20257 19538 15936 15260 13836 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 1 0 0 1 0 0 0 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 1 1 0 
+## 1 0 1 0 0 0 1 1 0 1 0 0 1 1 0 0 1 1 0 1 0 1 1 1 1 0 1 0 1 1 1 0 0 0 0 
 ## Flag is false
 ## Eigen values = 2.952e+19 1.824e+19 8.705e+18 1.413e+18 2.818e+17 2.122e+17 8.527e+16 3.965e+16 2.954e+16 2.427e+16 8.895e+15 6.684e+15 6.535e+15 4.633e+15 2.948e+15 2.458e+15 2.043e+15 1.584e+15 1.054e+15 8.188e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 7.184e+19 123643 63810 60745 53995 48991 48776 48192 40279 37941 37772 35421 34122 33207 31942 31884 28129 25003 24243 21919 
+## Eigen values = 4.2e+19 914334 44448 41425 37307 36994 29767 29710 28490 22901 22192 19540 18000 16055 14982 14530 14106 13370 12716 12554 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 1 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 1 0 0 1 0 0 
+## 1 1 0 1 1 1 1 1 0 0 1 1 0 0 1 0 1 1 1 1 1 0 1 1 0 0 1 0 1 0 1 1 0 1 1 
 ## Flag is false
 ## Eigen values = 2.852e+19 1.791e+19 7.489e+18 1.66e+18 2.927e+17 1.401e+17 1.273e+17 4.912e+16 3.795e+16 2.517e+16 1.181e+16 7.113e+15 5.149e+15 3.496e+15 3.148e+15 2.286e+15 1.708e+15 1.21e+15 1.001e+15 7.766e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 7.59e+19 137146 78641 59775 54597 51047 48545 40436 38482 37358 34471 30302 30178 29540 28534 27133 26357 24750 21939 19640 
+## Eigen values = 3.899e+19 894841 42729 34630 34619 32387 26495 25720 25695 25169 23702 20326 19217 18470 17989 17055 16933 16834 14541 12329 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel
@@ -415,7 +415,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.958
+## [1] 0.6933
 ```
 
 ```r
@@ -423,7 +423,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.6364
+## [1] 0.6634
 ```
 
 ```r
@@ -433,7 +433,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.9091
+## [1] 0.6
 ```
 
 ```r
@@ -441,7 +441,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.5758
+## [1] 0.6733
 ```
 
 ```r
@@ -451,7 +451,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.9161
+## [1] 0.6
 ```
 
 ```r
@@ -459,7 +459,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.6364
+## [1] 0.6337
 ```
 
 ```r
@@ -476,8 +476,8 @@ counts
 
 ```
 ##                sensetivity specificty
-## Basic PCA           0.9580     0.6364
-## Kernelized PCA      0.9091     0.5758
+## Basic PCA           0.6933     0.6634
+## Kernelized PCA      0.6000     0.6733
 ```
 
 ```r

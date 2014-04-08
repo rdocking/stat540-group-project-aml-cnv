@@ -493,8 +493,6 @@ barplot(c(counts$sensetivity, counts$specificty), main = "preformance of SVM on 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
 
 
-
-
 ```r
 sample <- rownames(dat.filt.rpkm[, grepl(".*calculated", colnames(dat.filt.rpkm))])
 princomp <- prcomp(dat.filt.rpkm[, grepl(".*calculated", colnames(dat.filt.rpkm))], 
@@ -557,6 +555,23 @@ legend("topright", as.character(levels(factor(dat.filt.rpkm$Molecular_risk))),
 
 ```r
 
+plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(prelim.in$Cytogenetic_risk), 
+    pch = 21, cex = 1.5, main = "Cytogenetic_risk")
+```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-136.png) 
+
+```r
+legend("topright", as.character(levels(factor(prelim.in$Cytogenetic_risk))), 
+    pch = 21, pt.bg = c(1, 2, 4))
+```
+
+```
+## Error: 'legend' is of length 0
+```
+
+```r
+
 
 selected_gene_1 <- rownames(subset(princomp$rotation, subset = abs(princomp$rotation[, 
     1]) > abs(mean(princomp$rotation[, 1]) + 1 * sd(princomp$rotation[, 1]))))
@@ -572,14 +587,14 @@ venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-136.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-137.png) 
 
 ```r
 
 barplot(princomp$sd^2, main = "PCA Eigen Values")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-137.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-138.png) 
 
 ```r
 
@@ -610,7 +625,7 @@ plot.new()
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-138.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-139.png) 
 
 ```r
 
@@ -622,7 +637,7 @@ stripplot(gExp ~ del_5 | intersection[1:9], prepareData(intersection[1:9], t(dat
     main = "Interesting hits")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-139.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-1310.png) 
 
 ```r
 stripplot(gExp ~ Molecular_risk | intersection[1:9], prepareData(intersection[1:4], 
@@ -630,7 +645,7 @@ stripplot(gExp ~ Molecular_risk | intersection[1:9], prepareData(intersection[1:
     grid = TRUE, main = "Interesting hits")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-1310.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-1311.png) 
 
 ```r
 
