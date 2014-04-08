@@ -369,20 +369,34 @@ splom(scatter,
         diag.panel.splom(x, ...)
         })
 
+
+
+pdf(file = "del_5.pdf")
 plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$del_5), pch = 21, cex = 1.5, main="del_5")
 legend("topright", as.character(levels(factor(dat.filt.rpkm$del_5))), pch = 21, pt.bg =c(0,1))
+dev.off()
 
+pdf(file = "del_7.pdf")
 plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$del_7), pch = 21, cex = 1.5, main="del_7")
 legend("topright", as.character(levels(factor(dat.filt.rpkm$del_7))), pch = 21, pt.bg =c(0,1))
+dev.off()
 
+
+pdf(file = "trisomy_8.pdf")
 plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$trisomy_8), pch = 21, cex = 1.5, main="trisomy_8")
 legend("topright", as.character(levels(factor(dat.filt.rpkm$trisomy_8))), pch = 21, pt.bg =c(0,1))
+dev.off()
 
+
+pdf(file = "Molecular_risk.pdf")
 plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$Molecular_risk), pch = 21, cex = 1.5, main="Molecular_risk")
 legend("topright", as.character(levels(factor(dat.filt.rpkm$Molecular_risk))), pch = 21, pt.bg =c(1,2,3,4))
+dev.off()
 
-plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(prelim.in$Cytogenetic_risk), pch = 21, cex = 1.5, main="Cytogenetic_risk")
-legend("topright", as.character(levels(factor(prelim.in$Cytogenetic_risk))), pch = 21, pt.bg =c(1,2,4))
+pdf(file = "cytogenetic_risk.pdf")
+plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$Cytogenetic_risk), pch = 21, cex = 1.5, main="Cytogenetic_risk")
+legend("topright", as.character(levels(factor(dat.filt.rpkm$Cytogenetic_risk))), pch = 21, pt.bg =c(1,2,4))
+dev.off()
 
 
 selected_gene_1 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+1*sd(princomp$rotation[,1]))))

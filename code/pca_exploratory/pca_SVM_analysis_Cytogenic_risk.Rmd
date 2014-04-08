@@ -350,8 +350,10 @@ barplot(c(counts$sensetivity, counts$specificty), main="preformance of SVM on PC
 
 princomp <- prcomp(prelim.in[,grepl(".*calculated",colnames(prelim.in))], center = T, scale = F)
 smoothScatter(princomp$x) #generates a smooth scatter plot that shows the density of the data points.
+pdf(file = "cytogenetic_risk.pdf")
 plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(prelim.in$Cytogenetic_risk), pch = 21, cex = 1.5, main="Cytogenic_risk")
 legend("topright", as.character(levels(factor(prelim.in$Cytogenetic_risk))), pch = 21, pt.bg =c(1,2,4))
+dev.off()
 
 selected_gene_1 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,1])>abs(mean(princomp$rotation[,1])+1*sd(princomp$rotation[,1]))))
 selected_gene_2 <- rownames(subset(princomp$rotation, subset=abs(princomp$rotation[,2])>abs(mean(princomp$rotation[,2])+1*sd(princomp$rotation[,2]))))
