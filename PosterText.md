@@ -13,11 +13,11 @@ Carmen Bayly, Lauren Chong, Rod Docking, Fatemeh Dorri, Emily Hindalong, Rebecca
 
 ## Introduction:
 
-Acute Myeloid Leukemia (AML) is characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is typically performed through karyotying or array-comparative genomic hybridization (aCGH), both of which are technically limiting.
+Acute Myeloid Leukemia (AML) is a cancer of the blood cells characterized by recurrent, large-scale chromosomal abnormalities. Detection of these abnormalities is critical for proper treatment stratification. The current standard of care involves testing of both cytogenetic and molecular markers, assessed through karyotyping and PCR-based tests, respectively. However, as new research identifies more clinically relevant markers, these serial tests are difficult to scale. Further, next-generation sequencing makes genome-wide testing possible, allowing for more complete testing and stratification.
 
-The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq data provides an unbiased view of gene expression, and allows the detection of expressed structural variants that may be functionally relevant to the tumour phenotype.
+The aim of this project is to infer large-scale chromosomal abnormalities in AML using RNA-seq data. RNA-seq is known to be a powerful technique for detection of SNVs, as well as AML-relevant fusion and internal tandem duplication events. 
 
-The main rationale for using RNA-Seq is to increase the clinical utility of RNA-Seq based diagnostic testing in AML. For a clinical test to be useful in guiding AML treatment, the results need to be rapidly available. Furthermore, additional tests add to the time and expense of diagnosis. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
+However, detection of copy-number variants (CNVs) using RNA-seq data alone is quite challenging. Being able to provide accurate inference of large-scale chromosomal abnormalities from RNA-Seq data alone would be a significant advance in the field, and ultimately lead to better patient care.
 
 ## Methods:
 
