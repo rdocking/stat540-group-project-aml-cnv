@@ -153,7 +153,7 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm",
 
 
 
-## 2) Train RF to predict cytogenetic risk, use linear models for feature selection
+## 2) Train RF to predict "Poor" cytogenetic risk, use linear models for feature selection
 
 Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to poor and not poor:
 
@@ -437,7 +437,7 @@ grid.draw(venn.plot)
 
 
 
-## 3) Predict the different cytogenetic mutations, use correlations for feature selection
+## 5) Predict the different cytogenetic mutations, use correlations for feature selection
 
 First look at trisomy 8:
 
@@ -607,4 +607,140 @@ grid.draw(venn.plot)
 ```
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16.png) 
+
+
+
+## 6) Train RF to predict "Good" cytogenetic risk, use linear models for feature selection
+
+Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to good and not good:
+
+```r
+rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.", ]
+rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
+    c(1, 0, 0), warn_missing = TRUE)
+rf.labels <- factor(rf.labels)
+rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
+    c(3, 2, 1), warn_missing = TRUE)
+rf.levels <- factor(rf.levels)
+rfDat <- rDat[, rownames(rfDes)]
+```
+
+
+Run a 5-fold cross-validation for the data:
+
+```r
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
+```
+
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-181.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-182.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-183.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-184.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-185.png) 
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.9659
+## 
+## $sens
+## [1] 0.993
+## 
+## $spec
+## [1] 0.8485
+```
+
+```r
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-186.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+##  [1] "CPNE8|144402_calculated"  "HOXA7|3204_calculated"   
+##  [3] "HOXA6|3203_calculated"    "HOXA5|3202_calculated"   
+##  [5] "HOXA3|3200_calculated"    "HOXA4|3201_calculated"   
+##  [7] "HOXA9|3205_calculated"    "HOXA10|3206_calculated"  
+##  [9] "HOXA2|3199_calculated"    "FGFR1|2260_calculated"   
+## [11] "CYP7B1|9420_calculated"   "PDE4DIP|9659_calculated" 
+## [13] "HOXB5|3215_calculated"    "NKX2-3|159296_calculated"
+## [15] "LPO|4025_calculated"      "RMND5B|64777_calculated" 
+## [17] "PRDM16|63976_calculated"  "HOXB6|3216_calculated"
+```
+
+
+
+## 6) Train RF to predict "Intermediate" cytogenetic risk, use linear models for feature selection
+
+Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to intermediate and not intermediate:
+
+```r
+rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.", ]
+rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
+    c(0, 1, 0), warn_missing = TRUE)
+rf.labels <- factor(rf.labels)
+rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
+    c(3, 2, 1), warn_missing = TRUE)
+rf.levels <- factor(rf.levels)
+rfDat <- rDat[, rownames(rfDes)]
+```
+
+
+Run a 5-fold cross-validation for the data:
+
+```r
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
+```
+
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-201.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-202.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-203.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-204.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-205.png) 
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.8636
+## 
+## $sens
+## [1] 0.901
+## 
+## $spec
+## [1] 0.8133
+```
+
+```r
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-206.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+##  [1] "NAV1|89796_calculated"    "SLC18A2|6571_calculated" 
+##  [3] "LASS4|79603_calculated"   "PBX3|5090_calculated"    
+##  [5] "HOXB6|3216_calculated"    "HOXB5|3215_calculated"   
+##  [7] "NKX2-3|159296_calculated" "IQCE|23288_calculated"   
+##  [9] "EVPL|2125_calculated"     "C7orf50|84310_calculated"
+```
 
