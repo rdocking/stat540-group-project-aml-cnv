@@ -12,6 +12,8 @@ rDes <- read.table("../data/experimental_design_cleaned.txt",
                            sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
 rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
                           sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+#rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
+#                         sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
 ```
 
 Load required libraries:
@@ -27,7 +29,7 @@ Both the design matrix and the data matrix have already been cleaned, filtered a
 
 Apply scale normalization:
 ```{r Apply scale normalization}
-normFactor <- calcNormFactors(rDat)
+#normFactor <- calcNormFactors(rDat)
 ```
 
 Preparing model matrix:
@@ -64,9 +66,9 @@ tris8Dat <- rDat[voomTris8genes,]
 tris8Dat$Transcript <- rownames(tris8Dat) #creating a transcript group
 tris8Dat <- melt(tris8Dat, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
-                   value.name = "Counts")
+                   value.name = "RPKM")
 
-#cleaup molten counts data
+#cleaup molten RPKM data
 tris8Dat$TCGA_patient_id <- gsub("X", "", tris8Dat$TCGA_patient_id)
 tris8Dat$Transcript <- gsub("[|].*$", "", tris8Dat$Transcript)
 
@@ -79,7 +81,7 @@ tris8Dat <- merge(tris8Dat, miniDes, by = "TCGA_patient_id") #merging
 Boxplot for trisomy 8 genes
 ```{r Trisomy 8: Boxplots}
 #plotting
-ggplot(tris8Dat, aes(Transcript, log2(Counts), colour = trisomy_8)) +
+ggplot(tris8Dat, aes(Transcript, log2(RPKM), colour = trisomy_8)) +
   geom_boxplot() +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
@@ -103,7 +105,7 @@ e <- grep("KDM3B", rownames(ttfit_del5))
 f <- grep("HARS", rownames(ttfit_del5))
 
 #alltogether
-del5_index <- c(a, b, c, d, e, f)
+(del5_index <- c(a, b, c, d, e, f))
 
 #list of rownames for plugging back into the system
 voomDel5genes <- rownames(ttfit_del5[del5_index,])
@@ -115,9 +117,9 @@ del5Dat <- rDat[voomDel5genes,] #subsetting transcripts of interest from rDat
 del5Dat$Transcript <- rownames(del5Dat) #creating a transcript group
 del5Dat <- melt(del5Dat, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
-                   value.name = "Counts")
+                   value.name = "RPKM")
 
-#cleaup molten counts data
+#cleaup molten RPKM data
 del5Dat$TCGA_patient_id <- gsub("X", "", del5Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
 del5Dat$Transcript <- gsub("[|].*$", "", del5Dat$Transcript) #shortening transcript names
 
@@ -127,7 +129,7 @@ del5Dat <- merge(del5Dat, miniDes, by = "TCGA_patient_id") #merging
 
 This is for the actual plot.
 ```{r Del 5: Boxplots}
-ggplot(del5Dat, aes(Transcript, log2(Counts), colour = del_5)) +
+ggplot(del5Dat, aes(Transcript, log2(RPKM), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
@@ -166,9 +168,9 @@ del7Dat <- rDat[voomDel7genes,] #subsetting transcripts of interest from rDat
 del7Dat$Transcript <- rownames(del7Dat) #creating a transcript group
 del7Dat <- melt(del7Dat, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
-                   value.name = "Counts")
+                   value.name = "RPKM")
 
-#cleaup molten counts data
+#cleaup molten RPKM data
 del7Dat$TCGA_patient_id <- gsub("X", "", del7Dat$TCGA_patient_id) #removing the "X" preceding patient ID names
 del7Dat$Transcript <- gsub("[|].*$", "", del7Dat$Transcript) #shortening transcript names
 
@@ -177,7 +179,7 @@ del7Dat <- merge(del7Dat, miniDes, by = "TCGA_patient_id") #merging
 ```
 
 ```{r Del 7: Boxplots}
-ggplot(del7Dat, aes(Transcript, log2(Counts), colour = del_7)) +
+ggplot(del7Dat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
@@ -197,9 +199,9 @@ sgDat <- rDat[SharedGene, ] #subsetting transcripts of interest from rDat
 sgDat$Transcript <- rownames(sgDat) #creating a transcript group
 sgDat <- melt(sgDat, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
-                   value.name = "Counts")
+                   value.name = "RPKM")
 
-#cleaup molten counts data
+#cleaup molten RPKM data
 sgDat$TCGA_patient_id <- gsub("X", "", sgDat$TCGA_patient_id) #removing the "X" preceding patient ID names
 sgDat$Transcript <- gsub("[|].*$", "", sgDat$Transcript) #shortening transcript names
 
@@ -208,14 +210,14 @@ sgDat <- merge(sgDat, miniDes, by = "TCGA_patient_id") #merging
 ```
 
 ```{r Del 5 & Del 7: Boxplots using both groupings}
-ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_5)) +
+ggplot(sgDat, aes(Transcript, log2(RPKM), colour = del_5)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
         aspect.ratio = 2) +
   ggtitle("Collagen, type V, alpha 1: del 5 grouping")
 
-ggplot(sgDat, aes(Transcript, log2(Counts), colour = del_7)) +
+ggplot(sgDat, aes(Transcript, log2(RPKM), colour = del_7)) +
   geom_boxplot()  +
   facet_wrap(~ Transcript, scales = "free") +
   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), 
