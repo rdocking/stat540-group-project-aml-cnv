@@ -394,8 +394,8 @@ legend("topright", as.character(levels(factor(dat.filt.rpkm$Molecular_risk))), p
 dev.off()
 
 pdf(file = "cytogenetic_risk.pdf")
-plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(dat.filt.rpkm$Cytogenetic_risk), pch = 21, cex = 1.5, main="Cytogenetic_risk")
-legend("topright", as.character(levels(factor(dat.filt.rpkm$Cytogenetic_risk))), pch = 21, pt.bg =c(1,2,4))
+plot(princomp$x[ ,c("PC1","PC2")], bg = as.numeric(factor(dat.filt.rpkm$Cytogenetic_risk)), pch = 21, cex = 1.5, main="Cytogenetic_risk")
+legend("topright", as.character(levels(factor(dat.filt.rpkm$Cytogenetic_risk)), pch = 21, pt.bg =c(1,2,4))
 dev.off()
 
 
