@@ -7,9 +7,13 @@ Using RNA-Seq data to predict large-scale copy number alterations in Acute Myelo
 ## Authors:
 Carmen Bayly, Lauren Chong, Rod Docking, Fatemeh Dorri, Emily Hindalong, Rebecca Johnston.
 
-## Research question:
-- Hypothesis:
-- Aim:
+## Can RNA-seq differentiate the key karyotypes of Acute Myeloid Leukemia?
+- **Hypothesis:** 
+  - The transcriptional profile of Acute Myeloid Leukemia is predictive of its inherent cytogenetic abnormalities and prognosis.
+
+- **Aims:**
+  - Characterize the differences in RNA expression between different cytogenetic risk groups and the key karyotypes of Acute Myeloid Leukemia;
+  - Train classifiers that predict the cytogenetic risk groups in Acute Myeloid Leukemia using only RNA-seq data.
 
 ## Introduction:
 
