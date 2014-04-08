@@ -40,21 +40,20 @@ We used `voom` (4) to test for differential expression between:
 1. Genes differentially expressed between Good, Intermediate, and Poor cytogenetic risk.
 2. Genes differentially expressed in samples containing or lacking the three specific CNV events.
 
-In both cases, we set a FDR of 1e-05, and examined the observed hits for potential biological relevance.
+In both cases, we set a FDR of 1e-05, and examined the observed hits for overlap between categories, and potential biological relevance.
 
 ### Machine Learning
 
+We applied several different machine-learning approaches to classify the samples. First, we used Principal Component Analysis (PCA) to ...
 
+Next, we built a Support Vector Machine (SVM) model to...
 
-  
-
+Finally, we used Random Forest (RF) to...
  
 ## Results:
 
 
-
 ## Conclusions:
-
 
 
 ## Bibliography:
