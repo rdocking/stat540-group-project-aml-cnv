@@ -102,7 +102,7 @@ for (f in 1:5) {
   gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$Cytogenetic_risk),gene_cols,method="spearman")))
   
   # Sort
-  gene_corrs_sort <- sort(gene_corrs, f= ~ -V1, drop=FALSE)
+  gene_corrs_sort <- sort(abs(gene_corrs), f= ~ -V1, drop=FALSE)
   
   # Grab top 25
   gene_corrs_top <- gene_corrs_sort[1:25,,drop=FALSE]
@@ -268,9 +268,9 @@ dat_svm$del_7 <- as.factor(dat_svm$del_7)
 **Make prelimary dataset with gene columns + prognosis + cyt risk.**
 ```{r}
 prelim <- dat_svm[,grepl(".*calculated",colnames(dat_svm))]
-prelim$prognosis <- dat_svm$trisomy_8
+#prelim$prognosis <- dat_svm$trisomy_8
 #prelim$prognosis <- dat_svm$del_5
-#prelim$prognosis <- dat_svm$del_7
+prelim$prognosis <- dat_svm$del_7
 ```
 
 ### Part 2b: Predict using just most correlated gene features
@@ -337,12 +337,12 @@ for (f in 1:5) {
 ```{r}
 sens_svm_cor <- conf_matrix[1,1]/sum(conf_matrix[1,])
 spec_svm_cor <- conf_matrix[2,2]/sum(conf_matrix[2,])
-sink("results_t8.txt")
+#sink("results_t8.txt")
 #sink("results_d5.txt")
-#sink("results_d7.txt")
-cat("Trisomy8, corrs:")
+sink("results_d7.txt")
+#cat("Trisomy8, corrs:")
 #cat("Del5, corrs:")
-#cat("Del7, corrs:")
+cat("Del7, corrs:")
 cat("\n")
 cat(sens_svm_cor)
 cat("\n")
@@ -428,12 +428,12 @@ for (f in 1:5) {
 ```{r}
 sens_svm_lm <- conf_matrix[1,1]/sum(conf_matrix[1,])
 spec_svm_lm <- conf_matrix[2,2]/sum(conf_matrix[2,])
-sink("results_t8.txt",append=TRUE)
+#sink("results_t8.txt",append=TRUE)
 #sink("results_d5.txt",append=TRUE)
-#sink("results_d7.txt",append=TRUE)
-cat("Trisomy8, lm:")
+sink("results_d7.txt",append=TRUE)
+#cat("Trisomy8, lm:")
 #cat("Del5, lm:")
-#cat("Del7, lm:")
+cat("Del7, lm:")
 cat("\n")
 cat(sens_svm_lm)
 cat("\n")
