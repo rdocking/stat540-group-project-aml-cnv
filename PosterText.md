@@ -56,11 +56,21 @@ We aimed to determine if RNA-seq expression profiles were predictive of cytogene
 
 We then trained two types of classifiers: random forests and support vector machines (SVMs).
 
-## Results:
+## Results
 
 
-## Conclusions:
+## Conclusions
 
+### Differential Expression
+
+- In the risk-specific differential expression analysis, we identified many genes which exhibited expression patterns that were specific to a single cytogenetic risk status
+- Additionally, in the CNA-specific differential expression model, many of the observed hits corresponded to the genomic region of the CNA of interest (e.g., over-expressed genes on chromosome 8 in +8 samples)
+
+### Machine Learning
+
+- Linear model-based feature-selection outperformed the correlation-based feature selection, as assessed by the downstream classifier performance
+- Random Forests slightly out-performed SVMs in classification accuracy
+- The classifiers trained to predict 'intermediate' and 'good' cytogenetic risk showed high sensitivity and specificity. The classifiers trained to predict del5 and del7 also showed good results.
 
 ## Bibliography:
 
