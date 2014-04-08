@@ -61,6 +61,8 @@ rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
 rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, 
     check.names = FALSE)
+
+all.results <- list()
 ```
 
 
@@ -193,6 +195,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["lm.poor"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -244,6 +247,7 @@ cv.trisomy8.res[1:3]
 ```
 
 ```r
+all.results[["lm.trisomy8"]] <- cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
 plot.new()
@@ -293,6 +297,7 @@ cv.del5.res[1:3]
 ```
 
 ```r
+all.results[["lm.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
 plot.new()
@@ -344,6 +349,7 @@ cv.del7.res[1:3]
 ```
 
 ```r
+all.results[["lm.del7"]] <- cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
 plot.new()
@@ -410,6 +416,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["corr.poor"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -461,6 +468,7 @@ cv.trisomy8.res[1:3]
 ```
 
 ```r
+all.results[["cor.trisomy8"]] <- cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
 plot.new()
@@ -512,6 +520,7 @@ cv.del5.res[1:3]
 ```
 
 ```r
+all.results[["cor.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
 plot.new()
@@ -558,6 +567,7 @@ cv.del7.res[1:3]
 ```
 
 ```r
+all.results[["cor.del7"]] <- cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
 plot.new()
@@ -638,6 +648,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["lm.good"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -668,7 +679,56 @@ grid.draw(venn.plot)
 
 
 
-## 6) Train RF to predict "Intermediate" cytogenetic risk, use linear models for feature selection
+## 7) Train RF to predict "Good" cytogenetic risk, use correlations for feature selection
+
+```r
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
+```
+
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-191.png) ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-192.png) ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-193.png) ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-194.png) ![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-195.png) 
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.9602
+## 
+## $sens
+## [1] 0.986
+## 
+## $spec
+## [1] 0.8485
+```
+
+```r
+all.results[["corr.good"]] <- cv.risk.res[1:3]
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-19](figure/unnamed-chunk-196.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
+```
+
+
+
+## 8) Train RF to predict "Intermediate" cytogenetic risk, use linear models for feature selection
 
 Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to intermediate and not intermediate:
 
@@ -690,7 +750,7 @@ Run a 5-fold cross-validation for the data:
 cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-201.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-202.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-203.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-204.png) ![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-205.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-211.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-212.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-213.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-214.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-215.png) 
 
 ```r
 cv.risk.res[1:3]
@@ -708,6 +768,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["lm.intermediate"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -716,7 +777,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-206.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-216.png) 
 
 ```r
 
@@ -730,5 +791,195 @@ grid.draw(venn.plot)
 ##  [5] "HOXB6|3216_calculated"    "HOXB5|3215_calculated"   
 ##  [7] "NKX2-3|159296_calculated" "IQCE|23288_calculated"   
 ##  [9] "EVPL|2125_calculated"     "C7orf50|84310_calculated"
+```
+
+
+
+## 9) Train RF to predict "Intermediate" cytogenetic risk, use correlations for feature selection
+
+```r
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
+```
+
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-221.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-222.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-223.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-224.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-225.png) 
+
+```r
+cv.risk.res[1:3]
+```
+
+```
+## $acc
+## [1] 0.7784
+## 
+## $sens
+## [1] 0.901
+## 
+## $spec
+## [1] 0.6133
+```
+
+```r
+all.results[["corr.intermediate"]] <- cv.risk.res[1:3]
+fts <- cv.risk.res[[4]]
+
+plot.new()
+venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
+    "yellow", "purple"), margin = 0.1)
+grid.draw(venn.plot)
+```
+
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-226.png) 
+
+```r
+
+(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], 
+    intersect(fts[[4]], fts[[5]])))))
+```
+
+```
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
+```
+
+
+
+## 10) Summarize results
+
+```r
+show(all.results)
+```
+
+```
+## $lm.poor
+## $lm.poor$acc
+## [1] 0.8523
+## 
+## $lm.poor$sens
+## [1] 0.5714
+## 
+## $lm.poor$spec
+## [1] 0.9403
+## 
+## 
+## $lm.trisomy8
+## $lm.trisomy8$acc
+## [1] 0.9553
+## 
+## $lm.trisomy8$sens
+## [1] 0.6842
+## 
+## $lm.trisomy8$spec
+## [1] 0.9875
+## 
+## 
+## $lm.del5
+## $lm.del5$acc
+## [1] 0.9721
+## 
+## $lm.del5$sens
+## [1] 0.8125
+## 
+## $lm.del5$spec
+## [1] 0.9877
+## 
+## 
+## $lm.del7
+## $lm.del7$acc
+## [1] 0.9497
+## 
+## $lm.del7$sens
+## [1] 0.7143
+## 
+## $lm.del7$spec
+## [1] 0.981
+## 
+## 
+## $corr.poor
+## $corr.poor$acc
+## [1] 0.8239
+## 
+## $corr.poor$sens
+## [1] 0.381
+## 
+## $corr.poor$spec
+## [1] 0.9627
+## 
+## 
+## $cor.trisomy8
+## $cor.trisomy8$acc
+## [1] 0.9609
+## 
+## $cor.trisomy8$sens
+## [1] 0.6842
+## 
+## $cor.trisomy8$spec
+## [1] 0.9938
+## 
+## 
+## $cor.del5
+## $cor.del5$acc
+## [1] 0.9385
+## 
+## $cor.del5$sens
+## [1] 0.4375
+## 
+## $cor.del5$spec
+## [1] 0.9877
+## 
+## 
+## $cor.del7
+## $cor.del7$acc
+## [1] 0.9497
+## 
+## $cor.del7$sens
+## [1] 0.7143
+## 
+## $cor.del7$spec
+## [1] 0.981
+## 
+## 
+## $lm.good
+## $lm.good$acc
+## [1] 0.9659
+## 
+## $lm.good$sens
+## [1] 0.993
+## 
+## $lm.good$spec
+## [1] 0.8485
+## 
+## 
+## $corr.good
+## $corr.good$acc
+## [1] 0.9602
+## 
+## $corr.good$sens
+## [1] 0.986
+## 
+## $corr.good$spec
+## [1] 0.8485
+## 
+## 
+## $lm.intermediate
+## $lm.intermediate$acc
+## [1] 0.8636
+## 
+## $lm.intermediate$sens
+## [1] 0.901
+## 
+## $lm.intermediate$spec
+## [1] 0.8133
+## 
+## 
+## $corr.intermediate
+## $corr.intermediate$acc
+## [1] 0.7784
+## 
+## $corr.intermediate$sens
+## [1] 0.901
+## 
+## $corr.intermediate$spec
+## [1] 0.6133
 ```
 
