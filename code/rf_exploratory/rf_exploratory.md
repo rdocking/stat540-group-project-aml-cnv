@@ -91,7 +91,7 @@ fs.lm <- function(input.dat, input.labels) {
 # training data set input.labels: true outcomes for training data
 fs.corr <- function(input.dat, input.levels) {
     gene.corrs <- apply(input.dat, 1, function(x) return(suppressWarnings(cor(x, 
-        as.numeric(input.levels)))))
+        as.numeric(input.levels), method = "spearman"))))
     gene.corrs <- gene.corrs[order(abs(gene.corrs), na.last = NA, decreasing = TRUE)]
     return(names(gene.corrs[1:25]))
 }
@@ -119,7 +119,7 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm",
         if (fs.method == "lm") {
             train.features <- fs.lm(all.dat[, train.samples], all.labels[train.samples])
         } else if (fs.method == "corr") {
-            train.features <- fs.corr(all.dat[, train.samples], all.labels[train.samples])
+            train.features <- fs.corr(all.dat[, train.samples], all.levels[train.samples])
         }
         feature.list[[paste("Fold", f, sep = "")]] <- train.features
         
@@ -403,13 +403,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.875
+## [1] 0.8239
 ## 
 ## $sens
-## [1] 0.619
+## [1] 0.381
 ## 
 ## $spec
-## [1] 0.9552
+## [1] 0.9627
 ```
 
 ```r
@@ -430,7 +430,9 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "ZNF229|7772_calculated" "ITPR3|3710_calculated"
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
 ```
 
 
@@ -444,7 +446,9 @@ cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), rf.levels,
     K = 5, fs.method = "corr")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-132.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-133.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-134.png) ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-135.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.trisomy8.res[1:3]
@@ -452,13 +456,13 @@ cv.trisomy8.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9441
+## [1] 0.9553
 ## 
 ## $sens
-## [1] 0.6316
+## [1] 0.6842
 ## 
 ## $spec
-## [1] 0.9812
+## [1] 0.9875
 ```
 
 ```r
@@ -470,7 +474,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-136.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
 
 ```r
 
@@ -479,10 +483,10 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "PPP2R2A|5520_calculated"   "NEIL2|252969_calculated"  
-## [3] "KIAA1967|57805_calculated" "ZNF7|7553_calculated"     
-## [5] "TSNARE1|203062_calculated" "C8orf55|51337_calculated" 
-## [7] "R3HCC1|203069_calculated"
+## [1] "NEIL2|252969_calculated"   "PPP2R2A|5520_calculated"  
+## [3] "ZNF7|7553_calculated"      "KIAA1967|57805_calculated"
+## [5] "R3HCC1|203069_calculated"  "TSNARE1|203062_calculated"
+## [7] "C8orf55|51337_calculated"  "ZFP41|286128_calculated"
 ```
 
 
@@ -493,7 +497,9 @@ cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), rf.levels, K = 5,
     fs.method = "corr")
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-141.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-142.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-143.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-144.png) ![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-145.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.del5.res[1:3]
@@ -501,10 +507,10 @@ cv.del5.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9385
+## [1] 0.9721
 ## 
 ## $sens
-## [1] 0.4375
+## [1] 0.8125
 ## 
 ## $spec
 ## [1] 0.9877
@@ -519,7 +525,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-146.png) 
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
 
 ```r
 
@@ -528,8 +534,12 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "ZNF560|147741_calculated" "ZNF98|148198_calculated" 
-## [3] "CREB3L3|84699_calculated"
+##  [1] "KDM3B|51780_calculated"        "EIF4EBP3|8637_calculated"     
+##  [3] "PCBD2|84105_calculated"        "KIAA0141|9812|1of2_calculated"
+##  [5] "PFDN1|5201_calculated"         "RBM22|55696_calculated"       
+##  [7] "ZMAT2|153527_calculated"       "CSNK1A1|1452_calculated"      
+##  [9] "PPP2CA|5515_calculated"        "WDR55|54853_calculated"       
+## [11] "CATSPER3|347732_calculated"    "HARS|3035_calculated"
 ```
 
 
@@ -540,7 +550,9 @@ cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), rf.levels, K = 5,
     fs.method = "corr")
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-151.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-152.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-153.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-154.png) ![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-155.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.del7.res[1:3]
@@ -548,10 +560,10 @@ cv.del7.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9385
+## [1] 0.9497
 ## 
 ## $sens
-## [1] 0.619
+## [1] 0.7143
 ## 
 ## $spec
 ## [1] 0.981
@@ -566,7 +578,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-156.png) 
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
 
 ```r
 
@@ -575,9 +587,11 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "PDAP1|11333_calculated"  "MKRN1|23608_calculated" 
-## [3] "LUC7L2|51631_calculated" "HEYL|26508_calculated"  
-## [5] "STYXL1|51657_calculated"
+## [1] "LUC7L2|51631_calculated"   "PDAP1|11333_calculated"   
+## [3] "MKRN1|23608_calculated"    "SLC25A13|10165_calculated"
+## [5] "GATAD1|57798_calculated"   "GSTK1|373156_calculated"  
+## [7] "STYXL1|51657_calculated"   "SUMF2|25870_calculated"   
+## [9] "CASP2|835_calculated"
 ```
 
 

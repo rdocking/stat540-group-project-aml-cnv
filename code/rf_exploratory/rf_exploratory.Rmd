@@ -46,7 +46,7 @@ fs.lm <- function(input.dat, input.labels) {
 # input.dat: training data set  
 # input.labels: true outcomes for training data  
 fs.corr <- function(input.dat, input.levels) {
-  gene.corrs <- apply(input.dat, 1, function(x) return(suppressWarnings(cor(x, as.numeric(input.levels)))))
+  gene.corrs <- apply(input.dat, 1, function(x) return(suppressWarnings(cor(x, as.numeric(input.levels), method = "spearman"))))
   gene.corrs <- gene.corrs[order(abs(gene.corrs), na.last = NA, decreasing = TRUE)]
   return(names(gene.corrs[1:25]))
 }
@@ -78,7 +78,7 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
     else if (fs.method == "corr") {
       train.features <- fs.corr(
         all.dat[,train.samples],
-        all.labels[train.samples]
+        all.levels[train.samples]
       )
     }
     feature.list[[paste("Fold", f, sep = "")]] <- train.features
