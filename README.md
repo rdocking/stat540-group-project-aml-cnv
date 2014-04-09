@@ -3,6 +3,31 @@ Using RNA-Seq Data to Predict Large-scale Copy-number Alterations in AML
 
 Group project for STAT540, Winter 2014.
 
+Overview
+--------
+Here is a general diagram of our workflow:  
+
+<img src="method-workflow.png" height=400>
+
+### Inputs
+* RPKM data: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt)
+* Patient metadata: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data/experimental_design_cleaned.txt)
+
+### Outputs
+* Poster text: **link to be added**
+* Poster figures: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster)
+
+### Analysis scripts
+1. Linear regression - cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_rna_seq_rpkm.md)
+2. Linear regression - CNA events: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.md)
+3. PCA & SVM analysis:
+ * Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_Cytogenic_risk.md)
+ * del5: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_del_5_final.Rmd)
+ * del7: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_del_7_final.Rmd)
+ * trisomy8: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_trsomy_8_final.Rmd)
+4. Random forest analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.md)
+5. SVM analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.md)
+
 Project Description
 -------------------
 
