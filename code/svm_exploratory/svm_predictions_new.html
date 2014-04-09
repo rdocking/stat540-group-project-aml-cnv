@@ -304,7 +304,7 @@ svm.cv &lt;- function(all.dat, all.labels, all.levels, K = 5, fs.method = &quot;
 
 <pre><code class="r">svmDes &lt;- rDes[rDes$Cytogenetic_risk != &quot;N.D.&quot;, ]
 svm.labels &lt;- mapvalues(svmDes$Cytogenetic_risk, c(&quot;Good&quot;, &quot;Intermediate&quot;, &quot;Poor&quot;), 
-    c(FALSE, FALSE, TRUE), warn_missing = TRUE)
+    c(0, 0, 1), warn_missing = TRUE)
 svm.labels &lt;- factor(svm.labels)
 svm.levels &lt;- mapvalues(svmDes$Cytogenetic_risk, c(&quot;Good&quot;, &quot;Intermediate&quot;, &quot;Poor&quot;), 
     c(3, 2, 1), warn_missing = TRUE)
@@ -328,13 +328,13 @@ svmDat &lt;- rDat[, rownames(svmDes)]
 </code></pre>
 
 <pre><code>## $acc
-## [1] NaN
+## [1] 0.858
 ## 
 ## $sens
-## [1] NaN
+## [1] 0.5476
 ## 
 ## $spec
-## [1] NaN
+## [1] 0.9552
 </code></pre>
 
 <pre><code class="r">fts &lt;- cv.risk.res[[4]]
@@ -533,13 +533,13 @@ grid.draw(venn.plot)
 </code></pre>
 
 <pre><code>## $acc
-## [1] NaN
+## [1] 0.8239
 ## 
 ## $sens
-## [1] NaN
+## [1] 0.4524
 ## 
 ## $spec
-## [1] NaN
+## [1] 0.9403
 </code></pre>
 
 <pre><code class="r">fts &lt;- cv.risk.res[[4]]

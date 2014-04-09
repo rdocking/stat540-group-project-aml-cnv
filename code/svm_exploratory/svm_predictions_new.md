@@ -149,7 +149,7 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 ```r
 svmDes <- rDes[rDes$Cytogenetic_risk != "N.D.", ]
 svm.labels <- mapvalues(svmDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
-    c(FALSE, FALSE, TRUE), warn_missing = TRUE)
+    c(0, 0, 1), warn_missing = TRUE)
 svm.labels <- factor(svm.labels)
 svm.levels <- mapvalues(svmDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
     c(3, 2, 1), warn_missing = TRUE)
@@ -178,13 +178,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] NaN
+## [1] 0.858
 ## 
 ## $sens
-## [1] NaN
+## [1] 0.5476
 ## 
 ## $spec
-## [1] NaN
+## [1] 0.9552
 ```
 
 ```r
@@ -419,13 +419,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] NaN
+## [1] 0.8239
 ## 
 ## $sens
-## [1] NaN
+## [1] 0.4524
 ## 
 ## $spec
-## [1] NaN
+## [1] 0.9403
 ```
 
 ```r

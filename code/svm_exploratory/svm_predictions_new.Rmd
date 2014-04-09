@@ -1,4 +1,4 @@
-Random forest exploratory analysis
+SVM predictions
 ========================================================
 
 Load the data and metadata. In this analysis, I will be using the cleaned RPKM data.
@@ -34,8 +34,8 @@ fs.lm <- function(input.dat, input.labels) {
   fit <- lmFit(dat.voomed, design)
   ebFit <- eBayes(fit)
   hits <- topTable(ebFit, n = Inf, coef = "Label")
-#  train.features <- hits$ID[1:25]
-  train.features <- rownames(hits)[1:25]
+  train.features <- hits$ID[1:25]
+  #train.features <- rownames(hits)[1:25]
   return(train.features)
 }
 ```
@@ -122,7 +122,7 @@ svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
 Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to poor and not poor:
 ```{r}
 svmDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
-svm.labels <- mapvalues(svmDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(FALSE,FALSE,TRUE), warn_missing = TRUE)
+svm.labels <- mapvalues(svmDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
 svm.labels <- factor(svm.labels)
 svm.levels <- mapvalues(svmDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 svm.levels <- factor(svm.levels)
