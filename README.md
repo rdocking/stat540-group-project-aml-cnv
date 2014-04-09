@@ -28,6 +28,16 @@ Here is a general diagram of our workflow:
 4. Random forest analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.md)
 5. SVM analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.md)
 
+### Bibliography
+1. Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. New England Journal of Medicine 368, 2059–2074 (2013). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/23634996)
+2. Grimwade, D. et al. Refinement of cytogenetic classification in acute myeloid leukemia: determination of prognostic significance of rare recurring chromosomal abnormalities among 5876 younger adult patients treated in the United Kingdom Medical Research Council trials. Blood 116, 354–365 (2010). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/20385793)
+3. Prebet, T. et al. Secondary Philadelphia chromosome after non-myeloablative peripheral blood stem cell transplantation for a myelodysplastic syndrome in transformation. Bone Marrow Transplant 33, 247–249 (2004). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/14716291)
+4. Law, C. W., Chen, Y., Shi, W. & Smyth, G. K. voom: precision weights unlock linear model analysis tools for RNA-seq read counts. Genome Biology 15, R29 (2014). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/24485249)
+
+* Missing one reference from poster
+* Just the ones in the poster, or additional?
+
+
 Project Description
 -------------------
 
