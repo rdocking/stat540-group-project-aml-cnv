@@ -21,15 +21,12 @@ Here is a general diagram of our workflow:
 * Poster figures: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster)
 
 ### Analysis scripts
-1. Linear regression - cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_rna_seq_rpkm.md)
+1. Linear regression - Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_rna_seq_rpkm.md)
 2. Linear regression - CNA events: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.md)
-3. PCA & SVM analysis:
- * Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_Cytogenic_risk.md)
- * del5: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_del_5_final.Rmd)
- * del7: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_del_7_final.Rmd)
- * trisomy8: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_trsomy_8_final.Rmd)
-4. Random forest analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.md)
-5. SVM analysis: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.md)
+3. SVM (PCA-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_Cytogenic_risk.md)
+4. SVM (lm and correlation-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory)
+5. Random forest (lm and correlation-based feature selection) : [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory)
+
 
 ### Bibliography
 1. Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. New England Journal of Medicine 368, 2059–2074 (2013). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/23634996)
