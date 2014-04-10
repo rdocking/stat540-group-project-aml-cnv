@@ -23,9 +23,9 @@ Here is a general diagram of our workflow:
 ### Analysis scripts
 1. Linear regression - Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_rna_seq_rpkm.md)
 2. Linear regression - CNA events: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.md)
-3. SVM (PCA-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory/pca_SVM_analysis_Cytogenic_risk.md)
+3. SVM (PCA-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory)
 4. SVM (lm and correlation-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory)
-5. Random forest (lm and correlation-based feature selection) : [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory)
+5. Random forest (lm and correlation-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory)
 
 
 ### Bibliography
