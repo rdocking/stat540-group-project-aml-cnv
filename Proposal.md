@@ -68,6 +68,7 @@ In this step, we aim to prepare the data for the main analysis by first doing sa
 - Classification (supervised): We can apply Linear discriminant analysis or SVM  for classification of the data.
 We can also do the main analysis on data with smaller number of features, that is basically reducing the dimensionality of the data in order to identify the salient features.  The dimensionality reduction step can be accomplished by using PCA. Afterwards, we will be able to compare the result of the "original data" and "data with smaller number of features" and conclude how it is necessary in RNA-seq.
 
+
 Group Composition
 -----------------
   
@@ -83,7 +84,7 @@ Group Composition
   Deliverables and Responsibilities
 ---------------------------------
   
-The main deliverables for the project will be a poster, as well as this git repository. Within this git repository, the work will be broken down into a series of [R Markdown](http://rmarkdown.rstudio.com) documents.  
+  The main deliverables for the project will be a poster, as well as this git repository. Within this git repository, the work will be broken down into a series of [R Markdown](http://rmarkdown.rstudio.com) documents.  
 
 Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Markdown documents, their interconnection, and the group member in charge of each document:
   
@@ -99,7 +100,7 @@ Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Mar
   | **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF? |
   | **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | ??? |
   
-Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
+  Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
 
 ### 1. Experimental Design Sheet Generation
 
