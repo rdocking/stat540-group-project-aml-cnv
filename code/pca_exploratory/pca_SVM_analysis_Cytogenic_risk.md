@@ -3,14 +3,13 @@ PCA Analysis
 
 
 ```r
-setwd("/Users/fdorri/Documents/UBC/courses/STAT540/workspace/finalProject/stat540-group-project-aml-cnv/code")
-rna_seq_dat_rpkm <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", 
+rna_seq_dat_rpkm <- read.table("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", 
     sep = "\t", header = TRUE, check.names = FALSE)
-rna_seq_dat_read <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
+rna_seq_dat_read <- read.table("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
     sep = "\t", header = TRUE, check.names = FALSE)
 
 
-exp_dat <- read.table("../data/experimental_design_cleaned.txt", sep = "\t", 
+exp_dat <- read.table("../../data/experimental_design_cleaned.txt", sep = "\t", 
     header = TRUE, row.names = 1)
 
 joined_dat_rpkm <- cbind(exp_dat, t(rna_seq_dat_rpkm))
@@ -47,12 +46,8 @@ library(VennDiagram)
 **Now, let's remove the columns with NA values - we won't use them at this time.**
 
 ```r
-# complete.cols.rpkm <- lapply(joined_dat_rpkm,function(x) {all(!is.na(x))})
-# dat.complete.rpkm <- joined_dat_rpkm[unlist(complete.cols.rpkm)]
 dat.complete.rpkm <- joined_dat_rpkm
 
-# complete.cols.read <- lapply(joined_dat_read,function(x) {all(!is.na(x))})
-# dat.complete.read <- joined_dat_read[unlist(complete.cols.read)]
 dat.complete.read <- joined_dat_read
 ```
 
@@ -73,11 +68,13 @@ dat.filt.read <- subset(dat.complete.read, dat.complete.read$Cytogenetic_risk !=
 
 ```r
 dat.in.read <- dat.filt.read
+# change ccc for different classification
+c.class <- c(0, 1, 0)
 dat.in.read$prognosis <- mapvalues(dat.in.read$Cytogenetic_risk, c("Good", "Intermediate", 
-    "Poor"), c(0, 1, 0), warn_missing = TRUE)
+    "Poor"), c.class, warn_missing = TRUE)
 dat.in.rpkm <- dat.filt.rpkm
 dat.in.rpkm$prognosis <- mapvalues(dat.in.rpkm$Cytogenetic_risk, c("Good", "Intermediate", 
-    "Poor"), c(0, 1, 0), warn_missing = TRUE)
+    "Poor"), c.class, warn_missing = TRUE)
 ```
 
 
@@ -194,14 +191,6 @@ cross_validate <- function(prelim_in, d) {
         ypred = predict(svp, xtest)
         results.ker <- table(factor(ytest), ypred)
         
-        # xtrain <- t(res$tr.dat) colnames(xtrain) <- paste('X', c(1:d), sep='')
-        # xtest <- t(res$ts.dat) colnames(xtest) <- paste('X', c(1:d), sep='')
-        # xtrain <- as.data.frame(xtrain) xtest <- as.data.frame(xtest) xtrain <-
-        # cbind(xtrain, prognosis=factor(ytrain)) xtest <- cbind(xtest,
-        # prognosis=factor(ytest)) fit_svm <- ksvm(prognosis~.,xtrain) pred_svm <-
-        # predict(fit_svm, newdata=xtest, type='response') results.ker <-
-        # table(ytest,pred_svm)
-        
         
         # # #R kernel PCA xtest <-
         # prelim.in[folds$subsets[folds$which==f,],grepl('.*calculated',colnames(prelim.in))]
@@ -234,12 +223,10 @@ cross_validate <- function(prelim_in, d) {
             C = 100, scaled = c())
         ypred = predict(svp, xtest)
         results.sup <- table(factor(ytest), ypred)
-        # colnames(xtrain) <- paste('X', c(1:d), sep='') colnames(xtest) <-
-        # paste('X', c(1:d), sep='') xtrain <- as.data.frame(xtrain) xtest <-
-        # as.data.frame(xtest) xtrain <- cbind(xtrain, prognosis=factor(ytrain))
-        # xtest <- cbind(xtest, prognosis=factor(ytest)) fit_svm <-
-        # ksvm(prognosis~.,xtrain) pred_svm <- predict(fit_svm, newdata=xtest,
-        # type='response') results.sup <- table(ytest,pred_svm)
+        
+        # fit_svm <- ksvm(prognosis~.,xtrain) pred_svm <- predict(fit_svm,
+        # newdata=xtest, type='response')
+        
         
         conf_matrix_sup[1, 1] <- conf_matrix_sup[1, 1] + results.sup[1, 1]
         conf_matrix_sup[1, 2] <- conf_matrix_sup[1, 2] + results.sup[1, 2]
@@ -254,28 +241,19 @@ cross_validate <- function(prelim_in, d) {
         # prcomp(t(prelim.in[,grepl('.*calculated',colnames(prelim.in))]), center =
         # T, scale = F) xtrain <-
         # princomp.t$rotation[folds$subsets[folds$which!=f,], 1:d] xtest <-
-        # princomp.t$rotation[folds$subsets[folds$which==f,], 1:d] xtrain <-
-        # as.data.frame(xtrain) xtest <- as.data.frame(xtest) xtrain <-
-        # cbind(xtrain, prognosis=factor(ytrain)) xtest <- cbind(xtest,
-        # prognosis=factor(ytest))
+        # princomp.t$rotation[folds$subsets[folds$which==f,], 1:d]
         
         
         
         
         xtrain <- princomp$x[folds$subsets[folds$which != f, ], 1:d]
-        # colnames(xtrain) <- paste('X', c(1:d), sep='')
         xtest <- princomp$x[folds$subsets[folds$which == f, ], 1:d]
-        # colnames(xtest) <- paste('X', c(1:d), sep='') xtrain <-
-        # as.data.frame(xtrain) xtest <- as.data.frame(xtest) xtrain <-
-        # cbind(xtrain, prognosis=factor(ytrain)) xtest <- cbind(xtest,
-        # prognosis=factor(ytest))
         
         svp <- ksvm(xtrain, factor(ytrain), type = "C-svc", kernel = "rbfdot", 
             C = 100, scaled = c())
         ypred = predict(svp, xtest)
         results.basic <- table(factor(ytest), ypred)
-        # fit_svm <- ksvm(prognosis~.,xtrain) pred_svm <- predict(fit_svm,
-        # newdata=xtest, type='response') results.basic <- table(ytest,pred_svm)
+        
         
         conf_matrix_basic[1, 1] <- conf_matrix_basic[1, 1] + results.basic[1, 
             1]
@@ -463,10 +441,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```r
-# counts <- data.frame(sensetivity =
-# c(sens_svm_basic,sens_svm_ker,sens_svm_sup ),
-# specificty=c(spec_svm_basic,spec_svm_ker,spec_svm_sup))
-counts <- data.frame(sensetivity = c(sens_svm_basic, sens_svm_ker), specificty = c(spec_svm_basic, 
+counts <- data.frame(specificty = c(sens_svm_basic, sens_svm_ker), sensetivity = c(spec_svm_basic, 
     spec_svm_ker))
 
 # row.names(counts) <- c('Basic PCA','Kernelized PCA','Supervised PCA')
@@ -475,17 +450,13 @@ counts
 ```
 
 ```
-##                sensetivity specificty
-## Basic PCA           0.6933     0.6634
-## Kernelized PCA      0.6000     0.6733
+##                specificty sensetivity
+## Basic PCA          0.6933      0.6634
+## Kernelized PCA     0.6000      0.6733
 ```
 
 ```r
 
-# barplot(c(counts$sensetivity, counts$specificty), main='preformance of SVM
-# on PCA versions on RPKM data', xlab='Sensetivity and specificity',
-# col=c('red', 'blue', 'green'), legend = c('Basic PCA','Kernelized PCA',
-# 'Supervised PCA'), beside=TRUE)
 
 barplot(c(counts$sensetivity, counts$specificty), main = "preformance of SVM on PCA versions on RPKM data", 
     xlab = "Sensetivity and specificity", col = c("red", "blue"), legend = c("Basic PCA", 
@@ -509,13 +480,18 @@ smoothScatter(princomp$x)  #generates a smooth scatter plot that shows the densi
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-122.png) 
 
 ```r
+pdf(file = "cytogenetic_risk.pdf")
 plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(prelim.in$Cytogenetic_risk), 
     pch = 21, cex = 1.5, main = "Cytogenic_risk")
 legend("topright", as.character(levels(factor(prelim.in$Cytogenetic_risk))), 
     pch = 21, pt.bg = c(1, 2, 4))
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-123.png) 
+```
+## pdf 
+##   2
+```
 
 ```r
 
@@ -533,14 +509,14 @@ venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-124.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-123.png) 
 
 ```r
 
 barplot(princomp$sd^2, main = "PCA Eigen Values")
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-125.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-124.png) 
 
 ```r
 
@@ -562,21 +538,6 @@ gset <- list(RPKM = intersection_rpkm, Read_count = intersection_read)
 ```
 
 ```r
-venn.plot <- venn.diagram(gset, filename = NULL, fill = c("red", "blue"), force.unique)
-```
-
-```
-## Error: object 'gset' not found
-```
-
-```r
-plot.new()
-grid.draw(venn.plot)
-```
-
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) 
-
-```r
 
 data <- prelim.in[, grepl("_*calculated", colnames(prelim.in))]
 des <- exp_dat[rownames(prelim.in), ]
@@ -586,7 +547,7 @@ stripplot(gExp ~ Cytogenetic_risk | intersection[1:9], prepareData(intersection[
     grid = TRUE, main = "Interesting hits")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-132.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-131.png) 
 
 ```r
 stripplot(gExp ~ Molecular_risk | intersection[1:9], prepareData(intersection[1:4], 
@@ -594,7 +555,7 @@ stripplot(gExp ~ Molecular_risk | intersection[1:9], prepareData(intersection[1:
     grid = TRUE, main = "Interesting hits")
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-133.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-132.png) 
 
 
 
@@ -604,8 +565,6 @@ princomp <- prcomp(dat.filt.rpkm[, grepl(".*calculated", colnames(dat.filt.rpkm)
     center = T, scale = F)
 pc <- data.matrix(cbind(exp_dat[sample, ], princomp$x[sample, 1:20]))
 scatter <- pc[, c("Cytogenetic_risk", "del_5", "del_7", "PC1", "PC2", "PC3")]
-# scatter$Cytogenetic_risk <- as.numeric(scatter$Cytogenetic_risk)
-# scatter$qdel_5 <- as.numeric(scatter$qdel_5)
 splom(scatter, pch = 16, col = 1, pscale = 0, xlab = NULL, main = "Scatter plot matrix", 
     diag.panel = function(x, ...) {
         yLim <- current.panel.limits()$ylim
