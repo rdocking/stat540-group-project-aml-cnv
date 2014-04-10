@@ -7,11 +7,25 @@ Load libraries:
 
 ```r
 library(kernlab)
+```
+
+```
+## Warning: package 'kernlab' was built under R version 3.0.2
+```
+
+```r
 library(cvTools)
 ```
 
 ```
 ## Loading required package: lattice
+```
+
+```
+## Warning: package 'lattice' was built under R version 3.0.2
+```
+
+```
 ## Loading required package: robustbase
 ```
 
@@ -37,17 +51,32 @@ library(caret)
 ```
 
 ```
-## Warning: package 'caret' was built under R version 3.0.3
+## Warning: package 'caret' was built under R version 3.0.2
 ```
 
 ```
 ## Loading required package: ggplot2
 ```
 
+```
+## Warning: package 'ggplot2' was built under R version 3.0.2
+```
+
 ```r
 library(plyr)
+```
+
+```
+## Warning: package 'plyr' was built under R version 3.0.2
+```
+
+```r
 library(limma)
 library(VennDiagram)
+```
+
+```
+## Warning: package 'VennDiagram' was built under R version 3.0.2
 ```
 
 ```
@@ -56,6 +85,10 @@ library(VennDiagram)
 
 ```r
 library(xtable)
+```
+
+```
+## Warning: package 'xtable' was built under R version 3.0.2
 ```
 
 
@@ -110,7 +143,7 @@ fs.corr <- function(input.dat, input.levels) {
 # data used in the analysis all.labels: true outcomes for the data K: number
 # of folds to use in CV fs.method: the strategy to use for feature selection
 rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", 
-    plot.varimp = TRUE) {
+    plot.varimp = TRUE, conf.mat.flip = FALSE) {
     set.seed(540)
     folds <- cvFolds(ncol(all.dat), K = K)
     
@@ -144,10 +177,17 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm",
         results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.rf, 
             levels = c(0, 1)), dnn = c("obs", "pred"))
         
-        conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
-        conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
-        conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
-        conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+        if (conf.mat.flip) {
+            conf_matrix[2, 2] <- conf_matrix[2, 2] + results[1, 1]
+            conf_matrix[2, 1] <- conf_matrix[2, 1] + results[1, 2]
+            conf_matrix[1, 2] <- conf_matrix[1, 2] + results[2, 1]
+            conf_matrix[1, 1] <- conf_matrix[1, 1] + results[2, 2]
+        } else {
+            conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
+            conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
+            conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
+            conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+        }
     }
     
     rf.sens <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
@@ -182,34 +222,57 @@ Run a 5-fold cross-validation for the data:
 cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-71.png) ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-72.png) ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-73.png) ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-74.png) ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-75.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.risk.res[1:3]
 ```
 
 ```
-## $acc
-## [1] 0.8523
-## 
-## $sens
-## [1] 0.5714
-## 
-## $spec
-## [1] 0.9403
+## Error: object 'cv.risk.res' not found
 ```
 
 ```r
 all.results[["lm.poor"]] <- cv.risk.res[1:3]
+```
+
+```
+## Error: object 'cv.risk.res' not found
+```
+
+```r
 fts <- cv.risk.res[[4]]
+```
+
+```
+## Error: object 'cv.risk.res' not found
+```
+
+```r
 
 plot.new()
+```
+
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7.png) 
+
+```r
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
+```
+
+```
+## Error: object 'fts' not found
+```
+
+```r
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-76.png) 
+```
+## Error: object 'venn.plot' not found
+```
 
 ```r
 
@@ -218,9 +281,7 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "SCD|6319_calculated"     "STYXL1|51657_calculated"
-## [3] "PDAP1|11333_calculated"  "LUC7L2|51631_calculated"
-## [5] "GSTK1|373156_calculated"
+## Error: object 'fts' not found
 ```
 
 
@@ -234,34 +295,57 @@ cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), rf.levels,
     K = 5, fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-81.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-82.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-83.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-84.png) ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-85.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.trisomy8.res[1:3]
 ```
 
 ```
-## $acc
-## [1] 0.9553
-## 
-## $sens
-## [1] 0.6842
-## 
-## $spec
-## [1] 0.9875
+## Error: object 'cv.trisomy8.res' not found
 ```
 
 ```r
 all.results[["lm.trisomy8"]] <- cv.trisomy8.res[1:3]
+```
+
+```
+## Error: object 'cv.trisomy8.res' not found
+```
+
+```r
 fts <- cv.trisomy8.res[[4]]
+```
+
+```
+## Error: object 'cv.trisomy8.res' not found
+```
+
+```r
 
 plot.new()
+```
+
+![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+
+```r
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
+```
+
+```
+## Error: object 'fts' not found
+```
+
+```r
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-86.png) 
+```
+## Error: object 'venn.plot' not found
+```
 
 ```r
 
@@ -270,10 +354,7 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "NEIL2|252969_calculated"   "PPP2R2A|5520_calculated"  
-## [3] "ZNF7|7553_calculated"      "KIAA1967|57805_calculated"
-## [5] "R3HCC1|203069_calculated"  "TSNARE1|203062_calculated"
-## [7] "C8orf55|51337_calculated"  "ZFP41|286128_calculated"
+## Error: object 'fts' not found
 ```
 
 
@@ -284,32 +365,55 @@ cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), rf.levels, K = 5,
     fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-91.png) ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-92.png) ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-93.png) ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-94.png) ![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-95.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.del5.res[1:3]
 ```
 
 ```
-## $acc
-## [1] 0.9721
-## 
-## $sens
-## [1] 0.8125
-## 
-## $spec
-## [1] 0.9877
+## Error: object 'cv.del5.res' not found
 ```
 
 ```r
 all.results[["lm.del5"]] <- cv.del5.res[1:3]
+```
+
+```
+## Error: object 'cv.del5.res' not found
+```
+
+```r
 fts <- cv.del5.res[[4]]
+```
+
+```
+## Error: object 'cv.del5.res' not found
+```
+
+```r
 
 pdf("../../poster/rf_venn.pdf")
 plot.new()
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
+```
+
+```
+## Error: object 'fts' not found
+```
+
+```r
 grid.draw(venn.plot)
+```
+
+```
+## Error: object 'venn.plot' not found
+```
+
+```r
 dev.off()
 ```
 
@@ -325,12 +429,7 @@ dev.off()
 ```
 
 ```
-##  [1] "KDM3B|51780_calculated"        "EIF4EBP3|8637_calculated"     
-##  [3] "PCBD2|84105_calculated"        "KIAA0141|9812|1of2_calculated"
-##  [5] "PFDN1|5201_calculated"         "RBM22|55696_calculated"       
-##  [7] "ZMAT2|153527_calculated"       "CSNK1A1|1452_calculated"      
-##  [9] "PPP2CA|5515_calculated"        "WDR55|54853_calculated"       
-## [11] "CATSPER3|347732_calculated"    "HARS|3035_calculated"
+## Error: object 'fts' not found
 ```
 
 
@@ -341,34 +440,57 @@ cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), rf.levels, K = 5,
     fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-101.png) ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-102.png) ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-103.png) ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-104.png) ![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-105.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.del7.res[1:3]
 ```
 
 ```
-## $acc
-## [1] 0.9497
-## 
-## $sens
-## [1] 0.7143
-## 
-## $spec
-## [1] 0.981
+## Error: object 'cv.del7.res' not found
 ```
 
 ```r
 all.results[["lm.del7"]] <- cv.del7.res[1:3]
+```
+
+```
+## Error: object 'cv.del7.res' not found
+```
+
+```r
 fts <- cv.del7.res[[4]]
+```
+
+```
+## Error: object 'cv.del7.res' not found
+```
+
+```r
 
 plot.new()
+```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10.png) 
+
+```r
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
+```
+
+```
+## Error: object 'fts' not found
+```
+
+```r
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-106.png) 
+```
+## Error: object 'venn.plot' not found
+```
 
 ```r
 
@@ -377,11 +499,7 @@ grid.draw(venn.plot)
 ```
 
 ```
-## [1] "LUC7L2|51631_calculated"   "PDAP1|11333_calculated"   
-## [3] "MKRN1|23608_calculated"    "SLC25A13|10165_calculated"
-## [5] "GATAD1|57798_calculated"   "GSTK1|373156_calculated"  
-## [7] "STYXL1|51657_calculated"   "SUMF2|25870_calculated"   
-## [9] "CASP2|835_calculated"
+## Error: object 'fts' not found
 ```
 
 
@@ -390,13 +508,34 @@ Now get a sense of how many genes are shared between these 4 different sets:
 ```r
 fts.all <- list(risk = common.fts.risk, trisomy8 = common.fts.trisomy8, del5 = common.fts.del5, 
     del7 = common.fts.del7)
+```
+
+```
+## Error: object 'common.fts.risk' not found
+```
+
+```r
 plot.new()
-venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", 
-    "blue", "green"))
-grid.draw(venn.plot)
 ```
 
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
+
+```r
+venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", 
+    "blue", "green"))
+```
+
+```
+## Error: object 'fts.all' not found
+```
+
+```r
+grid.draw(venn.plot)
+```
+
+```
+## Error: object 'venn.plot' not found
+```
 
 
 
@@ -640,7 +779,9 @@ Run a 5-fold cross-validation for the data:
 cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-181.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-182.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-183.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-184.png) ![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-185.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.risk.res[1:3]
@@ -648,13 +789,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.9659
+## [1] 0.8239
 ## 
 ## $sens
-## [1] 0.8485
+## [1] 0.381
 ## 
 ## $spec
-## [1] 0.993
+## [1] 0.9627
 ```
 
 ```r
@@ -667,7 +808,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-186.png) 
+![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18.png) 
 
 ```r
 
@@ -676,15 +817,9 @@ grid.draw(venn.plot)
 ```
 
 ```
-##  [1] "CPNE8|144402_calculated"  "HOXA7|3204_calculated"   
-##  [3] "HOXA6|3203_calculated"    "HOXA5|3202_calculated"   
-##  [5] "HOXA3|3200_calculated"    "HOXA4|3201_calculated"   
-##  [7] "HOXA9|3205_calculated"    "HOXA10|3206_calculated"  
-##  [9] "HOXA2|3199_calculated"    "FGFR1|2260_calculated"   
-## [11] "CYP7B1|9420_calculated"   "PDE4DIP|9659_calculated" 
-## [13] "HOXB5|3215_calculated"    "NKX2-3|159296_calculated"
-## [15] "LPO|4025_calculated"      "RMND5B|64777_calculated" 
-## [17] "PRDM16|63976_calculated"  "HOXB6|3216_calculated"
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
 ```
 
 
@@ -757,10 +892,12 @@ rfDat <- rDat[, rownames(rfDes)]
 Run a 5-fold cross-validation for the data:
 
 ```r
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm", conf.mat.flip = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-211.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-212.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-213.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-214.png) ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-215.png) 
+```
+## Error: missing values in object
+```
 
 ```r
 cv.risk.res[1:3]
@@ -768,13 +905,13 @@ cv.risk.res[1:3]
 
 ```
 ## $acc
-## [1] 0.8636
+## [1] 0.9602
 ## 
 ## $sens
-## [1] 0.901
+## [1] 0.8485
 ## 
 ## $spec
-## [1] 0.8133
+## [1] 0.986
 ```
 
 ```r
@@ -787,7 +924,7 @@ venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-216.png) 
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21.png) 
 
 ```r
 
@@ -796,11 +933,9 @@ grid.draw(venn.plot)
 ```
 
 ```
-##  [1] "NAV1|89796_calculated"    "SLC18A2|6571_calculated" 
-##  [3] "LASS4|79603_calculated"   "PBX3|5090_calculated"    
-##  [5] "HOXB6|3216_calculated"    "HOXB5|3215_calculated"   
-##  [7] "NKX2-3|159296_calculated" "IQCE|23288_calculated"   
-##  [9] "EVPL|2125_calculated"     "C7orf50|84310_calculated"
+## [1] "PDE4DIP|9659_calculated"  "PHKA1|5255_calculated"   
+## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
+## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
 ```
 
 
@@ -808,7 +943,8 @@ grid.draw(venn.plot)
 ## 9) Train RF to predict "Intermediate" cytogenetic risk, use correlations for feature selection
 
 ```r
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
+cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr", 
+    conf.mat.flip = TRUE)
 ```
 
 ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-221.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-222.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-223.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-224.png) ![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-225.png) 
@@ -822,10 +958,10 @@ cv.risk.res[1:3]
 ## [1] 0.7784
 ## 
 ## $sens
-## [1] 0.901
+## [1] 0.6133
 ## 
 ## $spec
-## [1] 0.6133
+## [1] 0.901
 ```
 
 ```r
@@ -868,21 +1004,17 @@ all.results.xt <- xtable(all.results.df)
 print(all.results.xt, type = "html")
 ```
 
-<!-- html table generated in R 3.0.2 by xtable 1.7-3 package -->
-<!-- Tue Apr 08 22:45:40 2014 -->
+<!-- html table generated in R 3.0.1 by xtable 1.7-3 package -->
+<!-- Thu Apr 10 14:05:43 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> accuracy </TH> <TH> sensitivity </TH> <TH> specificity </TH>  </TR>
-  <TR> <TD align="right"> lm.poor </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.57 </TD> <TD align="right"> 0.94 </TD> </TR>
-  <TR> <TD align="right"> lm.trisomy8 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.68 </TD> <TD align="right"> 0.99 </TD> </TR>
-  <TR> <TD align="right"> lm.del5 </TD> <TD align="right"> 0.97 </TD> <TD align="right"> 0.81 </TD> <TD align="right"> 0.99 </TD> </TR>
-  <TR> <TD align="right"> lm.del7 </TD> <TD align="right"> 0.95 </TD> <TD align="right"> 0.71 </TD> <TD align="right"> 0.98 </TD> </TR>
   <TR> <TD align="right"> corr.poor </TD> <TD align="right"> 0.82 </TD> <TD align="right"> 0.38 </TD> <TD align="right"> 0.96 </TD> </TR>
   <TR> <TD align="right"> corr.trisomy8 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.68 </TD> <TD align="right"> 0.99 </TD> </TR>
   <TR> <TD align="right"> corr.del5 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.44 </TD> <TD align="right"> 0.99 </TD> </TR>
   <TR> <TD align="right"> corr.del7 </TD> <TD align="right"> 0.95 </TD> <TD align="right"> 0.71 </TD> <TD align="right"> 0.98 </TD> </TR>
-  <TR> <TD align="right"> lm.good </TD> <TD align="right"> 0.97 </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.good </TD> <TD align="right"> 0.82 </TD> <TD align="right"> 0.38 </TD> <TD align="right"> 0.96 </TD> </TR>
   <TR> <TD align="right"> corr.good </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.99 </TD> </TR>
-  <TR> <TD align="right"> lm.intermediate </TD> <TD align="right"> 0.86 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.81 </TD> </TR>
-  <TR> <TD align="right"> corr.intermediate </TD> <TD align="right"> 0.78 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.61 </TD> </TR>
+  <TR> <TD align="right"> lm.intermediate </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.intermediate </TD> <TD align="right"> 0.78 </TD> <TD align="right"> 0.61 </TD> <TD align="right"> 0.90 </TD> </TR>
    </TABLE>
 
