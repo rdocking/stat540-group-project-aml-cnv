@@ -94,10 +94,10 @@ Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Mar
 | **3**    | Differential Expression I - Cytogenetic Risk | Rebecca | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
 | **4**    | Differential Expression II - Karyotypic Events | Carmen | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
 | **5** | Differential Expression Summary | CB, RD, RJ | Output of **3**, **4** | Summary of the differential expression analysis |
-| **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components? |
-| **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM? |
-| **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF? |
-| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | ??? |
+| **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components |
+| **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM |
+| **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF |
+| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | Performance summary (sensitivity/sepcifity) for classifiers |
 
 Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
 
