@@ -16,9 +16,11 @@ Here is a general diagram of our workflow:
 * RPKM data: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt)
 * Patient metadata: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data/experimental_design_cleaned.txt)
 
-### Outputs
-* Poster text: **link to be added**
-* Poster figures: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster)
+### Poster
+* Poster pdf: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/poster/STAT540_AML_poster_FINAL.pdf)
+* Poster text: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/poster/PosterText.md)
+* Poster figures: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster/images)
+* Poster tables: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster/tables)
 
 ### Analysis scripts
 1. Linear regression - Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_rna_seq_rpkm.md)
