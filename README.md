@@ -7,7 +7,7 @@ Overview
 --------
 Here is a general diagram of our workflow:  
 
-<img src="method-workflow.png" height=400>
+<img src="proposal-method-workflow.png" height=400>
 
 ### Project Proposal
 * Proposal: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/Proposal.md)
