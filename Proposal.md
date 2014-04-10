@@ -68,39 +68,38 @@ In this step, we aim to prepare the data for the main analysis by first doing sa
 - Classification (supervised): We can apply Linear discriminant analysis or SVM  for classification of the data.
 We can also do the main analysis on data with smaller number of features, that is basically reducing the dimensionality of the data in order to identify the salient features.  The dimensionality reduction step can be accomplished by using PCA. Afterwards, we will be able to compare the result of the "original data" and "data with smaller number of features" and conclude how it is necessary in RNA-seq.
 
-
 Group Composition
 -----------------
-  
-  | Name  | Program | Supervisor  | Expertise |
-  | ------------- | ------------- | ----- | ------- |
-  | Fatemeh Dorri | Computer Science (PhD) | Dr. Sohrab Shah and Dr. Anne Condon | Machine learning, Data mining, Bioinformatics | 
-  | Rod Docking | Experimental Medicine (PhD) | Dr. Aly Karsan | Bioinformatics, Genomics |
-  | Lauren Chong | Bioinformatics (MSc) | Rotations (current: Dr. Ryan Morin) | Bioinformatics, R |
-  | Rebecca Johnston | Bioinformatics (MSc) | Rotations (current: Dr. Christian Steidl) | Molecular biology, cancer biology |
-  | Emily Hindalong | Bioinformatics (MSc) | Current Rotation: Dr. Paul Pavlidis | Computer Science, Software, Cognitive Systems |
-  | Carmen Bayly | GSAT | Current rotation: Dr. Corey Nislow | Biochemistry |
-  
-  Deliverables and Responsibilities
+
+| Name  | Program | Supervisor  | Expertise |
+| ------------- | ------------- | ----- | ------- |
+| Fatemeh Dorri | Computer Science (PhD) | Dr. Sohrab Shah and Dr. Anne Condon | Machine learning, Data mining, Bioinformatics | 
+| Rod Docking | Experimental Medicine (PhD) | Dr. Aly Karsan | Bioinformatics, Genomics |
+| Lauren Chong | Bioinformatics (MSc) | Rotations (current: Dr. Ryan Morin) | Bioinformatics, R |
+| Rebecca Johnston | Bioinformatics (MSc) | Rotations (current: Dr. Christian Steidl) | Molecular biology, cancer biology |
+| Emily Hindalong | Bioinformatics (MSc) | Current Rotation: Dr. Paul Pavlidis | Computer Science, Software, Cognitive Systems |
+| Carmen Bayly | GSAT | Current rotation: Dr. Corey Nislow | Biochemistry |
+
+Deliverables and Responsibilities
 ---------------------------------
-  
-  The main deliverables for the project will be a poster, as well as this git repository. Within this git repository, the work will be broken down into a series of [R Markdown](http://rmarkdown.rstudio.com) documents.  
+
+The main deliverables for the project will be a poster, as well as this git repository. Within this git repository, the work will be broken down into a series of [R Markdown](http://rmarkdown.rstudio.com) documents.  
 
 Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Markdown documents, their interconnection, and the group member in charge of each document:
-  
-  |  Document Number   |   Subject   |   Owner   | Input | Output |
-  | ------------------ | ----------- | --------- | ----- | ------ | 
-  | **1**    | Experimental Design Sheet Generation     | Rod  | Raw Clinical Data | Cleaned Experimental design CSV |
-  | **2**    | Expression Matrix Generation | Rebecca | Raw count and RPKM Data | Cleaned count data | 
-  | **3**    | Differential Expression I - Cytogenetic Risk | Rebecca | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
-  | **4**    | Differential Expression II - Karyotypic Events | Carmen | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
-  | **5** | Differential Expression Summary | CB, RD, RJ | Output of **3**, **4** | Summary of the differential expression analysis |
-  | **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components? |
-  | **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM? |
-  | **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF? |
-  | **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | ??? |
-  
-  Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
+
+|  Document Number   |   Subject   |   Owner   | Input | Output |
+| ------------------ | ----------- | --------- | ----- | ------ | 
+| **1**    | Experimental Design Sheet Generation     | Rod  | Raw Clinical Data | Cleaned Experimental design CSV |
+| **2**    | Expression Matrix Generation | Rebecca | Raw count and RPKM Data | Cleaned count data | 
+| **3**    | Differential Expression I - Cytogenetic Risk | Rebecca | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
+| **4**    | Differential Expression II - Karyotypic Events | Carmen | Output of **1**, **2** | Table of differentially expressed genes, with associated q-values, logFC |
+| **5** | Differential Expression Summary | CB, RD, RJ | Output of **3**, **4** | Summary of the differential expression analysis |
+| **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components? |
+| **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM? |
+| **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF? |
+| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | ??? |
+
+Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
 
 ### 1. Experimental Design Sheet Generation
 
