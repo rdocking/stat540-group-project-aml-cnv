@@ -54,6 +54,10 @@ library(VennDiagram)
 ## Loading required package: grid
 ```
 
+```r
+library(xtable)
+```
+
 
 
 ```r
@@ -137,7 +141,8 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm",
         
         pred.rf <- predict(fit.rf, newdata = test.dat, type = "response")
         
-        results <- table(test.labels, pred.rf)
+        results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.rf, 
+            levels = c(0, 1)), dnn = c("obs", "pred"))
         
         conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
         conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
@@ -300,13 +305,18 @@ cv.del5.res[1:3]
 all.results[["lm.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
+pdf("../../poster/rf_venn.pdf")
 plot.new()
 venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", 
     "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-96.png) 
+```
+## pdf 
+##   2
+```
 
 ```r
 
@@ -468,7 +478,7 @@ cv.trisomy8.res[1:3]
 ```
 
 ```r
-all.results[["cor.trisomy8"]] <- cv.trisomy8.res[1:3]
+all.results[["corr.trisomy8"]] <- cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
 plot.new()
@@ -520,7 +530,7 @@ cv.del5.res[1:3]
 ```
 
 ```r
-all.results[["cor.del5"]] <- cv.del5.res[1:3]
+all.results[["corr.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
 plot.new()
@@ -567,7 +577,7 @@ cv.del7.res[1:3]
 ```
 
 ```r
-all.results[["cor.del7"]] <- cv.del7.res[1:3]
+all.results[["corr.del7"]] <- cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
 plot.new()
@@ -641,10 +651,10 @@ cv.risk.res[1:3]
 ## [1] 0.9659
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.8485
 ## 
 ## $spec
-## [1] 0.8485
+## [1] 0.993
 ```
 
 ```r
@@ -696,10 +706,10 @@ cv.risk.res[1:3]
 ## [1] 0.9602
 ## 
 ## $sens
-## [1] 0.986
+## [1] 0.8485
 ## 
 ## $spec
-## [1] 0.8485
+## [1] 0.986
 ```
 
 ```r
@@ -847,139 +857,32 @@ grid.draw(venn.plot)
 ## 10) Summarize results
 
 ```r
-show(all.results)
+all.results.df <- data.frame(matrix(unlist(all.results), ncol = 3, byrow = TRUE))
+rownames(all.results.df) <- names(all.results)
+colnames(all.results.df) <- c("accuracy", "sensitivity", "specificity")
 ```
 
+
+```r
+all.results.xt <- xtable(all.results.df)
+print(all.results.xt, type = "html")
 ```
-## $lm.poor
-## $lm.poor$acc
-## [1] 0.8523
-## 
-## $lm.poor$sens
-## [1] 0.5714
-## 
-## $lm.poor$spec
-## [1] 0.9403
-## 
-## 
-## $lm.trisomy8
-## $lm.trisomy8$acc
-## [1] 0.9553
-## 
-## $lm.trisomy8$sens
-## [1] 0.6842
-## 
-## $lm.trisomy8$spec
-## [1] 0.9875
-## 
-## 
-## $lm.del5
-## $lm.del5$acc
-## [1] 0.9721
-## 
-## $lm.del5$sens
-## [1] 0.8125
-## 
-## $lm.del5$spec
-## [1] 0.9877
-## 
-## 
-## $lm.del7
-## $lm.del7$acc
-## [1] 0.9497
-## 
-## $lm.del7$sens
-## [1] 0.7143
-## 
-## $lm.del7$spec
-## [1] 0.981
-## 
-## 
-## $corr.poor
-## $corr.poor$acc
-## [1] 0.8239
-## 
-## $corr.poor$sens
-## [1] 0.381
-## 
-## $corr.poor$spec
-## [1] 0.9627
-## 
-## 
-## $cor.trisomy8
-## $cor.trisomy8$acc
-## [1] 0.9609
-## 
-## $cor.trisomy8$sens
-## [1] 0.6842
-## 
-## $cor.trisomy8$spec
-## [1] 0.9938
-## 
-## 
-## $cor.del5
-## $cor.del5$acc
-## [1] 0.9385
-## 
-## $cor.del5$sens
-## [1] 0.4375
-## 
-## $cor.del5$spec
-## [1] 0.9877
-## 
-## 
-## $cor.del7
-## $cor.del7$acc
-## [1] 0.9497
-## 
-## $cor.del7$sens
-## [1] 0.7143
-## 
-## $cor.del7$spec
-## [1] 0.981
-## 
-## 
-## $lm.good
-## $lm.good$acc
-## [1] 0.9659
-## 
-## $lm.good$sens
-## [1] 0.993
-## 
-## $lm.good$spec
-## [1] 0.8485
-## 
-## 
-## $corr.good
-## $corr.good$acc
-## [1] 0.9602
-## 
-## $corr.good$sens
-## [1] 0.986
-## 
-## $corr.good$spec
-## [1] 0.8485
-## 
-## 
-## $lm.intermediate
-## $lm.intermediate$acc
-## [1] 0.8636
-## 
-## $lm.intermediate$sens
-## [1] 0.901
-## 
-## $lm.intermediate$spec
-## [1] 0.8133
-## 
-## 
-## $corr.intermediate
-## $corr.intermediate$acc
-## [1] 0.7784
-## 
-## $corr.intermediate$sens
-## [1] 0.901
-## 
-## $corr.intermediate$spec
-## [1] 0.6133
-```
+
+<!-- html table generated in R 3.0.2 by xtable 1.7-3 package -->
+<!-- Tue Apr 08 22:45:40 2014 -->
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> accuracy </TH> <TH> sensitivity </TH> <TH> specificity </TH>  </TR>
+  <TR> <TD align="right"> lm.poor </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.57 </TD> <TD align="right"> 0.94 </TD> </TR>
+  <TR> <TD align="right"> lm.trisomy8 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.68 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.del5 </TD> <TD align="right"> 0.97 </TD> <TD align="right"> 0.81 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.del7 </TD> <TD align="right"> 0.95 </TD> <TD align="right"> 0.71 </TD> <TD align="right"> 0.98 </TD> </TR>
+  <TR> <TD align="right"> corr.poor </TD> <TD align="right"> 0.82 </TD> <TD align="right"> 0.38 </TD> <TD align="right"> 0.96 </TD> </TR>
+  <TR> <TD align="right"> corr.trisomy8 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.68 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.del5 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.44 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.del7 </TD> <TD align="right"> 0.95 </TD> <TD align="right"> 0.71 </TD> <TD align="right"> 0.98 </TD> </TR>
+  <TR> <TD align="right"> lm.good </TD> <TD align="right"> 0.97 </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.good </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.85 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.intermediate </TD> <TD align="right"> 0.86 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.81 </TD> </TR>
+  <TR> <TD align="right"> corr.intermediate </TD> <TD align="right"> 0.78 </TD> <TD align="right"> 0.90 </TD> <TD align="right"> 0.61 </TD> </TR>
+   </TABLE>
 

@@ -123,7 +123,8 @@ svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
         
         pred.svm <- predict(fit.svm, newdata = test.dat, type = "response")
         
-        results <- table(test.labels, pred.svm)
+        results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.svm, 
+            levels = c(0, 1)), dnn = c("obs", "pred"))
         
         conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
         conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
@@ -148,7 +149,7 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 ```r
 svmDes <- rDes[rDes$Cytogenetic_risk != "N.D.", ]
 svm.labels <- mapvalues(svmDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
-    c(FALSE, FALSE, TRUE), warn_missing = TRUE)
+    c(0, 0, 1), warn_missing = TRUE)
 svm.labels <- factor(svm.labels)
 svm.levels <- mapvalues(svmDes$Cytogenetic_risk, c("Good", "Intermediate", "Poor"), 
     c(3, 2, 1), warn_missing = TRUE)
@@ -672,10 +673,10 @@ cv.risk.res[1:3]
 ## [1] 0.983
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.9394
 ## 
 ## $spec
-## [1] 0.9394
+## [1] 0.993
 ```
 
 ```r
@@ -733,10 +734,10 @@ cv.risk.res[1:3]
 ## [1] 0.9602
 ## 
 ## $sens
-## [1] 0.993
+## [1] 0.8182
 ## 
 ## $spec
-## [1] 0.8182
+## [1] 0.993
 ```
 
 ```r
