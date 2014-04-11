@@ -31,10 +31,12 @@ Here is a general diagram of our workflow:
 
 
 ### Bibliography
-1. Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. New England Journal of Medicine 368, 2059–2074 (2013). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/23634996)
-2. Grimwade, D. et al. Refinement of cytogenetic classification in acute myeloid leukemia: determination of prognostic significance of rare recurring chromosomal abnormalities among 5876 younger adult patients treated in the United Kingdom Medical Research Council trials. Blood 116, 354–365 (2010). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/20385793)
-3. Prebet, T. et al. Secondary Philadelphia chromosome after non-myeloablative peripheral blood stem cell transplantation for a myelodysplastic syndrome in transformation. Bone Marrow Transplant 33, 247–249 (2004). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/14716291)
-4. Law, C. W., Chen, Y., Shi, W. & Smyth, G. K. voom: precision weights unlock linear model analysis tools for RNA-seq read counts. Genome Biology 15, R29 (2014). [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/24485249)
+1. National Comprehensive Cancer Network (2014). *NCCN Clinical Practice Guidelines in Oncology - Acute Myeloid Leukemia.* Version 2. [PDF](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/references/NCCN_AML_V2_2014.pdf)
 
-* Missing one reference from poster
-* Just the ones in the poster, or additional?
+2. Grimwade, D et al. (2010). Renement of cytogenetic classication in acute myeloid leukemia: determination of prognostic signicance of rare recurring chromosomal abnormalities among 5876 younger adult patients treated in the United Kingdom Medical Research Council trials. *Blood*. Jul 22;116(3):354-65. [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/20385793)
+
+3. Prebet, T et al. (2004). Secondary Philadelphia chromosome after non-myeloablative peripheral blood stem cell transplantation for a myelodysplastic syndrome in transformation. *Bone Marrow Transplantation*. Jan;33(2):247-9. [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/14716291)
+
+4. The Cancer Genome Atlas Research Network (2013). Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. *New England Journal of Medicine*. May 30;368(22):2059-74.[PubMed](http://www.ncbi.nlm.nih.gov/pubmed/23634996)
+
+5. Law, CW et al. (2014). Voom: precision weights unlock linear model analysis tools for RNA-seq read counts. *Genome Biology*. Feb 3;15(2):R29.
