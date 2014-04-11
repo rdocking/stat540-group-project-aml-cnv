@@ -5,6 +5,7 @@ This directory contains scripts to predict cytogenetic risk and abnormalities us
 
 Contents:
 * The final Rmd script: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.Rmd)
+* The MD report: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.md)
 * The HTML report: [here](http://htmlpreview.github.io/?https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions_new.html)
 * The original Rmd script: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions.Rmd)
 
