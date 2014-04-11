@@ -13,7 +13,7 @@ rDat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tc
 rDes <- read.delim("../data/experimental_design_cleaned.txt")
 ```
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(reshape2) # for reshaping data from wide to tall format
 library(ggplot2) # for graphing
 ```
@@ -119,7 +119,6 @@ rDat <- rDat + 1
 
 Now re-make the density plot:
 ```{r densityPlot_readCount_Add1Log2}
-rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "readCount")
 ggplot(rDatMelt, aes(log2(readCount))) +
@@ -138,6 +137,6 @@ Ensure we can read the data back in correctly:
 test <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
                    sep = "\t", header = TRUE, check.names = FALSE)
 str(test, max.level = 0)
-head(test[1:5, 1:5])
-tail(test[1:5, 1:5])
+head(test[ , 1:5])
+tail(test[ , 1:5])
 ```

@@ -22,10 +22,6 @@ library(reshape2)  # for reshaping data from wide to tall format
 library(ggplot2)  # for graphing
 ```
 
-```
-## Warning: package 'ggplot2' was built under R version 3.0.3
-```
-
 
 
 ## Data inspection
@@ -374,7 +370,6 @@ rDat <- rDat + 1
 Now re-make the density plot:
 
 ```r
-rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "readCount")
 ```
 
@@ -412,28 +407,30 @@ str(test, max.level = 0)
 ```
 
 ```r
-head(test[1:5, 1:5])
+head(test[, 1:5])
 ```
 
 ```
 ##                              2803   2805    2806    2807   2808
-## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
-## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
-## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
-## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
-## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
+## A1BG-AS|503538_calculated  793.14 430.64  892.18 1096.44 571.74
+## A1BG|1_calculated         1140.18 404.44 1005.70 1122.68 532.26
+## A1CF|29974_calculated        1.00   1.00    1.00    2.00   1.00
+## A2LD1|87769_calculated     195.50 228.10  180.84  112.06 124.08
+## A2ML1|144568_calculated     25.36  34.66   46.82   12.08  22.64
+## A2M|2_calculated           983.14 194.26  130.92  885.28 758.42
 ```
 
 ```r
-tail(test[1:5, 1:5])
+tail(test[, 1:5])
 ```
 
 ```
-##                              2803   2805    2806    2807   2808
-## A1BG-AS|503538_calculated  794.14 431.64  893.18 1097.44 572.74
-## A1BG|1_calculated         1141.18 405.44 1006.70 1123.68 533.26
-## A1CF|29974_calculated        2.00   2.00    2.00    3.00   2.00
-## A2LD1|87769_calculated     196.50 229.10  181.84  113.06 125.08
-## A2ML1|144568_calculated     26.36  35.66   47.82   13.08  23.64
+##                                2803     2805    2806    2807     2808
+## ZYG11B|79699_calculated     1115.18  3835.64  1697.5 1991.44  2724.36
+## ZYX|7791_calculated         9614.40 18643.30 18566.6 7734.44 10198.40
+## ZZEF1|23140_calculated      5333.46 12198.30 12209.0 9365.42  8041.82
+## ZZZ3|26009_calculated       2453.22  3495.92  6214.1 2987.18  3698.18
+## psiTPTE22|387590_calculated   34.00    20.22   333.1   52.88    48.70
+## tAKR|389932_calculated         8.78    27.34     2.0   23.28     6.92
 ```
 
