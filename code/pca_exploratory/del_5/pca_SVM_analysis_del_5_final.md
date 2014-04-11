@@ -3,13 +3,14 @@ PCA Analysis
 
 
 ```r
-rna_seq_dat_rpkm <- read.table("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", 
+
+rna_seq_dat_rpkm <- read.table("../../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", 
     sep = "\t", header = TRUE, check.names = FALSE)
-rna_seq_dat_read <- read.table("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
+rna_seq_dat_read <- read.table("../../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", 
     sep = "\t", header = TRUE, check.names = FALSE)
 
 
-exp_dat <- read.table("../../data/experimental_design_cleaned.txt", sep = "\t", 
+exp_dat <- read.table("../../../data/experimental_design_cleaned.txt", sep = "\t", 
     header = TRUE, row.names = 1)
 
 joined_dat_rpkm <- cbind(exp_dat, t(rna_seq_dat_rpkm))
@@ -57,8 +58,8 @@ dat.complete.read <- joined_dat_read
 **Remove the rows with N.D.**
 
 ```r
-dat.filt.rpkm <- subset(dat.complete.rpkm, dat.complete.rpkm$del_7 != "N.D.")
-dat.filt.read <- subset(dat.complete.read, dat.complete.read$del_7 != "N.D.")
+dat.filt.rpkm <- subset(dat.complete.rpkm, dat.complete.rpkm$del_5 != "N.D.")
+dat.filt.read <- subset(dat.complete.read, dat.complete.read$del_5 != "N.D.")
 ```
 
 
@@ -66,10 +67,10 @@ dat.filt.read <- subset(dat.complete.read, dat.complete.read$del_7 != "N.D.")
 
 ```r
 dat.in.read <- dat.filt.read
-dat.in.read$prognosis <- mapvalues(dat.in.read$del_7, c("TRUE", "FALSE"), c(1, 
+dat.in.read$prognosis <- mapvalues(dat.in.read$del_5, c("TRUE", "FALSE"), c(1, 
     0), warn_missing = TRUE)
 dat.in.rpkm <- dat.filt.rpkm
-dat.in.rpkm$prognosis <- mapvalues(dat.in.rpkm$del_7, c("TRUE", "FALSE"), c(1, 
+dat.in.rpkm$prognosis <- mapvalues(dat.in.rpkm$del_5, c("TRUE", "FALSE"), c(1, 
     0), warn_missing = TRUE)
 ```
 
@@ -79,11 +80,11 @@ dat.in.rpkm$prognosis <- mapvalues(dat.in.rpkm$del_7, c("TRUE", "FALSE"), c(1,
 ```r
 prelim.in.read <- dat.in.read[, grepl("_*calculated", colnames(dat.in.read))]
 gene.name.read <- colnames(prelim.in.read)
-prelim.in.read <- dat.in.read[, c(colnames(prelim.in.read), "prognosis", "del_7")]
+prelim.in.read <- dat.in.read[, c(colnames(prelim.in.read), "prognosis", "del_5")]
 
 prelim.in.rpkm <- dat.in.rpkm[, grepl("_*calculated", colnames(dat.in.rpkm))]
 gene.name.rpkm <- colnames(prelim.in.rpkm)
-prelim.in.rpkm <- dat.in.rpkm[, c(colnames(prelim.in.rpkm), "prognosis", "del_7")]
+prelim.in.rpkm <- dat.in.rpkm[, c(colnames(prelim.in.rpkm), "prognosis", "del_5")]
 ```
 
 
@@ -142,8 +143,8 @@ run_svm <- function(x.tr, x.ts) {
     
     sens_svm <- conf_matrix[1, 1]/sum(conf_matrix[1, ])
     spec_svm <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
-    cat("Specificity = ", sens_svm, "\n")
-    cat("Sensitvity = ", spec_svm, "\n")
+    cat("Sensitvity = ", sens_svm, "\n")
+    cat("Specificity = ", spec_svm, "\n")
     
 }
 ```
@@ -252,6 +253,7 @@ prepareData <- function(g, prDat, prDes) {
 
 
 
+
 **RPKM data analysis**
 
 ```r
@@ -263,53 +265,53 @@ rpkm.results <- cross_validate(prelim.in, 20)
 ```
 
 ```
-## 0 1 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 
+## 1 1 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 
 ## Flag is false
 ## Eigen values = 2.542e+19 2.029e+19 6.83e+18 1.555e+18 2.879e+17 1.81e+17 1.076e+17 3.974e+16 3.386e+16 2.209e+16 1.536e+16 8.228e+15 6.351e+15 4.995e+15 2.883e+15 2.5e+15 1.809e+15 1.502e+15 1.111e+15 8.532e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 1.489e+19 25219 13494 10509 9392 8745 8150 6285 5810 5664 5220 4499 4476 4262 3884 3788 3543 3394 3319 3164 
+## Eigen values = 1.031e+19 9955 9160 8479 7734 7634 6102 5953 5510 5384 5152 5066 4540 4511 4145 4025 4008 3797 3716 3551 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+## 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 
 ## Flag is false
 ## Eigen values = 3.03e+19 2.509e+19 8.713e+18 1.552e+18 2.576e+17 1.776e+17 1.048e+17 4.194e+16 2.959e+16 1.541e+16 8.361e+15 6.613e+15 4.832e+15 2.91e+15 1.98e+15 1.647e+15 1.127e+15 1.055e+15 8.542e+14 7.494e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 1.661e+19 31123 15540 14565 13751 10220 10085 9754 8962 7954 7400 7127 6243 6159 6115 5763 5420 5230 4477 4364 
+## Eigen values = 2.273e+19 36033 30022 22097 20192 17285 15270 14663 11124 11122 10961 10584 10512 10202 9281 8083 7983 7558 7164 6942 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 
+## 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 
 ## Flag is false
 ## Eigen values = 3.087e+19 1.786e+19 5.969e+18 1.626e+18 2.874e+17 1.473e+17 9.163e+16 4.216e+16 3.499e+16 1.994e+16 9.734e+15 6.95e+15 6.156e+15 5.6e+15 3.029e+15 2.427e+15 1.75e+15 1.274e+15 9.921e+14 8.826e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 2.176e+19 20585 19135 14426 12703 12556 10328 9879 9701 9459 9358 9287 8487 7523 6861 6251 5873 5833 5703 4710 
+## Eigen values = 1.504e+19 22120 21866 16055 14318 11291 8717 8400 8395 8332 7638 6534 6350 6288 5388 5097 5000 4516 4180 4155 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+## 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 ## Flag is false
 ## Eigen values = 3.222e+19 1.699e+19 9.727e+18 1.501e+18 3.549e+17 2.231e+17 7.782e+16 4.195e+16 2.705e+16 2.362e+16 1.528e+16 6.593e+15 5.275e+15 4.782e+15 3.054e+15 2.214e+15 1.691e+15 1.393e+15 1.048e+15 7.294e+14 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 2.223e+19 25826 21932 19745 17095 16900 16649 14353 14270 14036 13550 13428 13001 12459 11909 11729 10004 8950 8252 7490 
+## Eigen values = 2.982e+19 45796 42150 32218 28262 26550 26481 23798 21528 19687 18229 17980 15513 15392 13555 13483 13251 12763 12213 11717 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
-## 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 1 0 0 
+## 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 
 ## Flag is false
 ## Eigen values = 2.839e+19 2.446e+19 7.79e+18 1.855e+18 2.515e+17 1.89e+17 9.881e+16 4.503e+16 3.888e+16 2.496e+16 1.312e+16 8.46e+15 6.38e+15 5.293e+15 3.602e+15 3.13e+15 2.22e+15 1.843e+15 1.262e+15 1.013e+15 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## supervised PCA
 ## Flag is true
-## Eigen values = 1.926e+19 20237 19111 17109 15424 14491 13087 12696 12466 11431 11038 9498 8829 8637 8588 8102 7236 6572 6482 6383 
+## Eigen values = 2.518e+19 35688 28527 17894 16297 14365 13194 12711 12602 12242 10305 9510 9326 9205 8909 7946 7652 7334 7221 6453 
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
 ## basic PCA
 ## Using automatic sigma estimation (sigest) for RBF or laplace kernel
@@ -325,7 +327,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.981
+## [1] 0.9448
 ```
 
 ```r
@@ -333,7 +335,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.381
+## [1] 0.4375
 ```
 
 ```r
@@ -343,7 +345,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.9494
+## [1] 0.9448
 ```
 
 ```r
@@ -351,7 +353,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.2857
+## [1] 0.125
 ```
 
 ```r
@@ -361,7 +363,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.9557
+## [1] 0.9509
 ```
 
 ```r
@@ -369,7 +371,7 @@ conf_matrix_sup <- rpkm.results$sup
 ```
 
 ```
-## [1] 0.2857
+## [1] 0.1875
 ```
 
 ```r
@@ -383,8 +385,8 @@ counts
 
 ```
 ##                specificty sensetivity
-## Basic PCA          0.9810      0.3810
-## Kernelized PCA     0.9494      0.2857
+## Basic PCA          0.9448      0.4375
+## Kernelized PCA     0.9448      0.1250
 ```
 
 ```r
@@ -397,16 +399,12 @@ barplot(c(counts$sensetivity, counts$specificty), main = "preformance of SVM on 
 ![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
 
 
-
-
 ```r
 sample <- rownames(dat.filt.rpkm[, grepl(".*calculated", colnames(dat.filt.rpkm))])
 princomp <- prcomp(dat.filt.rpkm[, grepl(".*calculated", colnames(dat.filt.rpkm))], 
     center = T, scale = F)
 pc <- data.matrix(cbind(exp_dat[sample, ], princomp$x[sample, 1:20]))
-
 scatter <- pc[, c("Cytogenetic_risk", "del_5", "del_7", "PC1", "PC2", "PC3")]
-
 splom(scatter, pch = 16, col = 1, pscale = 0, xlab = NULL, main = "Scatter plot matrix", 
     diag.panel = function(x, ...) {
         yLim <- current.panel.limits()$ylim
@@ -421,16 +419,69 @@ splom(scatter, pch = 16, col = 1, pscale = 0, xlab = NULL, main = "Scatter plot 
 
 ```r
 
+
+
+pdf(file = "del_5.pdf")
+plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(dat.filt.rpkm$del_5), pch = 21, 
+    cex = 1.5, main = "del_5")
+legend("topright", as.character(levels(factor(dat.filt.rpkm$del_5))), pch = 21, 
+    pt.bg = c(0, 1))
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+pdf(file = "del_7.pdf")
 plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(dat.filt.rpkm$del_7), pch = 21, 
     cex = 1.5, main = "del_7")
 legend("topright", as.character(levels(factor(dat.filt.rpkm$del_7))), pch = 21, 
     pt.bg = c(0, 1))
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-122.png) 
+```
+## pdf 
+##   2
+```
 
 ```r
 
+
+pdf(file = "trisomy_8.pdf")
+plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(dat.filt.rpkm$trisomy_8), 
+    pch = 21, cex = 1.5, main = "trisomy_8")
+legend("topright", as.character(levels(factor(dat.filt.rpkm$trisomy_8))), pch = 21, 
+    pt.bg = c(0, 1))
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
+
+
+pdf(file = "Molecular_risk.pdf")
+plot(princomp$x[, c("PC1", "PC2")], bg = as.numeric(dat.filt.rpkm$Molecular_risk), 
+    pch = 21, cex = 1.5, main = "Molecular_risk")
+legend("topright", as.character(levels(factor(dat.filt.rpkm$Molecular_risk))), 
+    pch = 21, pt.bg = c(1, 2, 3, 4))
+dev.off()
+```
+
+```
+## pdf 
+##   2
+```
+
+```r
 
 
 
@@ -448,14 +499,14 @@ venn.plot <- venn.diagram(gene.set, filename = NULL, fill = c("red", "blue",
 grid.draw(venn.plot)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-123.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-122.png) 
 
 ```r
 
 barplot(princomp$sd^2, main = "PCA Eigen Values")
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-124.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-123.png) 
 
 ```r
 
@@ -475,11 +526,10 @@ gset <- list(RPKM = intersection_rpkm, Read_count = intersection_read)
 
 ```r
 
-
 data <- prelim.in[, grepl("_*calculated", colnames(prelim.in))]
 des <- exp_dat[rownames(prelim.in), ]
 
-# stripplot(gExp ~ del_7 | intersection[1:9] ,
+# stripplot(gExp ~ del_5 | intersection[1:9] ,
 # prepareData(intersection[1:9], t(data), (des)), jitter.data = TRUE,
 # auto.key = TRUE, type = c('p', 'a'), grid = TRUE, main= 'Interesting
 # hits')
@@ -488,7 +538,7 @@ stripplot(gExp ~ Molecular_risk | intersection[1:9], prepareData(intersection[1:
     grid = TRUE, main = "Interesting hits")
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-125.png) 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-124.png) 
 
 ```r
 

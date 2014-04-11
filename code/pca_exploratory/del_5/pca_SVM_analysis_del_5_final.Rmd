@@ -3,11 +3,11 @@ PCA Analysis
 
 ```{r}
 
-rna_seq_dat_rpkm <-read.table("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
-rna_seq_dat_read <-read.table("../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
+rna_seq_dat_rpkm <-read.table("../../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
+rna_seq_dat_read <-read.table("../../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
 
 
-exp_dat <- read.table("../../data/experimental_design_cleaned.txt", 
+exp_dat <- read.table("../../../data/experimental_design_cleaned.txt", 
                            sep = "\t", header = TRUE, row.names = 1)
 
 joined_dat_rpkm <- cbind(exp_dat,t(rna_seq_dat_rpkm))

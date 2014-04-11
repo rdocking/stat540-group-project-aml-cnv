@@ -181,13 +181,13 @@ hljs.initHighlightingOnLoad();
 <body>
 <h1>PCA Analysis</h1>
 
-<pre><code class="r">rna_seq_dat_rpkm &lt;- read.table(&quot;../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt&quot;, 
+<pre><code class="r">rna_seq_dat_rpkm &lt;- read.table(&quot;../../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt&quot;, 
     sep = &quot;\t&quot;, header = TRUE, check.names = FALSE)
-rna_seq_dat_read &lt;- read.table(&quot;../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt&quot;, 
+rna_seq_dat_read &lt;- read.table(&quot;../../../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt&quot;, 
     sep = &quot;\t&quot;, header = TRUE, check.names = FALSE)
 
 
-exp_dat &lt;- read.table(&quot;../../data/experimental_design_cleaned.txt&quot;, sep = &quot;\t&quot;, 
+exp_dat &lt;- read.table(&quot;../../../data/experimental_design_cleaned.txt&quot;, sep = &quot;\t&quot;, 
     header = TRUE, row.names = 1)
 
 joined_dat_rpkm &lt;- cbind(exp_dat, t(rna_seq_dat_rpkm))
