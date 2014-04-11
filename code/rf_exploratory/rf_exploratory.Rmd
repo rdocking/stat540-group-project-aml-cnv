@@ -1,23 +1,22 @@
-Random forest exploratory analysis
+Random forest analysis
 ========================================================
 
 Load the data and metadata. In this analysis, I will be using the cleaned RPKM data.
 
 Load libraries:
-```{r}
+```{r message=FALSE}
 library(kernlab)
 library(cvTools)
+library(plyr)
 library(randomForest)
 library(edgeR)
-library(caret)
-library(plyr)
 library(limma)
 library(VennDiagram)
 library(xtable)
 ```
 
 ```{r}
-rDes <- read.delim("../../data/experimental_design_cleaned.txt")
+ rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
 rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, check.names = FALSE)
 
@@ -25,11 +24,11 @@ all.results <- list()
 ```
 
 
-## 1) Functions for cross-validation
+## 1) Functions for feature selection and cross-validation
 ```{r}
-# Function to select features using linear models  
-# input.dat: training data set  
-# input.labels: true outcomes for training data  
+# Function to select features, takes the top 25 differentially expressed genes as determined with limma
+# input.dat: training data set
+# input.labels: true outcomes for training data
 fs.lm <- function(input.dat, input.labels) {
   norm.factor <- calcNormFactors(input.dat)
   design <- model.matrix(~input.labels)
@@ -46,9 +45,9 @@ fs.lm <- function(input.dat, input.labels) {
 
 
 ```{r}
-# Function to choose features using correlations to outcomes  
-# input.dat: training data set  
-# input.labels: true outcomes for training data  
+# Function to choose features by selecting genes whose expression have the highest correlations to the outcomes (top 25)
+# input.dat: training data set
+# input.levels: true outcome levels for training data
 fs.corr <- function(input.dat, input.levels) {
   gene.corrs <- apply(input.dat, 1, function(x) return(suppressWarnings(cor(x, as.numeric(input.levels), method = "spearman"))))
   gene.corrs <- gene.corrs[order(abs(gene.corrs), na.last = NA, decreasing = TRUE)]
@@ -57,12 +56,66 @@ fs.corr <- function(input.dat, input.levels) {
 ```
 
 ```{r}
-# Function to run k-fold cross validation with a random forest  
-# all.dat: all data used in the analysis  
-# all.labels: true outcomes for the data  
-# K: number of folds to use in CV  
-# fs.method: the strategy to use for feature selection  
-rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot.varimp = TRUE, conf.mat.flip = FALSE) {
+# Function to create a roc curve for a classifier
+# prob.mat: matrix of the probabilities assigned to each sample
+plot.roc <- function(votes.mat, true.labels, plot = TRUE) {
+  tprs <- c()
+	fprs <- c()
+	for (i in seq(0, 100, by = 0.1)) {
+		roc.classification <- vector(length = nrow(votes.mat))
+		for (j in 1:nrow(votes.mat)) {
+		  if (votes.mat[j,1] >= (i/100)) {
+				roc.classification[j] <- 0
+			}
+			else {
+				roc.classification[j] <- 1
+			}
+		}
+		roc.results <- table(
+			factor(true.labels, levels = c(0,1)),
+			factor(roc.classification, levels = c(0,1)),
+			dnn = c("obs", "pred")
+		)
+		tprs <- c(tprs, roc.results[2,2] / sum(roc.results[2,]))
+		fprs <- c(fprs, roc.results[1,2] / sum(roc.results[1,]))
+	}
+
+	roc.data <- data.frame(
+		Cutoff = seq(0, 100, by = 0.1),
+		TPR = tprs,
+		FPR = fprs
+	)
+
+	auc <- 0
+	for (n in 1:(nrow(roc.data) - 1)) {
+		auc <- auc + ((roc.data$FPR[n+1] - roc.data$FPR[n]) * roc.data$TPR[n])
+	}
+
+  if (plot) {
+    xyplot(
+      TPR ~ FPR,
+      roc.data,
+      panel = function(...) {
+        panel.abline(h = 0, v = 1, col = "darkgrey")
+        panel.xyplot(...)
+      },
+      type = c("s"),
+      col = "black"
+    )
+  }
+  
+  return(auc)
+}
+```
+
+```{r}
+# Function to run k-fold cross validation with a random forest classifier
+# all.dat: all data used in the analysis
+# all.labels: true outcomes for the data
+# K: number of folds to use in CV
+# fs.method: the strategy to use for feature selection
+# plot.varimp: whether to plot the variable importance for each of the trained forests
+rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot.varimp = TRUE) {
   set.seed(540)
   folds <- cvFolds(ncol(all.dat), K = K)
 
@@ -100,26 +153,16 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
     if (plot.varimp) { varImpPlot(fit.rf) }
     
     pred.rf <- predict(fit.rf, newdata = test.dat, type = "response")
-      
     results <- table(
       factor(test.labels, levels = c(0,1)),
       factor(pred.rf, levels = c(0,1)),
       dnn = c("obs", "pred")
     )
-    
-    if (conf.mat.flip) {
-      conf_matrix[2,2] <- conf_matrix[2,2] + results[1,1]
-      conf_matrix[2,1] <- conf_matrix[2,1] + results[1,2]
-      conf_matrix[1,2] <- conf_matrix[1,2] + results[2,1]
-      conf_matrix[1,1] <- conf_matrix[1,1] + results[2,2] 
-    }
-    
-    else {
-      conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
-      conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
-      conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
-      conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2] 
-    }
+
+    conf_matrix[1,1] <- conf_matrix[1,1] + results[1,1]
+    conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
+    conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
+    conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2]
   }
   
   rf.sens <- conf_matrix[2,2] / sum(conf_matrix[2,])
@@ -130,14 +173,37 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
 }
 ```
 
+```{r}
+# Function to analyse a list of selected features by drawing a venn diagram and finding the overlaps
+# fts: list of length 5 containing the features selected in each training set
+# draw: whether to draw a venn diagram  
+# filename: file where venn diagram should be printed (default NA means not saved to file)
+summarize.cv.fts <- function(fts, draw = TRUE, filename = NA) {
+  venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
+  
+  if (draw) {
+    plot.new()
+    grid.draw(venn.plot)
+  }  
+  if (!is.na(filename)) {
+    pdf(filename)
+    grid.draw(venn.plot)
+    dev.off()
+  }
+
+  common.fts <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]]))))
+  return(common.fts)
+}
+```
+
 
 ## 2) Train RF to predict "Poor" cytogenetic risk, use linear models for feature selection
 
-Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to poor and not poor:
+Set up the data. Remove samples where the cytogenetic risk category is not determined, and set outcomes to poor vs. not poor:
 ```{r}
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
-rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
-rf.labels <- factor(rf.labels)
+rf.labels.poor <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
+rf.labels.poor <- factor(rf.labels.poor)
 rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
@@ -145,141 +211,51 @@ rfDat <- rDat[,rownames(rfDes)]
 
 Run a 5-fold cross-validation for the data:
 ```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
-cv.risk.res[1:3]
-all.results[["lm.poor"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+cv.lm.poor <- rf.cv(rfDat, rf.labels.poor, rf.levels, K = 5, fs.method = "lm")
+cv.lm.poor[1:3]
+all.results[["lm.poor"]] <- cv.lm.poor[1:3]
+(common.fts.lm.poor <- summarize.cv.fts(cv.lm.poor[[4]]))
 ```
 
 
-## 3) Predict the different cytogenetic mutations, use linear models for feature selection
-
-First look at trisomy 8:
-```{r}
-cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), rf.levels, K = 5, fs.method = "lm")
-cv.trisomy8.res[1:3]
-all.results[["lm.trisomy8"]] <- cv.trisomy8.res[1:3]
-fts <- cv.trisomy8.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.trisomy8 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
-```
-
-Next look at deletions of chromosome 5:
-```{r}
-cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), rf.levels, K = 5, fs.method = "lm")
-cv.del5.res[1:3]
-all.results[["lm.del5"]] <- cv.del5.res[1:3]
-fts <- cv.del5.res[[4]]
-
-pdf("../../poster/rf_venn.pdf")
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-dev.off()
-
-(common.fts.del5 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
-```
-
-Next look at deletions of chromosome 7:
-```{r}
-cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), rf.levels, K = 5, fs.method = "lm")
-cv.del7.res[1:3]
-all.results[["lm.del7"]] <- cv.del7.res[1:3]
-fts <- cv.del7.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.del7 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
-```
-
-Now get a sense of how many genes are shared between these 4 different sets:
-```{r}
-fts.all <- list(risk = common.fts.risk, trisomy8 = common.fts.trisomy8, del5 = common.fts.del5, del7 = common.fts.del7)
-plot.new()
-venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", "blue", "green"))
-grid.draw(venn.plot)
-```
-
-
-## 4) Train RF to predict cytogenetic risk, use correlations for feature selection
+## 3) Predict "poor" cytogenetic risk, this time using correlations for feature selection
 
 Run a 5-fold cross-validation for the data:
 ```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
-cv.risk.res[1:3]
-all.results[["corr.poor"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+cv.corr.poor <- rf.cv(rfDat, rf.labels.poor, rf.levels, K = 5, fs.method = "corr")
+cv.corr.poor[1:3]
+all.results[["corr.poor"]] <- cv.corr.poor[1:3]
+(common.fts.corr.poor <- summarize.cv.fts(cv.corr.poor[[4]]))
 ```
 
 
-## 5) Predict the different cytogenetic mutations, use correlations for feature selection
+## 4) Train RF to predict "Intermediate" cytogenetic risk, use linear models for feature selection
 
-First look at trisomy 8:
+Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to intermediate and not intermediate:
 ```{r}
-cv.trisomy8.res <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "corr")
-cv.trisomy8.res[1:3]
-all.results[["corr.trisomy8"]] <- cv.trisomy8.res[1:3]
-fts <- cv.trisomy8.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.trisomy8 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
+rf.labels.intermediate <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,1,0), warn_missing = TRUE)
+rf.labels.intermediate <- factor(rf.labels.intermediate)
+rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
+rf.levels <- factor(rf.levels)
+rfDat <- rDat[,rownames(rfDes)]
 ```
 
-Next look at deletions of chromosome 5:
+Run a 5-fold cross-validation for the data:
 ```{r}
-cv.del5.res <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "corr")
-cv.del5.res[1:3]
-all.results[["corr.del5"]] <- cv.del5.res[1:3]
-fts <- cv.del5.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.del5 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+cv.lm.intermediate <- rf.cv(rfDat, rf.labels.intermediate, rf.levels, K = 5, fs.method = "lm")
+cv.lm.intermediate[1:3]
+all.results[["lm.intermediate"]] <- cv.lm.intermediate[1:3]
+(common.fts.lm.intermediate <- summarize.cv.fts(cv.lm.intermediate[[4]]))
 ```
 
-Next look at deletions of chromosome 7:
+
+## 5) Train RF to predict "Intermediate" cytogenetic risk, now using correlations for feature selection
 ```{r}
-cv.del7.res <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "corr")
-cv.del7.res[1:3]
-all.results[["corr.del7"]] <- cv.del7.res[1:3]
-fts <- cv.del7.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.del7 <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
-```
-
-Now get a sense of how many genes are shared between these 4 different sets:
-```{r}
-fts.all <- list(risk = common.fts.risk, trisomy8 = common.fts.trisomy8, del5 = common.fts.del5, del7 = common.fts.del7)
-plot.new()
-venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", "blue", "green"))
-grid.draw(venn.plot)
+cv.corr.intermediate <- rf.cv(rfDat, rf.labels.intermediate, rf.levels, K = 5, fs.method = "corr")
+cv.corr.intermediate[1:3]
+all.results[["corr.intermediate"]] <- cv.corr.intermediate[1:3]
+(common.fts.corr.intermediate <- summarize.cv.fts(cv.corr.intermediate[[4]]))
 ```
 
 
@@ -288,8 +264,8 @@ grid.draw(venn.plot)
 Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to good and not good:
 ```{r}
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
-rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(1,0,0), warn_missing = TRUE)
-rf.labels <- factor(rf.labels)
+rf.labels.good <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(1,0,0), warn_missing = TRUE)
+rf.labels.good <- factor(rf.labels.good)
 rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
@@ -297,83 +273,117 @@ rfDat <- rDat[,rownames(rfDes)]
 
 Run a 5-fold cross-validation for the data:
 ```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm")
-cv.risk.res[1:3]
-all.results[["lm.good"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
-
-plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
-grid.draw(venn.plot)
-
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+cv.lm.good <- rf.cv(rfDat, rf.labels.good, rf.levels, K = 5, fs.method = "lm")
+cv.lm.good[1:3]
+all.results[["lm.good"]] <- cv.lm.good[1:3]
+(common.fts.lm.good <- summarize.cv.fts(cv.lm.good[[4]]))
 ```
 
 
 ## 7) Train RF to predict "Good" cytogenetic risk, use correlations for feature selection
 ```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr")
-cv.risk.res[1:3]
-all.results[["corr.good"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
+cv.corr.good <- rf.cv(rfDat, rf.labels.good, rf.levels, K = 5, fs.method = "corr")
+cv.corr.good[1:3]
+all.results[["corr.good"]] <- cv.corr.good[1:3]
+(common.fts.corr.good <- summarize.cv.fts(cv.corr.good[[4]]))
+```
 
+
+## 8) Predict the different cytogenetic mutations, use linear models for feature selection
+
+First look at trisomy 8:
+```{r}
+cv.lm.trisomy8 <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "lm")
+cv.lm.trisomy8[1:3]
+all.results[["lm.trisomy8"]] <- cv.lm.trisomy8[1:3]
+(common.fts.lm.trisomy8 <- summarize.cv.fts(cv.lm.trisomy8[[4]]))
+```
+
+Next look at deletions of chromosome 5:
+```{r}
+cv.lm.del5 <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "lm")
+cv.lm.del5[1:3]
+all.results[["lm.del5"]] <- cv.lm.del5[1:3]
+(common.fts.lm.del5 <- summarize.cv.fts(cv.lm.del5[[4]]))
+```
+
+Next look at deletions of chromosome 7:
+```{r}
+cv.lm.del7 <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "lm")
+cv.lm.del7[1:3]
+all.results[["lm.del7"]] <- cv.lm.del7[1:3]
+(common.fts.lm.del7 <- summarize.cv.fts(cv.lm.del7[[4]]))
+```
+
+
+## 9) Predict the different cytogenetic mutations, now using correlations for feature selection
+
+First look at trisomy 8:
+```{r}
+cv.corr.trisomy8 <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "corr")
+cv.corr.trisomy8[1:3]
+all.results[["corr.trisomy8"]] <- cv.corr.trisomy8[1:3]
+(common.fts.corr.trisomy8 <- summarize.cv.fts(cv.corr.trisomy8[[4]]))
+```
+
+Next look at deletions of chromosome 5:
+```{r}
+cv.corr.del5 <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "corr")
+cv.corr.del5[1:3]
+all.results[["corr.del5"]] <- cv.corr.del5[1:3]
+(common.fts.corr.del5 <- summarize.cv.fts(cv.corr.del5[[4]]))
+```
+
+Next look at deletions of chromosome 7:
+```{r}
+cv.corr.del7 <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "corr")
+cv.corr.del7[1:3]
+all.results[["corr.del7"]] <- cv.corr.del7[1:3]
+(common.fts.corr.del7 <- summarize.cv.fts(cv.corr.del7[[4]]))
+```
+
+
+## 10) Compare features between outcomes
+Compare some of the significant gene lists between classifiers (just considering linear model feature selection).
+
+Compare the three different levels of cytogenetic risk:
+```{r}
+cyto.all <- list(poor = common.fts.lm.poor, intermediate = common.fts.lm.intermediate, good = common.fts.lm.good)
+venn.plot <- venn.diagram(cyto.all, filename = NULL, fill = c("red", "yellow", "blue"))
 plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
-
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
 ```
 
-
-## 8) Train RF to predict "Intermediate" cytogenetic risk, use linear models for feature selection
-
-Set up the data. Remove samples where the cytogenetic risk category is not determined, and set categories to intermediate and not intermediate:
+Look at poor risk vs. the 3 CNAs:
 ```{r}
-rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
-rf.labels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,1,0), warn_missing = TRUE)
-rf.labels <- factor(rf.labels)
-rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
-rf.levels <- factor(rf.levels)
-rfDat <- rDat[,rownames(rfDes)]
-```
-
-Run a 5-fold cross-validation for the data:
-```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "lm", conf.mat.flip = TRUE)
-cv.risk.res[1:3]
-all.results[["lm.intermediate"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
-
+fts.all <- list(poor = common.fts.lm.poor, trisomy8 = common.fts.lm.trisomy8, del5 = common.fts.lm.del5, del7 = common.fts.lm.del7)
+venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", "blue", "green"))
 plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
-
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
 ```
 
-
-## 9) Train RF to predict "Intermediate" cytogenetic risk, use correlations for feature selection
+Look at intermediate risk vs. the 3 CNAs:
 ```{r}
-cv.risk.res <- rf.cv(rfDat, rf.labels, rf.levels, K = 5, fs.method = "corr", conf.mat.flip = TRUE)
-cv.risk.res[1:3]
-all.results[["corr.intermediate"]] <- cv.risk.res[1:3]
-fts <- cv.risk.res[[4]]
-
+fts.all <- list(intermediate = common.fts.lm.intermediate, trisomy8 = common.fts.lm.trisomy8, del5 = common.fts.lm.del5, del7 = common.fts.lm.del7)
+venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", "blue", "green"))
 plot.new()
-venn.plot <- venn.diagram(fts, filename = NULL, fill = c("red", "blue", "green", "yellow", "purple"), margin = 0.1)
 grid.draw(venn.plot)
+```
 
-(common.fts.risk <- intersect(fts[[1]], intersect(fts[[2]], intersect(fts[[3]], intersect(fts[[4]], fts[[5]])))))
+Look at good risk vs. the 3 CNAs:
+```{r}
+fts.all <- list(good = common.fts.lm.good, trisomy8 = common.fts.lm.trisomy8, del5 = common.fts.lm.del5, del7 = common.fts.lm.del7)
+venn.plot <- venn.diagram(fts.all, filename = NULL, fill = c("red", "yellow", "blue", "green"))
+plot.new()
+grid.draw(venn.plot)
 ```
 
 
-## 10) Summarize results
-```{r}
+## 10) Summarize results for all classifiers
+```{r results='asis'}
 all.results.df <- data.frame(matrix(unlist(all.results), ncol = 3, byrow = TRUE))
 rownames(all.results.df) <- names(all.results)
 colnames(all.results.df) <- c("accuracy", "sensitivity", "specificity")
-```
-```{r results='asis'}
 all.results.xt <- xtable(all.results.df)
 print(all.results.xt, type = "html")
 ```
