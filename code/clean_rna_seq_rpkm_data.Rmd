@@ -136,7 +136,6 @@ rDat <- rDat + 1
 
 Now re-make the density plot:
 ```{r densityPlot_rpkm_Add1Log2}
-rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", 
                  value.name = "RPKM")
 ggplot(rDatMelt, aes(log2(RPKM))) +
@@ -155,6 +154,6 @@ Ensure we can read the data back in correctly:
 test <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
                    header = TRUE, check.names = FALSE)
 str(test, max.level = 0)
-head(test[1:5, 1:5])
-tail(test[1:5, 1:5])
+head(test[ , 1:5])
+tail(test[ , 1:5])
 ```

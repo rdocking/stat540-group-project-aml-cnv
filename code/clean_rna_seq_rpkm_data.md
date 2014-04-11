@@ -132,7 +132,7 @@ head(names(rDat))
 ```
 
 
-Reorder the columns (patients) to match the order of the experimental design file 'rDes$TCGA\_patient_id`:
+Reorder the columns (patients) to match the order of the experimental design file `rDes$TCGA\_patient_id`:
 
 ```r
 rDat <- rDat[, order(names(rDat))]
@@ -380,7 +380,6 @@ rDat <- rDat + 1
 Now re-make the density plot:
 
 ```r
-rDat <- rDat + 1
 rDatMelt <- melt(rDat, variable.name = "Sample", value.name = "RPKM")
 ```
 
@@ -418,28 +417,30 @@ str(test, max.level = 0)
 ```
 
 ```r
-head(test[1:5, 1:5])
+head(test[, 1:5])
 ```
 
 ```
 ##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
-## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
-## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
-## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
-## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
+## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
+## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
+## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
+## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
+## A2M|2_calculated          6.430 1.850 1.514  6.011 4.973
 ```
 
 ```r
-tail(test[1:5, 1:5])
+tail(test[, 1:5])
 ```
 
 ```
-##                            2803  2805  2806   2807  2808
-## A1BG-AS|503538_calculated 9.316 5.156 7.895 12.370 7.002
-## A1BG|1_calculated         9.472 4.105 6.719  9.541 5.306
-## A1CF|29974_calculated     2.000 2.000 2.000  2.011 2.000
-## A2LD1|87769_calculated    3.776 3.650 3.176  3.039 3.066
-## A2ML1|144568_calculated   2.102 2.113 2.138  2.048 2.086
+##                                2803    2805    2806   2807    2808
+## ZYG11B|79699_calculated       5.383  12.998   5.779  9.025  11.165
+## ZYX|7791_calculated         108.490 166.806 149.673 89.632 109.195
+## ZZEF1|23140_calculated       10.149  17.646  16.001 17.468  14.091
+## ZZZ3|26009_calculated        15.069  16.950  26.530 18.561  21.128
+## psiTPTE22|387590_calculated   1.216   1.100   2.553  1.347   1.296
+## tAKR|389932_calculated        1.162   1.437   1.015  1.476   1.117
 ```
 
