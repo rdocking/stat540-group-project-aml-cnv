@@ -25,8 +25,8 @@ This directory contains:
 
 - Differential Expression II - Karyotypic Events: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.html) [R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/Bayly_rna_seq_diff_exp_analysis.R)
 
-- SVM predictions: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory/svm_predictions.Rmd)
+- SVM predictions: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory)
 
-- PCA feature selection: [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_feature_selection.rmd)
+- PCA feature selection: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/pca_exploratory)
 
-- Random forest predictions: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory/rf_exploratory.Rmd)
+- Random forest predictions: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory)
