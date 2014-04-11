@@ -1,4 +1,4 @@
-Random forest exploratory analysis
+SVM exploratory analysis
 ========================================================
 
 Load the data and metadata. In this analysis, I will be using the cleaned RPKM data.
@@ -7,11 +7,25 @@ Load libraries:
 
 ```r
 library(kernlab)
+```
+
+```
+## Warning: package 'kernlab' was built under R version 3.0.2
+```
+
+```r
 library(cvTools)
 ```
 
 ```
 ## Loading required package: lattice
+```
+
+```
+## Warning: package 'lattice' was built under R version 3.0.2
+```
+
+```
 ## Loading required package: robustbase
 ```
 
@@ -28,21 +42,44 @@ library(caret)
 ```
 
 ```
-## Warning: package 'caret' was built under R version 3.0.3
+## Warning: package 'caret' was built under R version 3.0.2
 ```
 
 ```
 ## Loading required package: ggplot2
 ```
 
+```
+## Warning: package 'ggplot2' was built under R version 3.0.2
+```
+
 ```r
 library(plyr)
+```
+
+```
+## Warning: package 'plyr' was built under R version 3.0.2
+```
+
+```r
 library(limma)
 library(VennDiagram)
 ```
 
 ```
+## Warning: package 'VennDiagram' was built under R version 3.0.2
+```
+
+```
 ## Loading required package: grid
+```
+
+```r
+library(xtable)
+```
+
+```
+## Warning: package 'xtable' was built under R version 3.0.2
 ```
 
 
@@ -52,6 +89,8 @@ rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
 rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, 
     check.names = FALSE)
+
+all.results <- list()
 ```
 
 
@@ -69,8 +108,8 @@ fs.lm <- function(input.dat, input.labels) {
     fit <- lmFit(dat.voomed, design)
     ebFit <- eBayes(fit)
     hits <- topTable(ebFit, n = Inf, coef = "Label")
-    # train.features <- hits$ID[1:25]
-    train.features <- rownames(hits)[1:25]
+    train.features <- hits$ID[1:25]
+    # train.features <- rownames(hits)[1:25]
     return(train.features)
 }
 ```
@@ -92,10 +131,11 @@ fs.corr <- function(input.dat, input.levels) {
 
 
 ```r
-# Function to run k-fold cross validation with a random forest all.dat: all
-# data used in the analysis all.labels: true outcomes for the data K: number
-# of folds to use in CV fs.method: the strategy to use for feature selection
-svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
+# Function to run k-fold cross validation with svm all.dat: all data used in
+# the analysis all.labels: true outcomes for the data K: number of folds to
+# use in CV fs.method: the strategy to use for feature selection
+svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", 
+    conf.mat.flip = FALSE) {
     set.seed(540)
     folds <- cvFolds(ncol(all.dat), K = K)
     
@@ -126,10 +166,17 @@ svm.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm") {
         results <- table(factor(test.labels, levels = c(0, 1)), factor(pred.svm, 
             levels = c(0, 1)), dnn = c("obs", "pred"))
         
-        conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
-        conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
-        conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
-        conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+        if (conf.mat.flip) {
+            conf_matrix[2, 2] <- conf_matrix[2, 2] + results[1, 1]
+            conf_matrix[2, 1] <- conf_matrix[2, 1] + results[1, 2]
+            conf_matrix[1, 2] <- conf_matrix[1, 2] + results[2, 1]
+            conf_matrix[1, 1] <- conf_matrix[1, 1] + results[2, 2]
+        } else {
+            conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
+            conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
+            conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
+            conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+        }
     }
     
     svm.sens <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
@@ -188,6 +235,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["lm.poor"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -245,6 +293,7 @@ cv.trisomy8.res[1:3]
 ```
 
 ```r
+all.results[["lm.trisomy8"]] <- cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
 plot.new()
@@ -300,6 +349,7 @@ cv.del5.res[1:3]
 ```
 
 ```r
+all.results[["lm.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
 plot.new()
@@ -357,6 +407,7 @@ cv.del7.res[1:3]
 ```
 
 ```r
+all.results[["lm.del7"]] <- cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
 plot.new()
@@ -429,6 +480,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["corr.poor"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -486,6 +538,7 @@ cv.trisomy8.res[1:3]
 ```
 
 ```r
+all.results[["corr.trisomy8"]] <- cv.trisomy8.res[1:3]
 fts <- cv.trisomy8.res[[4]]
 
 plot.new()
@@ -543,6 +596,7 @@ cv.del5.res[1:3]
 ```
 
 ```r
+all.results[["corr.del5"]] <- cv.del5.res[1:3]
 fts <- cv.del5.res[[4]]
 
 plot.new()
@@ -595,6 +649,7 @@ cv.del7.res[1:3]
 ```
 
 ```r
+all.results[["corr.del7"]] <- cv.del7.res[1:3]
 fts <- cv.del7.res[[4]]
 
 plot.new()
@@ -680,6 +735,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["lm.good"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -741,6 +797,7 @@ cv.risk.res[1:3]
 ```
 
 ```r
+all.results[["corr.good"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -783,7 +840,8 @@ svmDat <- rDat[, rownames(svmDes)]
 Run a 5-fold cross-validation for the data:
 
 ```r
-cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "lm")
+cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "lm", 
+    conf.mat.flip = TRUE)
 ```
 
 ```
@@ -803,13 +861,14 @@ cv.risk.res[1:3]
 ## [1] 0.8693
 ## 
 ## $sens
-## [1] 0.8713
+## [1] 0.8667
 ## 
 ## $spec
-## [1] 0.8667
+## [1] 0.8713
 ```
 
 ```r
+all.results[["lm.intermediate"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -840,7 +899,8 @@ grid.draw(venn.plot)
 Run a 5-fold cross-validation for the data:
 
 ```r
-cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "corr")
+cv.risk.res <- svm.cv(svmDat, svm.labels, svm.levels, K = 5, fs.method = "corr", 
+    conf.mat.flip = TRUE)
 ```
 
 ```
@@ -860,13 +920,14 @@ cv.risk.res[1:3]
 ## [1] 0.7841
 ## 
 ## $sens
-## [1] 0.8515
+## [1] 0.6933
 ## 
 ## $spec
-## [1] 0.6933
+## [1] 0.8515
 ```
 
 ```r
+all.results[["corr.intermediate"]] <- cv.risk.res[1:3]
 fts <- cv.risk.res[[4]]
 
 plot.new()
@@ -888,4 +949,37 @@ grid.draw(venn.plot)
 ## [3] "SDPR|8436_calculated"     "RECK|8434_calculated"    
 ## [5] "IL7|3574_calculated"      "STARD10|10809_calculated"
 ```
+
+
+## 10) Summarize results
+
+```r
+all.results.df <- data.frame(matrix(unlist(all.results), ncol = 3, byrow = TRUE))
+rownames(all.results.df) <- names(all.results)
+colnames(all.results.df) <- c("accuracy", "sensitivity", "specificity")
+```
+
+
+```r
+all.results.xt <- xtable(all.results.df)
+print(all.results.xt, type = "html")
+```
+
+<!-- html table generated in R 3.0.1 by xtable 1.7-3 package -->
+<!-- Thu Apr 10 14:21:33 2014 -->
+<TABLE border=1>
+<TR> <TH>  </TH> <TH> accuracy </TH> <TH> sensitivity </TH> <TH> specificity </TH>  </TR>
+  <TR> <TD align="right"> lm.poor </TD> <TD align="right"> 0.86 </TD> <TD align="right"> 0.55 </TD> <TD align="right"> 0.96 </TD> </TR>
+  <TR> <TD align="right"> lm.trisomy8 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.68 </TD> <TD align="right"> 0.97 </TD> </TR>
+  <TR> <TD align="right"> lm.del5 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.62 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.del7 </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.71 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.poor </TD> <TD align="right"> 0.82 </TD> <TD align="right"> 0.45 </TD> <TD align="right"> 0.94 </TD> </TR>
+  <TR> <TD align="right"> corr.trisomy8 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.58 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.del5 </TD> <TD align="right"> 0.92 </TD> <TD align="right"> 0.19 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.del7 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.67 </TD> <TD align="right"> 0.98 </TD> </TR>
+  <TR> <TD align="right"> lm.good </TD> <TD align="right"> 0.98 </TD> <TD align="right"> 0.94 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> corr.good </TD> <TD align="right"> 0.96 </TD> <TD align="right"> 0.82 </TD> <TD align="right"> 0.99 </TD> </TR>
+  <TR> <TD align="right"> lm.intermediate </TD> <TD align="right"> 0.87 </TD> <TD align="right"> 0.87 </TD> <TD align="right"> 0.87 </TD> </TR>
+  <TR> <TD align="right"> corr.intermediate </TD> <TD align="right"> 0.78 </TD> <TD align="right"> 0.69 </TD> <TD align="right"> 0.85 </TD> </TR>
+   </TABLE>
 

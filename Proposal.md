@@ -27,7 +27,7 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
 - [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
-Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data_import.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
+Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/archive/import_rna_seq_data.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
 
 Initial Analysis Plan
 ---------------------
@@ -97,7 +97,7 @@ Per the group meeting on 2014-04-02, here is the breakdown of the relevant R Mar
 | **6** | Principal Components Analysis | Fatemeh | Output of **1**, **2** | Principal Components |
 | **7** | Support Vector Machine  | Emily | Output of **1, 2, 6** | SVM |
 | **8** | Random Forest  | Lauren | Output of **1, 2, 6** | RF |
-| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | Performance summary (sensitivity/sepcifity) for classifiers |
+| **9** | ML Summary | FD, EH, LC | Output of **6, 7, 8** | Performance summary (sensitivity/specificity) for classifiers |
 
 Note that the 'owner' in each case should not be the sole person working on each document, but will be the main group member responsible for its content. All steps should be modular enough so that, for example, a change in the expression matrix data (2) can be easily incorporated in subsequent steps.
 
@@ -107,7 +107,7 @@ The task here is to turn the raw clinical data (from the Supplemental material m
 
 The output CSV file will be used in all subsequent analysis steps.
 
-This task can be viewed at [import_and_clean_clinical_data.md](code/import_and_clean_clinical_data.md)
+This task can be viewed at [import_and_clean_clinical_data.md](code/clinical_data_import/import_and_clean_clinical_data.md)
 
 ### 2. Expression Matrix Generation
 

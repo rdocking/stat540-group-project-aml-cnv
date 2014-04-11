@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Clean RNA-seq RPKM data</title>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+<!-- MathJax scripts -->
+<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<style type="text/css">
+body {
+   font-family: Helvetica, arial, sans-serif;
+   font-size: 14px;
+   line-height: 1.6;
+   padding-top: 10px;
+   padding-bottom: 10px;
+   background-color: white;
+   padding: 30px; }
+
+body > *:first-child {
+   margin-top: 0 !important; }
+body > *:last-child {
+   margin-bottom: 0 !important; }
+
+a {
+   color: #4183C4; }
+a.absent {
+   color: #cc0000; }
+a.anchor {
+   display: block;
+   padding-left: 30px;
+   margin-left: -30px;
+   cursor: pointer;
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+   margin: 20px 0 10px;
+   padding: 0;
+   font-weight: bold;
+   -webkit-font-smoothing: antialiased;
+   cursor: text;
+   position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+   text-decoration: none; }
+
+h1 tt, h1 code {
+   font-size: inherit; }
+
+h2 tt, h2 code {
+   font-size: inherit; }
+
+h3 tt, h3 code {
+   font-size: inherit; }
+
+h4 tt, h4 code {
+   font-size: inherit; }
+
+h5 tt, h5 code {
+   font-size: inherit; }
+
+h6 tt, h6 code {
+   font-size: inherit; }
+
+h1 {
+   font-size: 28px;
+   color: black; }
+
+h2 {
+   font-size: 24px;
+   border-bottom: 1px solid #cccccc;
+   color: black; }
+
+h3 {
+   font-size: 18px; }
+
+h4 {
+   font-size: 16px; }
+
+h5 {
+   font-size: 14px; }
+
+h6 {
+   color: #777777;
+   font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+   margin: 15px 0; }
+
+hr {
+   border: 0 none;
+   color: #cccccc;
+   height: 4px;
+   padding: 0;
+}
+
+body > h2:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+body > h1:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+body > h1:first-child + h2 {
+   margin-top: 0;
+   padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+   margin-top: 0;
+   padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+   margin-top: 0;
+   padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+   margin-top: 0; }
+
+li p.first {
+   display: inline-block; }
+li {
+   margin: 0; }
+ul, ol {
+   padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+   margin-top: 0; }
+
+dl {
+   padding: 0; }
+dl dt {
+   font-size: 14px;
+   font-weight: bold;
+   font-style: italic;
+   padding: 0;
+   margin: 15px 0 5px; }
+dl dt:first-child {
+   padding: 0; }
+dl dt > :first-child {
+   margin-top: 0; }
+dl dt > :last-child {
+   margin-bottom: 0; }
+dl dd {
+   margin: 0 0 15px;
+   padding: 0 15px; }
+dl dd > :first-child {
+   margin-top: 0; }
+dl dd > :last-child {
+   margin-bottom: 0; }
+
+blockquote {
+   border-left: 4px solid #dddddd;
+   padding: 0 15px;
+   color: #777777; }
+blockquote > :first-child {
+   margin-top: 0; }
+blockquote > :last-child {
+   margin-bottom: 0; }
+
+table {
+   padding: 0;border-collapse: collapse; }
+table tr {
+   border-top: 1px solid #cccccc;
+   background-color: white;
+   margin: 0;
+   padding: 0; }
+table tr:nth-child(2n) {
+   background-color: #f8f8f8; }
+table tr th {
+   font-weight: bold;
+   border: 1px solid #cccccc;
+   margin: 0;
+   padding: 6px 13px; }
+table tr td {
+   border: 1px solid #cccccc;
+   margin: 0;
+   padding: 6px 13px; }
+table tr th :first-child, table tr td :first-child {
+   margin-top: 0; }
+table tr th :last-child, table tr td :last-child {
+   margin-bottom: 0; }
+
+img {
+   max-width: 100%; }
+
+span.frame {
+   display: block;
+   overflow: hidden; }
+span.frame > span {
+   border: 1px solid #dddddd;
+   display: block;
+   float: left;
+   overflow: hidden;
+   margin: 13px 0 0;
+   padding: 7px;
+   width: auto; }
+span.frame span img {
+   display: block;
+   float: left; }
+span.frame span span {
+   clear: both;
+   color: #333333;
+   display: block;
+   padding: 5px 0 0; }
+span.align-center {
+   display: block;
+   overflow: hidden;
+   clear: both; }
+span.align-center > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px auto 0;
+   text-align: center; }
+span.align-center span img {
+   margin: 0 auto;
+   text-align: center; }
+span.align-right {
+   display: block;
+   overflow: hidden;
+   clear: both; }
+span.align-right > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px 0 0;
+   text-align: right; }
+span.align-right span img {
+   margin: 0;
+   text-align: right; }
+span.float-left {
+   display: block;
+   margin-right: 13px;
+   overflow: hidden;
+   float: left; }
+span.float-left span {
+   margin: 13px 0 0; }
+span.float-right {
+   display: block;
+   margin-left: 13px;
+   overflow: hidden;
+   float: right; }
+span.float-right > span {
+   display: block;
+   overflow: hidden;
+   margin: 13px auto 0;
+   text-align: right; }
+
+code, tt {
+   margin: 0 2px;
+   padding: 0 5px;
+   white-space: nowrap;
+   border: 1px solid #eaeaea;
+   background-color: #f8f8f8;
+   border-radius: 3px; }
+
+pre code {
+   margin: 0;
+   padding: 0;
+   white-space: pre;
+   border: none;
+   background: transparent; }
+
+.highlight pre {
+   background-color: #f8f8f8;
+   border: 1px solid #cccccc;
+   font-size: 13px;
+   line-height: 19px;
+   overflow: auto;
+   padding: 6px 10px;
+   border-radius: 3px; }
+
+pre {
+   background-color: #f8f8f8;
+   border: 1px solid #cccccc;
+   font-size: 13px;
+   line-height: 19px;
+   overflow: auto;
+   padding: 6px 10px;
+   border-radius: 3px; }
+pre code, pre tt {
+   background-color: transparent;
+   border: none; }
+
+sup {
+   font-size: 0.83em;
+   vertical-align: super;
+   line-height: 0;
+}
+* {
+	 -webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+   body {
+      width: 854px;
+      margin:0 auto;
+   }
+}
+@media print {
+	 table, pre {
+		  page-break-inside: avoid;
+	 }
+	 pre {
+		  word-wrap: break-word;
+	 }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Clean RNA-seq RPKM data</h1>
+
+<blockquote>
+<p>To knit .rmd file, read data files in using &ldquo;../data&rdquo;<br/>
+To run chunks in Rstudio, read data files in using &ldquo;./data&rdquo;</p>
+</blockquote>
+
+<p>This code applies filters to the RNA seq RPKM data and cleans row and column names.</p>
+
+<h2>Load data and required libraries</h2>
+
+<p>Load RNA-seq data and the experimental design files:</p>
+
+<pre><code class="r">rDat &lt;- read.table(&quot;../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz&quot;, 
+    sep = &quot;\t&quot;, header = TRUE, row.names = 1)
+rDes &lt;- read.delim(&quot;../data/experimental_design_cleaned.txt&quot;)
+</code></pre>
+
+<pre><code class="r">library(reshape2)  # For reshaping data from wide to tall format
+library(ggplot2)  # for plotting
+</code></pre>
+
+<pre><code>## Warning: package &#39;ggplot2&#39; was built under R version 3.0.3
+</code></pre>
+
+<h2>Data inspection</h2>
+
+<pre><code class="r">str(rDat, max.level = 0)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    20442 obs. of  179 variables:
+##   [list output truncated]
+</code></pre>
+
+<pre><code class="r">rDat[1:4, 1:4]
+</code></pre>
+
+<pre><code>##                        TCGA.AB.2803 TCGA.AB.2807 TCGA.AB.2963 TCGA.AB.2826
+## ?|100132510_calculated       1.1250       0.3295       1.9477        2.735
+## ?|100134860_calculated      13.0095      15.0336       5.7934        4.625
+## ?|10357_calculated           0.2028       0.0831       0.2774        1.127
+## ?|10431_calculated          36.1781      17.8495      34.9591       29.438
+</code></pre>
+
+<pre><code class="r">head(names(rDat))
+</code></pre>
+
+<pre><code>## [1] &quot;TCGA.AB.2803&quot; &quot;TCGA.AB.2807&quot; &quot;TCGA.AB.2963&quot; &quot;TCGA.AB.2826&quot;
+## [5] &quot;TCGA.AB.2867&quot; &quot;TCGA.AB.2818&quot;
+</code></pre>
+
+<pre><code class="r">head(rownames(rDat), n = 10)
+</code></pre>
+
+<pre><code>##  [1] &quot;?|100132510_calculated&quot; &quot;?|100134860_calculated&quot;
+##  [3] &quot;?|10357_calculated&quot;     &quot;?|10431_calculated&quot;    
+##  [5] &quot;?|114130_calculated&quot;    &quot;?|115669_calculated&quot;   
+##  [7] &quot;?|120126_calculated&quot;    &quot;?|1231_calculated&quot;     
+##  [9] &quot;?|127550_calculated&quot;    &quot;?|136157_calculated&quot;
+</code></pre>
+
+<pre><code class="r">tail(rownames(rDat), n = 10)
+</code></pre>
+
+<pre><code>##  [1] &quot;ZWINT|11130_calculated&quot;      &quot;ZXDA|7789_calculated&quot;       
+##  [3] &quot;ZXDB|158586_calculated&quot;      &quot;ZXDC|79364_calculated&quot;      
+##  [5] &quot;ZYG11B|79699_calculated&quot;     &quot;ZYX|7791_calculated&quot;        
+##  [7] &quot;ZZEF1|23140_calculated&quot;      &quot;ZZZ3|26009_calculated&quot;      
+##  [9] &quot;psiTPTE22|387590_calculated&quot; &quot;tAKR|389932_calculated&quot;
+</code></pre>
+
+<pre><code class="r">str(rDes, max.level = 0)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    179 obs. of  10 variables:
+</code></pre>
+
+<pre><code class="r">head(rDes)
+</code></pre>
+
+<pre><code>##   TCGA_patient_id Sex Race FAB_subtype Age trisomy_8 del_5 del_7
+## 1            2803   F    W          M3  61     FALSE FALSE FALSE
+## 2            2805   M    W          M0  77     FALSE FALSE FALSE
+## 3            2806   M    W          M1  46     FALSE FALSE FALSE
+## 4            2807   F    W          M1  68     FALSE FALSE FALSE
+## 5            2808   M    W          M2  23     FALSE FALSE FALSE
+## 6            2810   F    B          M2  76     FALSE FALSE FALSE
+##   Cytogenetic_risk Molecular_risk
+## 1             Good           Good
+## 2     Intermediate   Intermediate
+## 3             Good           Good
+## 4     Intermediate   Intermediate
+## 5     Intermediate   Intermediate
+## 6             N.D.           N.D.
+</code></pre>
+
+<p>RNA-seq data: there are 20442 transcripts (rows) for 179 patients (columns). The row names are strange, I will attempt to change them.</p>
+
+<p>Experimental design: there are 179 rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and 179 variables. Note the sample ID naming scheme does not match across <code>rDat</code> and <code>rDes</code>, so I will need to fix this.</p>
+
+<h2>Clean rDat</h2>
+
+<p>Change sample names in <code>rDat</code> to match <code>rDes</code> by extracting substrings, i.e. extract the numbers in each sample name:</p>
+
+<pre><code class="r">names(rDat) &lt;- regmatches(names(rDat), regexpr(&quot;(?&lt;=AB.).*&quot;, names(rDat), perl = TRUE))
+head(names(rDat))
+</code></pre>
+
+<pre><code>## [1] &quot;2803&quot; &quot;2807&quot; &quot;2963&quot; &quot;2826&quot; &quot;2867&quot; &quot;2818&quot;
+</code></pre>
+
+<p>Reorder the columns (patients) to match the order of the experimental design file <code>rDes$TCGA\_patient_id</code>:</p>
+
+<pre><code class="r">rDat &lt;- rDat[, order(names(rDat))]
+identical(names(rDat), as.character(rDes$TCGA_patient_id))
+</code></pre>
+
+<pre><code>## [1] TRUE
+</code></pre>
+
+<p>Now to fix the row names: some row names begin with &ldquo;?&rdquo;, and each row name has the suffix &ldquo;|&rdquo;, followed by an integer, then &ldquo;_calculated&rdquo;. This naming scheme is explained <a href="https://wiki.nci.nih.gov/display/TCGA/RNASeq+Data+Format+Specification">here</a>, where the row names are: &ldquo;valid HUGO name|GENEID (if no HUGO name, &#39;?&#39; is present)&rdquo;.</p>
+
+<p>Remove the rows with &ldquo;?&rdquo; in the row name:</p>
+
+<pre><code class="r"># &#39;?&#39; only present at the start of the row name: rownames(rDat)[grep(&#39;[?]&#39;,
+# rownames(rDat))]
+length(grep(&quot;[?]&quot;, rownames(rDat)))
+</code></pre>
+
+<pre><code>## [1] 123
+</code></pre>
+
+<pre><code class="r">rDat &lt;- rDat[grep(&quot;[?]&quot;, rownames(rDat), invert = TRUE), ]
+dim(rDat)
+</code></pre>
+
+<pre><code>## [1] 20319   179
+</code></pre>
+
+<p>I attempted to remove substrings after and including the &ldquo;|&rdquo; symbol, but this was not allowed since I obtain non-unique row names. </p>
+
+<pre><code class="r">(test &lt;- tail(rownames(rDat)))
+</code></pre>
+
+<pre><code>## [1] &quot;ZYG11B|79699_calculated&quot;     &quot;ZYX|7791_calculated&quot;        
+## [3] &quot;ZZEF1|23140_calculated&quot;      &quot;ZZZ3|26009_calculated&quot;      
+## [5] &quot;psiTPTE22|387590_calculated&quot; &quot;tAKR|389932_calculated&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[|].*$&quot;, &quot;&quot;, test)
+</code></pre>
+
+<pre><code>## [1] &quot;ZYG11B&quot;    &quot;ZYX&quot;       &quot;ZZEF1&quot;     &quot;ZZZ3&quot;      &quot;psiTPTE22&quot; &quot;tAKR&quot;
+</code></pre>
+
+<pre><code class="r">rownames(rDat) &lt;- gsub(&quot;[|].*$&quot;, &quot;&quot;, rownames(rDat))
+</code></pre>
+
+<pre><code>## Warning: non-unique values when setting &#39;row.names&#39;: &#39;ADAM12&#39;, &#39;AGFG1&#39;,
+## &#39;AKAP17A&#39;, &#39;AKD1&#39;, &#39;AMY1A&#39;, &#39;ANKRD20A3&#39;, &#39;ANKRD30BP2&#39;, &#39;ANXA8&#39;,
+## &#39;ARHGAP42&#39;, &#39;ASMT&#39;, &#39;ASMTL&#39;, &#39;ASMTL-AS&#39;, &#39;BOLA2&#39;, &#39;BPY2&#39;, &#39;BRD3&#39;,
+## &#39;C11orf34&#39;, &#39;C11orf95&#39;, &#39;C3orf16&#39;, &#39;C4B&#39;, &#39;C8orf30A&#39;, &#39;CACNA1B&#39;, &#39;CAPN8&#39;,
+## &#39;CBWD3&#39;, &#39;CCL3L1&#39;, &#39;CCL3L3&#39;, &#39;CCL4L2&#39;, &#39;CD99&#39;, &#39;CDY1&#39;, &#39;CDY1B&#39;, &#39;CFC1B&#39;,
+## &#39;CHRDL1&#39;, &#39;CLMN&#39;, &#39;CRLF2&#39;, &#39;CSAG2&#39;, &#39;CSF2RA&#39;, &#39;CSPG4P2Y&#39;, &#39;CT45A4&#39;,
+## &#39;CT47A10&#39;, &#39;CT47A6&#39;, &#39;CTAG1A&#39;, &#39;CTAGE4&#39;, &#39;CYTH2&#39;, &#39;DAZ2&#39;, &#39;DAZ3&#39;, &#39;DCLK1&#39;,
+## &#39;DDX5&#39;, &#39;DEFA1B&#39;, &#39;DEFB103A&#39;, &#39;DEFB104B&#39;, &#39;DEFB105B&#39;, &#39;DEFB106B&#39;,
+## &#39;DEFB107B&#39;, &#39;DEFB109P1B&#39;, &#39;DEFB130&#39;, &#39;DHRSX&#39;, &#39;DNAH12&#39;, &#39;DNAH14&#39;, &#39;DNAH6&#39;,
+## &#39;DNHD1&#39;, &#39;DNM1P35&#39;, &#39;DPH3&#39;, &#39;DUX4&#39;, &#39;EIF3C&#39;, &#39;EIF3CL&#39;, &#39;EIF4EBP2&#39;, &#39;EML6&#39;,
+## &#39;EMP2&#39;, &#39;EP400NL&#39;, &#39;F8A1&#39;, &#39;FAM126B&#39;, &#39;FAM138A&#39;, &#39;FAM156A&#39;, &#39;FAM156B&#39;,
+## &#39;FAM197Y2P&#39;, &#39;FAM21B&#39;, &#39;FAM23A&#39;, &#39;FAM25B&#39;, &#39;FAM27A&#39;, &#39;FAM75A2&#39;, &#39;FAM75A5&#39;,
+## &#39;FAM7A1&#39;, &#39;FAM95B1&#39;, &#39;FBRSL1&#39;, &#39;FER1L4&#39;, &#39;FGF13&#39;, &#39;FLJ45340&#39;, &#39;FOXD4L2&#39;,
+## &#39;GAGE2A&#39;, &#39;GAGE2D&#39;, &#39;GFRA1&#39;, &#39;GOLGA2P2Y&#39;, &#39;GOLGA6L9&#39;, &#39;GOLGA8G&#39;, &#39;GPR19&#39;,
+## &#39;GPR26&#39;, &#39;GPR89C&#39;, &#39;GRIN2A&#39;, &#39;GSPT1&#39;, &#39;GSTT2&#39;, &#39;GTF2H2C&#39;, &#39;GTF2H2D&#39;,
+## &#39;GTF2IP1&#39;, &#39;GTPBP6&#39;, &#39;H2AFB1&#39;, &#39;H2BFXP&#39;, &#39;HIST2H2AA4&#39;, &#39;HIST2H3A&#39;,
+## &#39;HIST2H4B&#39;, &#39;HSBP1L1&#39;, &#39;HSFX1&#39;, &#39;HSFY2&#39;, &#39;IL3RA&#39;, &#39;IL9R&#39;, &#39;IRGQ&#39;, &#39;JMY&#39;,
+## &#39;KCNA6&#39;, &#39;KCP&#39;, &#39;KGFLP1&#39;, &#39;KIAA0141&#39;, &#39;KIAA1671&#39;, &#39;KIF7&#39;, &#39;LIMS3&#39;,
+## &#39;LOC100093631&#39;, &#39;LOC100129637&#39;, &#39;LOC100130872&#39;, &#39;LOC100190986&#39;,
+## &#39;LOC149837&#39;, &#39;LOC221710&#39;, &#39;LOC254559&#39;, &#39;LOC285740&#39;, &#39;LOC286094&#39;,
+## &#39;LOC286135&#39;, &#39;LOC388242&#39;, &#39;LOC399744&#39;, &#39;LOC400931&#39;, &#39;LOC440354&#39;,
+## &#39;LOC606724&#39;, &#39;LOC642826&#39;, &#39;LOC642846&#39;, &#39;LOC642852&#39;, &#39;LOC646762&#39;,
+## &#39;LOC653501&#39;, &#39;LOC728855&#39;, &#39;LOC728875&#39;, &#39;LOC729375&#39;, &#39;LOC80154&#39;,
+## &#39;LOC91316&#39;, &#39;MAGEA2&#39;, &#39;MAGEA2B&#39;, &#39;MAGEA9B&#39;, &#39;MBTPS2&#39;, &#39;MDM2&#39;, &#39;MGC21881&#39;,
+## &#39;MGC45800&#39;, &#39;MICAL3&#39;, &#39;MID2&#39;, &#39;MRC1&#39;, &#39;NBEAL1&#39;, &#39;NCRNA00230B&#39;,
+## &#39;NCRNA00246B&#39;, &#39;NCRNA00256A&#39;, &#39;NCRNA00256B&#39;, &#39;NEK7&#39;, &#39;NFIA&#39;, &#39;NXF2&#39;,
+## &#39;NXF2B&#39;, &#39;OCLN&#39;, &#39;OPN1MW2&#39;, &#39;OR2A1&#39;, &#39;OR2A9P&#39;, &#39;OR4F3&#39;, &#39;OR7E37P&#39;,
+## &#39;P2RY8&#39;, &#39;PBX1&#39;, &#39;PDZK1P1&#39;, &#39;PLCXD1&#39;, &#39;PLEKHM3&#39;, &#39;PLGLB2&#39;, &#39;PMS2L2&#39;,
+## &#39;POM121L10P&#39;, &#39;POM121L8P&#39;, &#39;POTEM&#39;, &#39;PPIAL4C&#39;, &#39;PPP2R3B&#39;, &#39;PRAMEF14&#39;,
+## &#39;PRAMEF19&#39;, &#39;PRAMEF20&#39;, &#39;PRAMEF5&#39;, &#39;PRAMEF8&#39;, &#39;PRAMEF9&#39;, &#39;PRICKLE1&#39;,
+## &#39;PRY&#39;, &#39;PSEN1&#39;, &#39;PTPN13&#39;, &#39;PTPN20B&#39;, &#39;RBMS1&#39;, &#39;RBMS2&#39;, &#39;RBMY1A1&#39;,
+## &#39;RBMY1J&#39;, &#39;RFT1&#39;, &#39;RGPD1&#39;, &#39;RGPD6&#39;, &#39;RHOXF2B&#39;, &#39;RIMBP3C&#39;, &#39;RLIM&#39;, &#39;RORA&#39;,
+## &#39;RPS17&#39;, &#39;RSPH10B&#39;, &#39;SAP30L&#39;, &#39;SCXB&#39;, &#39;SDK2&#39;, &#39;SERF1A&#39;, &#39;SERF1B&#39;,
+## &#39;SETBP1&#39;, &#39;SETD1B&#39;, &#39;SFTPA1&#39;, &#39;SFTPA2&#39;, &#39;SHISA9&#39;, &#39;SHOX&#39;, &#39;SLC22A24&#39;,
+## &#39;SLC25A6&#39;, &#39;SLX1A&#39;, &#39;SMN2&#39;, &#39;SNAR-A12&#39;, &#39;SNAR-A2&#39;, &#39;SNORA11E&#39;,
+## &#39;SNORD115-12&#39;, &#39;SNORD115-19&#39;, &#39;SNORD115-43&#39;, &#39;SNORD116-19&#39;, &#39;SNORD116-2&#39;,
+## &#39;SNORD116-5&#39;, &#39;SNORD116-9&#39;, &#39;SPACA5&#39;, &#39;SPAG11B&#39;, &#39;SPANXA2&#39;, &#39;SPANXB1&#39;,
+## &#39;SPDYE8P&#39;, &#39;SPRY3&#39;, &#39;SSC5D&#39;, &#39;SSX2&#39;, &#39;SSX4&#39;, &#39;ST3GAL1&#39;, &#39;ST6GAL2&#39;,
+## &#39;STK16&#39;, &#39;STK19&#39;, &#39;STMN1&#39;, &#39;SULT1A3&#39;, &#39;TBC1D3&#39;, &#39;TBC1D3H&#39;, &#39;TCEB3C&#39;,
+## &#39;TMEM120B&#39;, &#39;TMOD2&#39;, &#39;TMSL3&#39;, &#39;TNRC6C&#39;, &#39;TP53TG3B&#39;, &#39;TPCN1&#39;, &#39;TRIM49L1&#39;,
+## &#39;TSPY3&#39;, &#39;TTTY17B&#39;, &#39;TTTY1B&#39;, &#39;TTTY23&#39;, &#39;TTTY6B&#39;, &#39;TTTY7&#39;, &#39;TTTY7B&#39;,
+## &#39;UBE2Q2P2&#39;, &#39;UGT2B15&#39;, &#39;UNC5B&#39;, &#39;UNC80&#39;, &#39;UNKL&#39;, &#39;USP13&#39;, &#39;VAMP7&#39;, &#39;VCY&#39;,
+## &#39;VWDE&#39;, &#39;XAGE1A&#39;, &#39;XAGE1C&#39;, &#39;XAGE1E&#39;, &#39;XAGE2&#39;, &#39;XKRY2&#39;, &#39;XPR1&#39;, &#39;YIF1B&#39;,
+## &#39;ZBED1&#39;, &#39;ZDHHC3&#39;, &#39;ZNF662&#39;
+</code></pre>
+
+<pre><code>## Error: duplicate &#39;row.names&#39; are not allowed
+</code></pre>
+
+<h2>Filtering</h2>
+
+<p>Remove transcripts with RPKM = 0 across all samples:</p>
+
+<pre><code class="r"># Number of transcripts with RPKM = 0 for all samples
+nrow(rDat[rowSums(rDat) == 0, ])
+</code></pre>
+
+<pre><code>## [1] 318
+</code></pre>
+
+<pre><code class="r"># Remove these transcripts
+rDat &lt;- rDat[rowSums(rDat) != 0, ]
+dim(rDat)
+</code></pre>
+
+<pre><code>## [1] 20001   179
+</code></pre>
+
+<p>This filter does not remove all RPKM values of 0. What do we do when RPKM = 0? Do we need to apply more filters for low RPKM values?</p>
+
+<p>Potential additional filters: How many transcripts would be left to analyse if we apply any one of the following filters?</p>
+
+<pre><code class="r">nrow(rDat)
+</code></pre>
+
+<pre><code>## [1] 20001
+</code></pre>
+
+<pre><code class="r"># 1. Keep rows where sum RPKM values across all samples &gt; 5
+nrow(rDat[rowSums(rDat) &gt; 5, ])
+</code></pre>
+
+<pre><code>## [1] 17441
+</code></pre>
+
+<pre><code class="r"># 2. Remove rows where at least one sample has RPKM value = 0
+nrow(rDat[apply(rDat, 1, prod) != 0, ])
+</code></pre>
+
+<pre><code>## [1] 12904
+</code></pre>
+
+<pre><code class="r"># 3. Remove rows where more than 50 samples have RPKM values &lt; 1
+nrow(rDat[apply(rDat, 1, function(x) sum(abs(x) &lt; 1) &lt; 50), ])
+</code></pre>
+
+<pre><code>## [1] 11311
+</code></pre>
+
+<pre><code class="r"># 4. Keep rows where average expression per transcript &gt; 5
+nrow(rDat[apply(rDat, 1, function(x) mean(abs(x) &gt; 5)), ])
+</code></pre>
+
+<pre><code>## [1] 4042
+</code></pre>
+
+<p>I have decided not to apply any additional filters to our data, since I believe we may be removing biologically significant data. We are working with RNA-seq data from AML patients, a cancer type that is prone to translocations and copy number changes. Therefore, genes with 0 RPKM values may be instances where genes are completely deleted from the genome and thus no transcription can occur.</p>
+
+<h2>Density plot</h2>
+
+<p>Check the density plot of RPKM values across all samples:</p>
+
+<pre><code class="r">rDatMelt &lt;- melt(rDat, variable.name = &quot;Sample&quot;, value.name = &quot;RPKM&quot;)
+</code></pre>
+
+<pre><code>## Using  as id variables
+</code></pre>
+
+<pre><code class="r">head(rDatMelt)
+</code></pre>
+
+<pre><code>##   Sample   RPKM
+## 1   2803 7.3159
+## 2   2803 7.4715
+## 3   2803 0.0000
+## 4   2803 1.7760
+## 5   2803 0.1024
+## 6   2803 5.4296
+</code></pre>
+
+<pre><code class="r">ggplot(rDatMelt, aes(RPKM)) + geom_density()
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk densityPlot_rpkm"/> </p>
+
+<p>The data has to be log transformed:</p>
+
+<pre><code class="r">ggplot(rDatMelt, aes(log(RPKM))) + geom_density()
+</code></pre>
+
+<pre><code>## Warning: Removed 541040 rows containing non-finite values (stat_density).
+</code></pre>
+
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfgAAAH4CAMAAACR9g9NAAAA2FBMVEUAAAAAADoAAGYAOmYAOpAAZpAAZrY6AAA6ADo6AGY6OgA6OpA6ZpA6ZrY6kNtmAABmADpmAGZmOjpmZjpmZmZmZrZmtv9/f39/f5V/f6t/lcF/q9aQOgCQOjqQOmaQZpCQkGaQtpCQ2/+Vf3+Vweurf6urlZWrlcGr1v+2ZgC2Zjq2tma225C2/7a2/9u2///BlX/BlZXBlavBwdbB6//Wq3/W///bkDrbkGbb25Db/7bb///l5eXrwZXr///y8vL/tmb/1qv/25D//7b//9b//9v//+v///+QXU0lAAAACXBIWXMAAAsSAAALEgHS3X78AAAPiUlEQVR4nO3dC3/UxhXGYUFdSJrWQNraQJymdaFAm8YpwbgNxuD1Rd//G1XSGnsvusyM5oyO5vzPj7DGsf3uu49ntTdpi5IxOcXUZ4CZZoA3OsAbHeCNDvBGB3ijA7zRAd7oAG90gDc6wBsd4I0O8EbHE/60muYvv/nk/y3EhOT0xAA/lxjgjcYAbzQGeKMxwBuNAd5oDPBGY4A3GgO80RjgjcYAbzQGeKMxwBuNAd5oDPBGY4A3GgO80RjgjcYAbzQGeH0xRYoY4NXFFKeFLz3wMTpMHFPc/CccA7y2GOAlKyiOAV6ygt6YoonxlAc+RodpY4AXraA3ZgnvKT93+E/VNH/Jj9aYYuNUKCZsemJY8SNjilOLKz6wA/DAx+gwZUxxG+MlD3yMDlPGAC9cQWsM8MIVlMYUp8DLVlAaA7x0BaUxwEtXUBoDvHQFpTHAS1dQGrMC7yUPfIwOE8YAL11BaQzw0hWUxgAvXUFnTLEaA7xEBZ0xa/A+8sDH6DBdDPDiFXTGAC9eQWcM8OIVVMYU6zHAC1RQGQO8fAWVMRvwHvLAx+gwWQzw8hVUxgAvX0FlDPDyFTTGFJsxwMevoDEG+AQVNMZswbvLAx+jw1QxwCeooDEG+AQVFMZ8UQZesoLCGOBTVFAYA3yKCgpjgE9RQWEM8CkqKIwBPkUFhTHAp6igMAb4FBUUxgCfooLCGOBTVFAY0wLvLA98jA4TxQCfooLCGOBTVNAXc2sMvGQFfTHAJ6mgLwb4JBX0xQCfpIK+mFZ4V3ngY3SYJgb4JBX0xQCfpIK6mDth4CUrqIsBXptIohjgtYkkigFem0iiGOC1iSSK6YB3lAc+RodJYoDXJpImZsUXeMkK2mKA1yaSKAZ4bSKJYoDXJpIoBnhtIoligNcmkiimE95NHvgYHaaIAV6bSKIY4LWJJIoBXptIohjgtYkkigFem0iiGOC1iaSJWdUFXrKCshjgtYkkigFem0iiGOC1iSSKAV6bSKIY4LWJJIoxBH+8//RdfXr98/7+8zPj8Gu4ecOfPz87b7zPv6t+CV4D3xmTGfzHF+Xly/df/lHD71fTef2Q+fRtET23lkqmG/51ef32Br5e9MsJ/OVlxc9yxR/fugPfFuMiPx/422389c+v7z4b2AH4+cAvb9Vfvjo7rrftL4DvjskMvnUCO8wdfp0WeMkKqmKAD+wAPPAxOiSPAT6wA/DAx+iQPAb4wA7AAx+jQ+qYDdmtGAd54GN0SB0DPPCtMcBHrKApBnjgW2OAj1hBUwzwwLfGAB+xgqYY4IFvjQE+YgVNMcAD3x4zLA98jA6pY4AHvj0G+HgVNMUAbxN+kxV4yQqKYoAHviMG+HgVFMUAD3xHDPDxKiiKAR74jhjg41XQE7OlCrxkBT0xwAPfFQN8vAp6YoAHvisG+HgV9MQAD3xXDPDxKqiJ2UYFXrKCmhjgge+MAT5eBTUxLvDD8sDH6JA0Bnjgu2OAj1ZBTQzwNuFbSIGXrKAlBnjge2KAj1ZBSwzwwPfEAB+tgpYY4IHvixmSBz5Gh5QxwAPfFwN8rApaYoAHvi8G+FgVtMQAD3xfDPCxKiiJaQMFXrKCkhjgge+NAT5WBSUxwAPfHzMgD3yMDgljgLcJ38oJvGQFHTHAAz8QA3ykCjpigAd+IAb4SBV0xABvE75dE3jJCipigAd+KAb4SBVUxHjAD8gDH6NDshjggR+MAT5OBQ0xHZbAS1bQEAP87XyqpvlLfhTEFD4/qP+Lp2/DinePYcUDPxwDfJwKGmKAB344Bvg4FTTEAA/8cAzwcSpoiAEe+OEY4ONU0BADvE34LkrgJSsoiAEeeIcY4ONUUBADPPAOMcDHqaAgxg++Xx74GB3SxHRCAi9ZYfoY4IF3ipkz/MWjB8B/GUvwZfm5KO4dAl+PLfhqrg6KYg/4bscs4RcP6xV/8eQIeN+YOcNfPNr50LHWgR+KmTV8s9I71zvwfTHzhb94VCyne9kHdjAB3yuvGr53rQM/GDNj+MEJ7AC8aviLJ/9eXtnfZxtvCp4VvzrAA+8YM2f4k50PJ92P21mC71HMEP7i8WH1Z/E123hr8E+OqjUP/Kk1+PKkuHf4mav60yD4vu/RDj80gR3mB9+3eoGXrAB8UvjPPICzHGPwF4+6N+/AD8bMGJ4naZbT+xRrhvDlm13g67EGf8GTNMuxBj84gR2ABz5GB/GY/h0gu2O6v087/NVBsfPr4+4X1gd2AF45/NXB7uKbD5/Nv+bOHHx1d66C51W25uCXK/6EFR8YM1v4ZvepnldXA98fM1/4oQnsADzwMTqIxxiDv92TxvojdwNvHpgdfHnzWP1J99ERAjsArxyenSabsQdf3Z0rm9dYAx8UM1v45d25nuPgBHaYF/yAe5bwQxPYAXjgY3QQjgEeeM8Y4MdXmC5myB140QrAA584ZgR89/cCH6ODbAzwNuEH3YEXrQA88GljgAfePwb40RWABz5tDPA24YfdgRetME/4zm8HPkYHyRjgbcI7uAMvWgF44BPGuLgDL1oBeOATxgAPfFgM8GMrzBS+6yfMCP54/+m75UeXL98bgXdyzxz+/PlZ9af5aP8Z8M4xs4f/+OJmpV//cv22gd+vpvP6IY/x3PAJ/Ygk0w3/urwBvz0tc1/xbgveyooH3itm9vB323jgfWJmD7+8VX/56swOvKP7QEz7T5kRfOsEdgAe+BgdZGJc3YEXrQA88IligAd+TAzw4yokj3F2B160AvDAJ4lxdwdetALwwKeI8XAHXrQC8MAniPFxB160AvDAJ4gB3ia8l/tQTOsPAz5Gh9gxfu7Ai1YAHnjpGE934EUrpIvxdQdetALwwAvHAG8T3tt9MKbtJwIfo0PMGH934EUrJIopBGKAH1MBeOAFYwqJGODHVAAeeLmYQiQG+DEVUsQUQjEt8sDH6BApppCKAX5EBeCBF4opxGKAH1FBPKaQiwF+RAXpmC84wNuCv7UB3hT8HQ3wluBXZIC3A1+swgBvBn7NHXgr8MWGCvAm4DfZgTcBv80u9fsVIwb4WDFt7sBnD9/KDnz28BHfJQh4yQpxY4qO9Q583vA9L54HPlv47tUeNWYtMkYM8ONiBnaVkWkT4+EC4MfE9K72eDFbsRFigA+PGWQHPkt4B3fg84N3YQc+P3jH/Z+Bzwq+/y5ctJju2YwHPkaHwRhnduCzgvc5ygXw2cB7LPcxMf0DfGiFEfBpYvoH+NAKoTF+612uzfiX9gHvEePLDnwW8O534kbFAC9ZISCmmPpp/9UBPrCCf0wx+es9Vgf4wAq+MfW1PPD24Is0MafOMcAHVvCKublRB7wt+Nvb8sAbg08TczvAS1Zwjlm57w68IfjVC1gT/IY88DE6rMzaxQu8GfgCeNeYrOA3NqTAG4HffEoGeDH4T9U0f8mPQ0yRJiZw1s7d9BcaK947ZnMcY8YeXEvVig/sICOy9eQ78Cbgt190AbwF+JYX2wBvAL7tRVa64NfOIvAxOtQDfNvkD9/6qkrgs4dvfzUt8MDHiWkf4CUr9MZ0vHxeGfzI90MAfmu6dpsAHvgYMV0DvGSFnpjO/aSAzxq+e/844HOG79kvEviM4fv2hwUe+LExfQO8ZIWOmN4d4LXBj3tDS+BXpv/AB8DnCj9wwAvggR8VMzAeMWPetBr4uwF+YDKFHzq0EfB5wg8e0gr4LOGHD2WmD/72TAMf3gH44ckR3uHYhcADHxzjMMBLVgAe+GZcjlILfH7wTkcnVgj/5YwDH9gBeKfJDt7tcOTA5wbveBh6jfA35x34oA7AOw7wQTGOA7xkhWzgl2ce+JAOru80A3xe8M7vMKQTvjn/wAd0AN55soJ3f0sx4IH3j3Ef4CUrAG8d3uPNI5XC1xWA9+4AvMdkBO/zbrFa4asSwHt28HqXYLXwpwXwfh383h0aeOD9YvwmJMb//c2BTxDjN8BLVmhiPC8u4DOB9720FMOXAfLAC8f4DvCSFaoY78tKM3zAlb1V+CSXlOLrL+BlY/y/JdFNVeBlY/y/BXjJCiF3gIDPAD7kQU7l8Akelpg/fNDzWdrh5R+InD182DPY6uHFn2wE3nmA1wQf+Co1/fDSryuZOXzoviczgD8tRF87Om/44N0M5wAvu38I8M4zAbzgroCzhg8/hsQ84CV3/p0z/IjjRM0F3nHR24Ifc9jf2cC7yZuCH/WeDvOBlzpe42zhx71v05zgHRa9Hfi1yyJ3+GF6M/Drl0P+8EP0NuCLzQvBAnxL7XE584Pf7m8DvqHvsM8fvrX65CIJY9rxM4fv+o1XIZIupii2Loh84be7unXwjOkdXTFr/BPBH+8/fbf+QST44m4COzjFOI7GGLcLyDPGFf78+Vn1Z/WDLvi7M1g4zfgOXZML/F2O72UZAf7ji/Ly5fvVD/araftKN24m5XRejzvAvy6v375f/aBrxbv97nqP+ZiJtvHbKx74tDETwbtv42UqEDPprfrLV2fRb9WP72AjJuP78aEdbMQAbzQGeKMxwBuNAd5oDPBGY4A3GgO80RjgjcYAbzQGeKMxwBuNAd5oDPBGY4A3GqMKvp7WF97FH2JEY4A3GgO80RjgjcYEwDM5DPBGB3ijA7zRAd7o+MI3e1Ot7mIhNcf7CUKSNCkTlfGj8YQ/33/2fn2nKqG5/k8KkBRNykRlPGn84K9/qXecXduNUmgu//H3/e9kI8oySZMyTRlfGt+r+uanr+44LTTnz5oc4UnRpExVxo/GA/64/q1NsuKPl+vj/IVgRjOJVnw98mXkV3yKLWN9OckvkkTb+DRl/GhC4FPdqhdfIylv1cuX8aPhfrzRAd7oAG90gDc6wBsdY/CLr482P3Wyu3hYHxPw/lG5/GB3+VVXBw8WDx9UX/Dm/tHimw8TnFnRMQ9fmS4/ebKz/ODi8WF9enWwVy6++v2H8uLb6l8nu1OcW8kxCH/xqF7d9clvvj0s3+zd/DZUf9+s9L3qtHavPvXHw3Lxp/p7nmxdU8x8DMK/2S0/73xoTu4d1qLrK37xVbXif6rdq//xr73yv3+rP/tmb+qzHnnswdfU1dV5fXL1/WG99V5u2ne+fFBfxf+ueNB89Y9/uPrLjzV8dtf19uCbDfhSvDqp1379mWrx390CWDzcvXi0W//7px9+/fMC+PlP+4pvZO8f3cFXp9U1fn36z7/uAp/BdG/jq3tva/A32/zqSxZs4+c/67fqf/v96q36h7tr8FcHO/9rNgwLbtXnNs1VutNjM9ld09uFvzooivoGnZMpj9wxuQzwRgd4owO80QHe6ABvdIA3OsAbnf8Dj3extrbgxEEAAAAASUVORK5CYII=" alt="plot of chunk densityPlot_rpkm_log2"/> </p>
+
+<p>A lot of genes have RPKM values &lt; 1 and become negative values post-log2 transformation.  Therefore, I will add 1 to all values in <code>rDat</code>:</p>
+
+<pre><code class="r">rDat &lt;- rDat + 1
+</code></pre>
+
+<p>Now re-make the density plot:</p>
+
+<pre><code class="r">rDatMelt &lt;- melt(rDat, variable.name = &quot;Sample&quot;, value.name = &quot;RPKM&quot;)
+</code></pre>
+
+<pre><code>## Using  as id variables
+</code></pre>
+
+<pre><code class="r">ggplot(rDatMelt, aes(log2(RPKM))) + geom_density()
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk densityPlot_rpkm_Add1Log2"/> </p>
+
+<h2>Save the cleaned RNA-seq data to file</h2>
+
+<pre><code class="r">write.table(rDat, &quot;../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt&quot;, sep = &quot;\t&quot;, 
+    row.names = TRUE)
+</code></pre>
+
+<p>Ensure we can read the data back in correctly:</p>
+
+<pre><code class="r">test &lt;- read.table(&quot;../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt&quot;, sep = &quot;\t&quot;, 
+    header = TRUE, check.names = FALSE)
+str(test, max.level = 0)
+</code></pre>
+
+<pre><code>## &#39;data.frame&#39;:    20001 obs. of  179 variables:
+##   [list output truncated]
+</code></pre>
+
+<pre><code class="r">head(test[, 1:5])
+</code></pre>
+
+<pre><code>##                            2803  2805  2806   2807  2808
+## A1BG-AS|503538_calculated 8.316 4.156 6.895 11.370 6.002
+## A1BG|1_calculated         8.472 3.105 5.719  8.541 4.306
+## A1CF|29974_calculated     1.000 1.000 1.000  1.011 1.000
+## A2LD1|87769_calculated    2.776 2.650 2.176  2.039 2.066
+## A2ML1|144568_calculated   1.102 1.113 1.138  1.048 1.086
+## A2M|2_calculated          6.430 1.850 1.514  6.011 4.973
+</code></pre>
+
+<pre><code class="r">tail(test[, 1:5])
+</code></pre>
+
+<pre><code>##                                2803    2805    2806   2807    2808
+## ZYG11B|79699_calculated       5.383  12.998   5.779  9.025  11.165
+## ZYX|7791_calculated         108.490 166.806 149.673 89.632 109.195
+## ZZEF1|23140_calculated       10.149  17.646  16.001 17.468  14.091
+## ZZZ3|26009_calculated        15.069  16.950  26.530 18.561  21.128
+## psiTPTE22|387590_calculated   1.216   1.100   2.553  1.347   1.296
+## tAKR|389932_calculated        1.162   1.437   1.015  1.476   1.117
+</code></pre>
+
+</body>
+
+</html>

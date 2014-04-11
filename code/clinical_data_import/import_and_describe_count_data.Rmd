@@ -1,0 +1,88 @@
+Import and Describe Count Data
+==============================
+
+At [issue #7](https://github.com/rdocking/stat540-group-project-aml-cnv/issues/7), Dr. Pavlidis suggested using the count data for the experiment rather than the normalized RPKM data.
+
+My intent in this document is to download, import, and explore the read count data and try to figure out:
+
+- How it was generated
+- Whether any normalizations have been applied
+- How we can use it for the differential expression experiments
+
+Import Raw Data Files
+---------------------
+
+First, I'll import and compare the raw data files available at the [TCGA Data Portal Site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/). These files have already been downloaded and stored in the repository in the `data` sub-directory:
+
+```{r}
+rpkm_dat <- read.table('../../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz',
+                       sep = "\t", header = TRUE, row.names = 1)
+count_dat <- read.table('../../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz',
+                        sep = "\t", header = TRUE, row.names = 1)
+```
+
+Raw dimensions of the two data frames:
+
+```{r}
+dim(rpkm_dat)
+dim(count_dat)
+```
+
+Confirm that the rownames and column names of the two data frames are the same:
+
+```{r}
+identical(rownames(rpkm_dat), rownames(count_dat))
+identical(colnames(rpkm_dat), colnames(count_dat))
+```
+
+OK - the two data frames are equivalent in the row and column names.
+
+Interpret Row and Column Names
+-------------------------------
+
+Next, to interpret the row and column names. The column names are fairly obviously the sample names identified in the experimental design sheet:
+
+```{r}
+head(colnames(count_dat))
+```
+
+From the filename, the rownames seem to correspond to gene annotations from the [GO Annotation File Format 2.0](http://www.geneontology.org/GO.format.gaf-2_0.shtml). These will need to be explored a bit further, but there are measurements for `r nrow(count_dat)` different genes/isoforms.
+
+In the notes at the [data portal site](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/), the text implies that the files downloaded above are *not* part of the standardized TCGA data releases, but were instead specifically created for the paper by the paper's authors (rather than the TCGA consortium itself).
+
+### Review Supplementary Material
+
+The [Supplementary material](http://www.nejm.org/doi/suppl/10.1056/NEJMoa1301689/suppl_file/nejmoa1301689_appendix.pdf) for the paper is available online. 
+
+Here is the relevant portion:
+
+> **A.6.3. Alignment and coverage analysis of RNA-seq data**
+
+> Using BWA version 0.5.731, we aligned chastity-passed reads to an extended human reference genome consisting of hg18/GRCh36 plus exon junction sequences constructed from all known transcript models in RefSeq, EnsEMBL and UCSC genes, as described^32. We used default BWA parameter settings but disabled Smith-Waterman alignment. After alignment, the reads that aligned to exon junctions were repositioned in the genome as large-gapped alignments, using repositioning software developed in-house. We removed adapter dimer sequences and soft-clipped reads that contained adapter sequences. The unambiguously aligned, filtered reads were then analyzed by in-house gene coverage analysis software to calculate the coverage over the total collapsed exonic regions in each gene as annotated in EnsEMBL (version 59), and RPKM values^33 were calculated to represent the normalized expression level of exons and genes.
+
+The references are to:
+
+> 32 Morin, R. et al. Profiling the HeLa S3 transcriptome using randomly primed cDNA and massively parallel short-read sequencing.
+Biotechniques 45, 81-94, doi:10.2144/000112900 (2008).
+
+> 33 Mortazavi, A., Williams, B. A., McCue, K., Schaeffer, L. & Wold, B. Mapping and quantifying mammalian transcriptomes by RNA-Seq. Nat
+Methods 5, 621-628, doi:10.1038/nmeth.1226 (2008).
+
+These references describe the GSC in-house RNA-seq repositioning pipeline of a few years ago, and RPKM calculation.
+
+This answers a few questions:
+
+- The gene models used in this experiment correspond to [Ensembl](http://uswest.ensembl.org/index.html) release 59.
+- The methods describe an in-house pipeline for generating read-count and RPKM data. Looking at the author list, I think I know which house this refers to.
+
+What I'd like to know though, is:
+
+- Are the counts raw read counts? 
+- Have they been normalized in any way?
+
+After a bit of digging, I determined that:
+
+- The raw counts come from the in-house pipeline of the GSC
+- By reading their documentation, it looks like fractional reads are counted, when a read only partially overlaps with an exon. Additionally, exons from all transcript models of a gene are collapsed.
+
+For our purposes, we can treat these as 'raw' counts of reads per gene model.

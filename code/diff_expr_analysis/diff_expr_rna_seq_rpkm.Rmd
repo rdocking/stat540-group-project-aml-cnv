@@ -1,0 +1,345 @@
+Differential expression analysis of RNA seq RPKM data
+=====================================================
+
+> To knit .rmd file, read data files in using "../data"  
+> To run chunks in Rstudio, read data files in using "./data"
+
+This code performs differential expression analysis on cleaned RNA-seq RPKM data. In particular, it tests whether there is differential expression between **sexes** (Male vs. Female) and the different **cytogenetic risk** groups (Good vs. Intermediate vs. Poor) using `voom`.
+
+
+## Load data and required libraries
+Load RNA-seq cleaned RPKM data and the cleaned experimental design file:
+```{r}
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", header = TRUE, check.names = FALSE)
+rDes <- read.delim("../data/experimental_design_cleaned.txt")
+```
+
+Load required libraries:
+```{r warning=FALSE, message=FALSE}
+library(reshape2) # for reshaping data from wide to tall format
+library(ggplot2) # for graphing
+library(RColorBrewer) # for better colour palettes
+library(plyr) # data aggregation
+library(limma) # fit linear models
+library(edgeR) # differential expression analysis of RNA-seq data
+library(VennDiagram)  # for `venn.plot` function
+```
+
+
+## Data inspection
+```{r}
+str(rDat, max.level = 0)
+rDat[1:4, 1:4]
+head(names(rDat))
+head(rownames(rDat), n = 10)
+tail(rownames(rDat), n = 10)
+str(rDes, max.level = 0)
+head(rDes)
+```
+
+RNA-seq data: there are `r nrow(rDat)` transcripts (rows) for `r length(rDat)` patients (columns). Experimental design: there are `r nrow(rDes)` rows, representing information for each of the patients with RNA-seq data in the AML TCGA data set, and `r length(rDat)` variables.
+
+
+## Differential expression analysis using voom
+
+I will use `voom` to perform differential expression analysis. From my experience, `voom` makes the most stringent calls for differential expression. 
+
+**Sex**  
+First I will do a simple differential expression analysis: which genes are differentially expressed between males and females?
+```{r}
+sex <- rDes$Sex
+table(sex)
+```
+
+Apply scale normalization:
+```{r}
+normFactor <- calcNormFactors(rDat)
+```
+
+Use `voom` to convert RPKM to log2-RPKM ready for linear modelling:
+```{r voomMeanVarTrendPlot_rpkm}
+design <- model.matrix(~ sex)
+# The intercept represents females
+head(design)
+rDatVoom <- voom(rDat, design, plot = TRUE,  
+                 lib.size = colSums(rDat) * normFactor)
+```
+
+Now find genes differentially expressed between males and females:
+```{r}
+fit <- lmFit(rDatVoom, design)
+fit <- eBayes(fit)
+voomSex <- topTable(fit, coef = "sexM", p.value = 1e-5, n = Inf)
+nrow(voomSex)
+head(topTable(fit, coef = "sexM", n = Inf))
+tail(topTable(fit, coef = "sexM", n = Inf))
+(voomSexgenes <- rownames(voomSex))
+# Lower the FDR threshold: how many genes do we find?
+nrow(topTable(fit, coef = "sexM", p.value = 0.01, n = Inf))
+```
+Ok `r voomSexgenes[1:2]` are popping up, this is a promising result! Plus a lot of the gene names end in "Y", meaning they are linked to the Y chromosome, so I must be doing something right :)
+
+Plot the top differentially expressed genes between males and females:
+```{r sex_MalevsFemale_TopSixDEgenes_FDR1e-5_Boxplot_rpkm, tidy=FALSE}
+rDatvoomSex <- rDat[voomSexgenes[1:6], ]
+dim(rDatvoomSex)
+rDatvoomSex$Transcript <- rownames(rDatvoomSex)
+rDatvoomSex <- melt(rDatvoomSex, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomSex$Transcript <- gsub("[|].*$", "", rDatvoomSex$Transcript)
+head(rDatvoomSex)
+rDatvoomSex <- merge(rDatvoomSex, rDes, by = "TCGA_patient_id")
+head(rDatvoomSex)
+ggplot(rDatvoomSex, aes(Transcript, log2(RPKM), colour = Sex)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free")+
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+So the top genes differentially expressed between males and females have almost no expression in one of the sexes. Given we only found `r nrow(voomSex)` genes differentially expressed with an FDR of 1e-5, we can conclude that sex has limited influence on gene expression in AML patients.
+
+
+**Cytogenetic risk**  
+Now to explore another variable, "Cytogenetic_risk". 
+```{r}
+levels(rDes$Cytogenetic_risk)
+table(rDes$Cytogenetic_risk)
+```
+
+Which transcripts are differentially expressed between "Good", "Intermediate", and "Poor" cytogenetic risk?
+
+First, remove samples where cytogenetic risk could not be determined "N.D":
+```{r}
+# CRGIP = Cytogenetic Response Good + Intermediate + Poor
+rDesCRGIP <- droplevels(subset(rDes, Cytogenetic_risk != "N.D."))
+str(rDesCRGIP)
+dim(rDesCRGIP)
+rDatCRGIP <- rDat[ , names(rDat) %in% rDesCRGIP$TCGA_patient_id]
+dim(rDatCRGIP)
+identical(names(rDatCRGIP), as.character(rDesCRGIP$TCGA_patient_id))
+cytoRisk <- rDesCRGIP$Cytogenetic_risk
+```
+
+I will make a model with a reference + treatment effect, where I will use "Good" risk as the intercept:
+```{r voomMeanVarTrendPlot_rpkm_CRGIP}
+normFactor <- calcNormFactors(rDatCRGIP)
+design <- model.matrix(~ cytoRisk)
+colnames(design)
+# The intercept represents "Good" cytogenetic risk
+head(design)
+rDatCRGIPvoom <- voom(rDatCRGIP, design, plot = TRUE, 
+                      lib.size = colSums(rDatCRGIP) * normFactor)
+fit <- lmFit(rDatCRGIPvoom, design)
+fit <- eBayes(fit)
+voomCR <- topTable(fit, coef = c("cytoRiskIntermediate", "cytoRiskPoor"), 
+                   p.value = 1e-5, n = Inf)
+nrow(voomCR)
+head(voomCR)
+voomCRgenes <- rownames(voomCR)
+```
+
+Therefore, there are `r nrow(voomCR)` genes differentially expressed between Good vs. Intermediate and Poor cytogenetic risks.
+
+Write these results to file:
+```{r}
+write.table(voomCR, "../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", 
+            sep = "\t")
+test <- read.table("../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", 
+                   header = TRUE, sep = "\t")
+head(test)
+```
+
+Which genes are differentially expressed between Good vs. Poor cytogenetic risk?
+```{r}
+voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-5, n = Inf)
+nrow(voomCRGP)
+head(voomCRGP)
+```
+Therefore there are `r nrow(voomCRGP)` genes are differentially expressed between Good vs. Poor cytogenetic risk.
+
+Plot top 6 genes differentially expressed between Good vs. Poor cytogenetic risk:
+```{r cytoRisk_GoodvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+voomCRGPgenes <- rownames(voomCRGP)
+rDatvoomCR <- rDatCRGIP[head(voomCRGPgenes), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())  
+```
+
+Which genes are differentially expressed between Good vs. Intermediate cytogenetic risk?
+```{r}
+voomCRGI <- topTable(fit, coef = "cytoRiskIntermediate", p.value = 1e-5, 
+                     n = Inf)
+nrow(voomCRGI)
+head(voomCRGI)
+```
+Therefore there are `r nrow(voomCRGI)` genes differentially expressed between Good vs. Intermediate cytogenetic risk.
+
+Plot top 6 genes differentially expressed between Good vs. Intermediate cytogenetic risk:
+```{r cytoRisk_GoodvsInt_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+voomCRGIgenes <- rownames(voomCRGI)
+rDatvoomCR <- rDatCRGIP[head(voomCRGIgenes), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+How can we compare Intermediate and Poor risk? Create a contrast matrix:
+```{r}
+colnames(design)
+(contMatrix <- makeContrasts(
+  PoorVsInt = cytoRiskPoor - cytoRiskIntermediate,
+  levels = design))
+fitCont <- contrasts.fit(fit, contMatrix)
+EbFitCont <- eBayes(fitCont)
+voomCRIP <- topTable(EbFitCont, p.value = 1e-5, n = Inf)
+nrow(voomCRIP)
+head(voomCRIP)
+resCont <- decideTests(EbFitCont, p.value = 1e-5, method = "global")
+summary(resCont)
+# negHits <- rownames(rDatCRGIP)[which(resCont[ , "PoorVsInt"] < 0)]
+# posHits <- rownames(rDatCRGIP)[which(resCont[ , "PoorVsInt"] > 0)]
+```
+Therefore there are `r nrow(voomCRIP)` genes differentially expressed between Intermediate and Poor cytogenetic risk.
+
+Plot top 6 genes differentially expressed between Intermediate and Poor cytogenetic risk:
+```{r cytoRisk_IntvsPoor_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+voomCRIPgenes <- rownames(voomCRIP)
+rDatvoomCR <- rDatCRGIP[head(voomCRIPgenes), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+Create a Venn diagram to show which genes were differentially expressed:
+```{r cytoRiskDEA_AllComparisons_FDR1e-5_VennDiagram_rpkm}
+deGenes <- list(IntermedVsGood = voomCRGIgenes, 
+                PoorVsIntermed = voomCRIPgenes, 
+                PoorVsGood = voomCRGPgenes)
+plot.new()
+vennPlot <- venn.diagram(deGenes, filename = NULL, force.unique = TRUE, 
+                         fill = c("red", "blue", "yellow"))
+grid.draw(vennPlot)
+```
+
+Wow one gene is differentially expressed between all groups? What is it?!
+```{r}
+(luckyGene <- (intersect(intersect(voomCRGIgenes, voomCRIPgenes),
+                        voomCRGPgenes)))
+```
+
+It is a zinc finger protein on chromosome 7, which we know is commonly deleted in AML! Nice. Let's check its expression!
+```{r cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm}
+rDatvoomCR <- rDatCRGIP[head(luckyGene), ]
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript",
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM),
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot()
+```
+
+
+## Intersection between Venn diagram
+
+Which genes are found to be differentially expressed between Intermediate vs Good and Poor risk? This should be the "IntermedVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+
+```{r cytoRisk_IntvsGoodPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRIPgenes, voomCRGIgenes))
+commonIPGI <- intersect(voomCRIPgenes, voomCRGIgenes)
+rDatvoomCR <- rDatCRGIP[head(commonIPGI), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+Which genes are found to be differentially expressed between Poor vs Good and Intermediate risk? This should be the "PoorVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+```{r cytoRisk_PoorvsGoodIntIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRGPgenes, voomCRIPgenes))
+commonGPIP <- intersect(voomCRGPgenes, voomCRIPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGPIP), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+Which genes are found to be differentially expressed between Good vs Intermediate and Poor risk? This should be the "IntermedVsGood" and "PoorVsGood" overlap in the Venn diagram. Let's plot them to find out:
+```{r cytoRisk_GoodvsIntPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRGIgenes, voomCRGPgenes))
+commonGIGP <- intersect(voomCRGIgenes, voomCRGPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGIGP), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
