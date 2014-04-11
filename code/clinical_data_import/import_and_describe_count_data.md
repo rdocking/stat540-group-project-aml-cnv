@@ -16,9 +16,9 @@ First, I'll import and compare the raw data files available at the [TCGA Data Po
 
 
 ```r
-rpkm_dat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz", 
+rpkm_dat <- read.table("../../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz", 
     sep = "\t", header = TRUE, row.names = 1)
-count_dat <- read.table("../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz", 
+count_dat <- read.table("../../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz", 
     sep = "\t", header = TRUE, row.names = 1)
 ```
 

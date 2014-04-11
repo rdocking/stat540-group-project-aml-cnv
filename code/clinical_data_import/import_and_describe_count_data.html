@@ -75,9 +75,9 @@ hljs.initHighlightingOnLoad();
 
 <p>First, I&#39;ll import and compare the raw data files available at the <a href="https://tcga-data.nci.nih.gov/docs/publications/laml_2012/">TCGA Data Portal Site</a>. These files have already been downloaded and stored in the repository in the <code>data</code> sub-directory:</p>
 
-<pre><code class="r">rpkm_dat &lt;- read.table(&quot;../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz&quot;, 
+<pre><code class="r">rpkm_dat &lt;- read.table(&quot;../../data/laml.rnaseq.179_v1.0_gaf2.0_rpkm_matrix.txt.tcgaID.txt.gz&quot;, 
     sep = &quot;\t&quot;, header = TRUE, row.names = 1)
-count_dat &lt;- read.table(&quot;../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz&quot;, 
+count_dat &lt;- read.table(&quot;../../data/laml.rnaseq.179_v1.0_gaf2.0_read_count_matrix.txt.tcgaID.txt.gz&quot;, 
     sep = &quot;\t&quot;, header = TRUE, row.names = 1)
 </code></pre>
 
