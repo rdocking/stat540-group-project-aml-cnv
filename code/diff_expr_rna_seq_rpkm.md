@@ -465,6 +465,33 @@ voomCRgenes <- rownames(voomCR)
 
 Therefore, there are 786 genes differentially expressed between Good vs. Intermediate and Poor cytogenetic risks.
 
+Write these results to file:
+
+```r
+write.table(voomCR, "../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", sep = "\t")
+test <- read.table("../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", header = TRUE, 
+    sep = "\t")
+head(test)
+```
+
+```
+##                         cytoRiskIntermediate cytoRiskPoor AveExpr     F
+## CPNE8|144402_calculated                2.615        2.658   5.343 176.7
+## HOXA7|3204_calculated                  2.869        2.372   2.327 164.9
+## HOXA6|3203_calculated                  2.947        2.284   4.238 162.3
+## HOXA3|3200_calculated                  2.314        1.687   2.339 153.5
+## HOXA4|3201_calculated                  2.128        1.454   5.300 141.5
+## HOXA5|3202_calculated                  3.363        2.649   4.269 130.2
+##                           P.Value adj.P.Val
+## CPNE8|144402_calculated 7.661e-43 1.532e-38
+## HOXA7|3204_calculated   4.280e-41 4.280e-37
+## HOXA6|3203_calculated   1.061e-40 7.071e-37
+## HOXA3|3200_calculated   2.542e-39 1.271e-35
+## HOXA4|3201_calculated   2.196e-37 8.785e-34
+## HOXA5|3202_calculated   1.906e-35 6.354e-32
+```
+
+
 Which genes are differentially expressed between Good vs. Poor cytogenetic risk?
 
 ```r
@@ -854,4 +881,215 @@ ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), colour = Cytogenetic_risk)) +
 ```
 
 ![plot of chunk cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm](figure/cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm.png) 
+
+
+
+## Intersection between Venn diagram
+
+Which genes are found to be differentially expressed between Intermediate vs Good and Poor risk? This should be the "IntermedVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+
+
+```r
+length(intersect(voomCRIPgenes, voomCRGIgenes))
+```
+
+```
+## [1] 12
+```
+
+```r
+commonIPGI <- intersect(voomCRIPgenes, voomCRGIgenes)
+rDatvoomCR <- rDatCRGIP[head(commonIPGI), ]
+dim(rDatvoomCR)
+```
+
+```
+## [1]   6 176
+```
+
+```r
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", variable.name = "TCGA_patient_id", 
+    value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+```
+
+```
+##   Transcript TCGA_patient_id  RPKM
+## 1      HOXB6            2803 1.081
+## 2     NKX2-3            2803 1.000
+## 3      HOXB5            2803 1.028
+## 4      HOXB7            2803 1.340
+## 5       NAV1            2803 1.819
+## 6      ADCY2            2803 1.008
+```
+
+```r
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+```
+
+```
+##   TCGA_patient_id Transcript  RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803      HOXB6 1.081   F    W          M3  61     FALSE
+## 2            2803     NKX2-3 1.000   F    W          M3  61     FALSE
+## 3            2803      HOXB5 1.028   F    W          M3  61     FALSE
+## 4            2803      HOXB7 1.340   F    W          M3  61     FALSE
+## 5            2803       NAV1 1.819   F    W          M3  61     FALSE
+## 6            2803      ADCY2 1.008   F    W          M3  61     FALSE
+##   del_5 del_7 Cytogenetic_risk Molecular_risk
+## 1 FALSE FALSE             Good           Good
+## 2 FALSE FALSE             Good           Good
+## 3 FALSE FALSE             Good           Good
+## 4 FALSE FALSE             Good           Good
+## 5 FALSE FALSE             Good           Good
+## 6 FALSE FALSE             Good           Good
+```
+
+```r
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), colour = Cytogenetic_risk)) + 
+    geom_boxplot() + facet_wrap(~Transcript, scales = "free") + theme(axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank())
+```
+
+![plot of chunk cytoRisk_IntvsGoodPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm](figure/cytoRisk_IntvsGoodPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm.png) 
+
+
+Which genes are found to be differentially expressed between Poor vs Good and Intermediate risk? This should be the "PoorVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+
+```r
+length(intersect(voomCRGPgenes, voomCRIPgenes))
+```
+
+```
+## [1] 47
+```
+
+```r
+commonGPIP <- intersect(voomCRGPgenes, voomCRIPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGPIP), ]
+dim(rDatvoomCR)
+```
+
+```
+## [1]   6 176
+```
+
+```r
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", variable.name = "TCGA_patient_id", 
+    value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+```
+
+```
+##   Transcript TCGA_patient_id   RPKM
+## 1     ZNF498            2803  7.996
+## 2      BEND4            2803  1.006
+## 3       PAWR            2803  1.225
+## 4      TGIF1            2803 23.620
+## 5   C6orf125            2803  6.134
+## 6      MYCT1            2803  1.865
+```
+
+```r
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+```
+
+```
+##   TCGA_patient_id Transcript   RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803     ZNF498  7.996   F    W          M3  61     FALSE
+## 2            2803      BEND4  1.006   F    W          M3  61     FALSE
+## 3            2803       PAWR  1.225   F    W          M3  61     FALSE
+## 4            2803      TGIF1 23.620   F    W          M3  61     FALSE
+## 5            2803   C6orf125  6.134   F    W          M3  61     FALSE
+## 6            2803      MYCT1  1.865   F    W          M3  61     FALSE
+##   del_5 del_7 Cytogenetic_risk Molecular_risk
+## 1 FALSE FALSE             Good           Good
+## 2 FALSE FALSE             Good           Good
+## 3 FALSE FALSE             Good           Good
+## 4 FALSE FALSE             Good           Good
+## 5 FALSE FALSE             Good           Good
+## 6 FALSE FALSE             Good           Good
+```
+
+```r
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), colour = Cytogenetic_risk)) + 
+    geom_boxplot() + facet_wrap(~Transcript, scales = "free") + theme(axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank())
+```
+
+![plot of chunk cytoRisk_PoorvsGoodIntIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm](figure/cytoRisk_PoorvsGoodIntIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm.png) 
+
+
+Which genes are found to be differentially expressed between Good vs Intermediate and Poor risk? This should be the "IntermedVsGood" and "PoorVsGood" overlap in the Venn diagram. Let's plot them to find out:
+
+```r
+length(intersect(voomCRGIgenes, voomCRGPgenes))
+```
+
+```
+## [1] 201
+```
+
+```r
+commonGIGP <- intersect(voomCRGIgenes, voomCRGPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGIGP), ]
+dim(rDatvoomCR)
+```
+
+```
+## [1]   6 176
+```
+
+```r
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", variable.name = "TCGA_patient_id", 
+    value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+```
+
+```
+##   Transcript TCGA_patient_id  RPKM
+## 1      CPNE8            2803 1.090
+## 2      HOXA7            2803 1.013
+## 3      HOXA6            2803 1.088
+## 4      HOXA3            2803 1.014
+## 5      HOXA4            2803 1.119
+## 6      HOXA5            2803 1.404
+```
+
+```r
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+```
+
+```
+##   TCGA_patient_id Transcript  RPKM Sex Race FAB_subtype Age trisomy_8
+## 1            2803      CPNE8 1.090   F    W          M3  61     FALSE
+## 2            2803      HOXA7 1.013   F    W          M3  61     FALSE
+## 3            2803      HOXA6 1.088   F    W          M3  61     FALSE
+## 4            2803      HOXA3 1.014   F    W          M3  61     FALSE
+## 5            2803      HOXA4 1.119   F    W          M3  61     FALSE
+## 6            2803      HOXA5 1.404   F    W          M3  61     FALSE
+##   del_5 del_7 Cytogenetic_risk Molecular_risk
+## 1 FALSE FALSE             Good           Good
+## 2 FALSE FALSE             Good           Good
+## 3 FALSE FALSE             Good           Good
+## 4 FALSE FALSE             Good           Good
+## 5 FALSE FALSE             Good           Good
+## 6 FALSE FALSE             Good           Good
+```
+
+```r
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), colour = Cytogenetic_risk)) + 
+    geom_boxplot() + facet_wrap(~Transcript, scales = "free") + theme(axis.text.x = element_blank(), 
+    axis.ticks.x = element_blank())
+```
+
+![plot of chunk cytoRisk_GoodvsIntPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm](figure/cytoRisk_GoodvsIntPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm.png) 
 

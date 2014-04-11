@@ -140,6 +140,15 @@ voomCRgenes <- rownames(voomCR)
 
 Therefore, there are `r nrow(voomCR)` genes differentially expressed between Good vs. Intermediate and Poor cytogenetic risks.
 
+Write these results to file:
+```{r}
+write.table(voomCR, "../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", 
+            sep = "\t")
+test <- read.table("../data/diffExpr_CytoRisk_GvsIP_FDR1e-5_rpkm.txt", 
+                   header = TRUE, sep = "\t")
+head(test)
+```
+
 Which genes are differentially expressed between Good vs. Poor cytogenetic risk?
 ```{r}
 voomCRGP <- topTable(fit, coef = "cytoRiskPoor", p.value = 1e-5, n = Inf)
@@ -248,13 +257,36 @@ grid.draw(vennPlot)
 
 Wow one gene is differentially expressed between all groups? What is it?!
 ```{r}
-(luckyGene <- (intersect(intersect(voomCRGIgenes, voomCRIPgenes), 
+(luckyGene <- (intersect(intersect(voomCRGIgenes, voomCRIPgenes),
                         voomCRGPgenes)))
 ```
 
 It is a zinc finger protein on chromosome 7, which we know is commonly deleted in AML! Nice. Let's check its expression!
 ```{r cytoRiskDEA_AllComparisons_CommonGene_FDR1e-5_Boxplot_rpkm}
 rDatvoomCR <- rDatCRGIP[head(luckyGene), ]
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript",
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM),
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot()
+```
+
+
+## Intersection between Venn diagram
+
+Which genes are found to be differentially expressed between Intermediate vs Good and Poor risk? This should be the "IntermedVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+
+```{r cytoRisk_IntvsGoodPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRIPgenes, voomCRGIgenes))
+commonIPGI <- intersect(voomCRIPgenes, voomCRGIgenes)
+rDatvoomCR <- rDatCRGIP[head(commonIPGI), ]
+dim(rDatvoomCR)
 rDatvoomCR$Transcript <- rownames(rDatvoomCR)
 rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
                    variable.name = "TCGA_patient_id",
@@ -265,5 +297,49 @@ rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
 head(rDatvoomCR)
 ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
                        colour = Cytogenetic_risk)) +
-  geom_boxplot()
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+Which genes are found to be differentially expressed between Poor vs Good and Intermediate risk? This should be the "PoorVsGood" and "PoorVsIntermed" overlap in the Venn diagram. Let's plot them to find out:
+```{r cytoRisk_PoorvsGoodIntIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRGPgenes, voomCRIPgenes))
+commonGPIP <- intersect(voomCRGPgenes, voomCRIPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGPIP), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+```
+
+Which genes are found to be differentially expressed between Good vs Intermediate and Poor risk? This should be the "IntermedVsGood" and "PoorVsGood" overlap in the Venn diagram. Let's plot them to find out:
+```{r cytoRisk_GoodvsIntPoorIntersect_TopSixDEgenes_FDR1e-5_Boxplot_rpkm}
+length(intersect(voomCRGIgenes, voomCRGPgenes))
+commonGIGP <- intersect(voomCRGIgenes, voomCRGPgenes)
+rDatvoomCR <- rDatCRGIP[head(commonGIGP), ]
+dim(rDatvoomCR)
+rDatvoomCR$Transcript <- rownames(rDatvoomCR)
+rDatvoomCR <- melt(rDatvoomCR, id.vars = "Transcript", 
+                   variable.name = "TCGA_patient_id",
+                   value.name = "RPKM")
+rDatvoomCR$Transcript <- gsub("[|].*$", "", rDatvoomCR$Transcript)
+head(rDatvoomCR)
+rDatvoomCR <- merge(rDatvoomCR, rDesCRGIP, by = "TCGA_patient_id")
+head(rDatvoomCR)
+ggplot(rDatvoomCR, aes(Transcript, log2(RPKM), 
+                       colour = Cytogenetic_risk)) +
+  geom_boxplot() +
+  facet_wrap(~ Transcript, scales = "free") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 ```
