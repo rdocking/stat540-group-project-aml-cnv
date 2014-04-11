@@ -12,7 +12,7 @@ This directory contains:
   
 - Differential expression analysis:  
   - Differential Expression I - Cytogenetic Risk:
-      - Using RPKM data (chosen method): [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.md [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.html)
+      - Using RPKM data (chosen method): [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.html)
       - Using read count data: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_read_count.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_read_count.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_read_count.html)
 
   - Differential Expression II - Karyotypic Events: 
