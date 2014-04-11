@@ -62,8 +62,7 @@ hljs.initHighlightingOnLoad();
 <h1>Clinical Data Import and Cleaning</h1>
 
 <blockquote>
-<p>To knit .rmd file, read data files in using &ldquo;../data&rdquo;<br/>
-To run chunks in Rstudio, read data files in using &ldquo;./data&rdquo;</p>
+<p>To knit .rmd file, make sure the working directory is set to that of the source file  </p>
 </blockquote>
 
 <p>Load required libraries and print working directory:</p>
@@ -80,7 +79,7 @@ library(knitr)
 #raw_clinical_data &lt;- getURL(url, ssl.verifypeer = FALSE)
 #raw_clinical_data &lt;- read.table(text = raw_clinical_data, header = TRUE, sep =&#39;\t&#39;)
 # Read in raw clinical data:
-raw_clinical_data &lt;- read.table(&quot;../data/clinical_patient_laml.tsv&quot;, header = TRUE, 
+raw_clinical_data &lt;- read.table(&quot;../../data/clinical_patient_laml.tsv&quot;, header = TRUE, 
                                  sep = &quot;\t&quot;)
 </code></pre>
 
@@ -184,7 +183,7 @@ raw_clinical_data &lt;- read.table(&quot;../data/clinical_patient_laml.tsv&quot;
 <li>Open in Excel, save as CSV</li>
 </ul>
 
-<pre><code class="r">supp_d &lt;- read.csv(&quot;../data/SuppTable01.update.2013.05.13.csv&quot;)
+<pre><code class="r">supp_d &lt;- read.csv(&quot;../../data/SuppTable01.update.2013.05.13.csv&quot;)
 str(supp_d, max.level = 0)
 </code></pre>
 
@@ -398,7 +397,7 @@ str(supp_d, max.level = 0)
 
 <p>Now I can read in the modified CSV file to get a cleaner data frame:</p>
 
-<pre><code class="r">cleaned_data &lt;- read.csv(&quot;../data/experimental_design.csv&quot;)
+<pre><code class="r">cleaned_data &lt;- read.csv(&quot;../../data/experimental_design.csv&quot;)
 </code></pre>
 
 <p>This data frame is quite a bit smaller and simpler than the original:</p>
@@ -601,13 +600,13 @@ head(cleanExpDes)
 
 <p>Save the output to file:</p>
 
-<pre><code class="r">write.table(cleanExpDes, &quot;../data/experimental_design_cleaned.txt&quot;, sep = &quot;\t&quot;, 
+<pre><code class="r">write.table(cleanExpDes, &quot;../../data/experimental_design_cleaned.txt&quot;, sep = &quot;\t&quot;, 
     row.names = FALSE)
 </code></pre>
 
 <p>Ensure we can read the file back in correctly:</p>
 
-<pre><code class="r">test &lt;- read.delim(&quot;../data/experimental_design_cleaned.txt&quot;)
+<pre><code class="r">test &lt;- read.delim(&quot;../../data/experimental_design_cleaned.txt&quot;)
 str(test)
 </code></pre>
 
