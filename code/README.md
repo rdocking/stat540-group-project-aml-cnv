@@ -4,9 +4,9 @@ Code files
 This directory contains:
 
 - Clinical data:
-  - Import and cleaning: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_clean_clinical_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_clean_clinical_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/import_and_clean_clinical_data.html)
+  - Import and cleaning: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code//clinical_data_import/import_and_clean_clinical_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clinical_data_import/import_and_clean_clinical_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code//clinical_data_import/import_and_clean_clinical_data.html)
   
-  - Parse clinical data: [PY](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/parse_supplementary_table.py)
+  - Parse clinical data: [PY](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code//clinical_data_import/parse_supplementary_table.py)
 
 - RNA-seq RPKM data
   - Cleaning: [MD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_rpkm_data.md) [RMD](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_rpkm_data.Rmd) [HTML](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/clean_rna_seq_rpkm_data.html)

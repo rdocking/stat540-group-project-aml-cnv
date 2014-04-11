@@ -107,7 +107,7 @@ The task here is to turn the raw clinical data (from the Supplemental material m
 
 The output CSV file will be used in all subsequent analysis steps.
 
-This task can be viewed at [import_and_clean_clinical_data.md](code/import_and_clean_clinical_data.md)
+This task can be viewed at [import_and_clean_clinical_data.md](code/clinical_data_import/import_and_clean_clinical_data.md)
 
 ### 2. Expression Matrix Generation
 
