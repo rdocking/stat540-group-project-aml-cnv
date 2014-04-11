@@ -8,7 +8,7 @@ Import and Cleaning of Clinical Data
 
 The first R Markdown document, [import_and_clean_clinical_data.md](import_and_clean_clinical_data.md), describes the initial download, inspection, and interpretation of the clinical data from the TCGA paper.
 
-This document was written over the course of a few days, and was updated following discussion with professors, TAs, and group members. The script also relies on a Python script, [parse_supplemental_table.py](parse_supplemental_table.py), which was used to parse the supplemental data CSV file from the TCGA paper into something more R-friendly. 
+This document was written over the course of a few days, and was updated following discussion with professors, TAs, and group members. The script also relies on a Python script, [parse_supplementary_table.py](parse_supplementary_table.py), which was used to parse the supplemental data CSV file from the TCGA paper into something more R-friendly. 
 
 Import and Describe Count Data
 ------------------------------
