@@ -31,7 +31,7 @@ Here is a general diagram of our workflow:
 
 
 ### Bibliography
-1. National Comprehensive Cancer Network (2014). *NCCN Clinical Practice Guidelines in Oncology - Acute Myeloid Leukemia.* Version 2. [PDF](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/references/NCCN_AML_V2_2014.pdf)
+1. National Comprehensive Cancer Network (2014). *NCCN Clinical Practice Guidelines in Oncology - Acute Myeloid Leukemia.* Version 2. [NCCN](http://www.nccn.org/default.aspx)
 
 2. Grimwade, D et al. (2010). Renement of cytogenetic classication in acute myeloid leukemia: determination of prognostic signicance of rare recurring chromosomal abnormalities among 5876 younger adult patients treated in the United Kingdom Medical Research Council trials. *Blood*. Jul 22;116(3):354-65. [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/20385793)
 
