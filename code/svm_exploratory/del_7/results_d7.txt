@@ -12,3 +12,4 @@ LUC7L2|51631_calculated PDAP1|11333_calculated MKRN1|23608_calculated SLC25A13|1
 
 
 
+[1] Cortes, C. and  Vapnik, V. (1995). "Support-vector networks". Machine Learning 20 (3): 273.[2] Breiman, Leo (2001). "Random Forests". Machine Learning 45 (1): 5–32.Elnaz Barshan, Ali Ghodsi, Zohreh Azimifar, and Mansoor Zolghadri. Supervised Principal Component Analysis: Visualization, Classification and Regression on Subspaces and and Regression on Subspaces and Submanifolds , Journal of Pattern Recognition
