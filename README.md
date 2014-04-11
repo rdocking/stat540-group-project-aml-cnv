@@ -39,4 +39,4 @@ Here is a general diagram of our workflow:
 
 4. The Cancer Genome Atlas Research Network (2013). Genomic and Epigenomic Landscapes of Adult De Novo Acute Myeloid Leukemia. *New England Journal of Medicine*. May 30;368(22):2059-74.[PubMed](http://www.ncbi.nlm.nih.gov/pubmed/23634996)
 
-5. Law, CW et al. (2014). Voom: precision weights unlock linear model analysis tools for RNA-seq read counts. *Genome Biology*. Feb 3;15(2):R29.
+5. Law, CW et al. (2014). Voom: precision weights unlock linear model analysis tools for RNA-seq read counts. *Genome Biology*. Feb 3;15(2):R29. [PubMed](http://www.ncbi.nlm.nih.gov/pubmed/24485249)
