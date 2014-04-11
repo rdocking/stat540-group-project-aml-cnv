@@ -27,7 +27,7 @@ The specific data sets to be used are available through the [TCGA Data Portal si
 - [Polymorphisms identified using the Affymetrix SNP 6 platform](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/LAML.Genome_Wide_SNP_6.Level_3.tgz) (SNP-array data)
 - [Patient Clinical Data](https://tcga-data.nci.nih.gov/docs/publications/laml_2012/clinical_patient_laml.tsv)
 
-Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/data_import.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
+Some example `R` code for importing and inspecting the main data files can be found at [data_import.R](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/archive/import_rna_seq_data.R). Further cleaning and interpretation will be required, but the data straightforwardly loads into R, and the main expression data has already been normalized into an analysis-ready format.
 
 Initial Analysis Plan
 ---------------------
