@@ -16,7 +16,7 @@ library(xtable)
 ```
 
 ```{r}
- rDes <- read.delim("../../data/experimental_design_cleaned.txt")
+rDes <- read.delim("../../data/experimental_design_cleaned.txt")
 rownames(rDes) <- rDes$TCGA_patient_id
 rDat <- read.delim("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", row.names = 1, check.names = FALSE)
 
@@ -57,14 +57,16 @@ fs.corr <- function(input.dat, input.levels) {
 
 ```{r}
 # Function to create a roc curve for a classifier
-# prob.mat: matrix of the probabilities assigned to each sample
-plot.roc <- function(votes.mat, true.labels, plot = TRUE) {
+# votes.mat: matrix of the probabilities assigned to each sample
+# true.labels: the true outcomes for the input samples
+# plot: whether or not to draw the ROC curve
+plot.roc <- function(votes.mat, true.labels) {
   tprs <- c()
 	fprs <- c()
-	for (i in seq(0, 100, by = 0.1)) {
+	for (i in seq(0, 99.9, by = 0.1)) {
 		roc.classification <- vector(length = nrow(votes.mat))
 		for (j in 1:nrow(votes.mat)) {
-		  if (votes.mat[j,1] >= (i/100)) {
+		  if (votes.mat[j, "prob0"] >= (i/100)) {
 				roc.classification[j] <- 0
 			}
 			else {
@@ -81,28 +83,38 @@ plot.roc <- function(votes.mat, true.labels, plot = TRUE) {
 	}
 
 	roc.data <- data.frame(
-		Cutoff = seq(0, 100, by = 0.1),
+		Cutoff = seq(0, 99.9, by = 0.1),
 		TPR = tprs,
 		FPR = fprs
 	)
-
+  roc.data <- rbind(roc.data, c(100, 1, 1))
 	auc <- 0
 	for (n in 1:(nrow(roc.data) - 1)) {
 		auc <- auc + ((roc.data$FPR[n+1] - roc.data$FPR[n]) * roc.data$TPR[n])
 	}
 
-  if (plot) {
-    xyplot(
-      TPR ~ FPR,
-      roc.data,
-      panel = function(...) {
-        panel.abline(h = 0, v = 1, col = "darkgrey")
-        panel.xyplot(...)
-      },
-      type = c("s"),
-      col = "black"
+  roc.obj <- xyplot(
+    TPR ~ FPR,
+    roc.data,
+    panel = function(...) {
+      panel.abline(h = c(0,1), v = c(0,1), col = "darkgrey")
+      panel.xyplot(...)
+    },
+    type = c("s"),
+    col = "black",
+    xlab = list("1 - Specificity", cex = 1.5),
+    ylab = list("Sensitivity", cex = 1.5),
+  	key = list(
+      x = 0.6,
+      y = 0.2,
+		  text = list(paste("AUC =", format(auc, digits = 3)), cex = 1.5)
+		),
+    scales = list(
+      x = list(cex = 1.5, limits = c(-0.1, 1.1)),
+      y = list(cex = 1.5, limits = c(-0.1, 1.1))
     )
-  }
+  )
+  print(roc.obj)
   
   return(auc)
 }
@@ -112,6 +124,7 @@ plot.roc <- function(votes.mat, true.labels, plot = TRUE) {
 # Function to run k-fold cross validation with a random forest classifier
 # all.dat: all data used in the analysis
 # all.labels: true outcomes for the data
+# all.levels: true outcome levels for training data
 # K: number of folds to use in CV
 # fs.method: the strategy to use for feature selection
 # plot.varimp: whether to plot the variable importance for each of the trained forests
@@ -121,6 +134,13 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
 
   conf_matrix <- matrix(0, nrow = 2, ncol = 2, dimnames = list(c("true0", "true1"), c("pred0", "pred1")))
   feature.list <- list()
+  all.votes <- data.frame(
+    sample = colnames(all.dat),
+    votes0 = rep(0, ncol(all.dat)),
+    votes1 = rep(0, ncol(all.dat)),
+    stringsAsFactors = FALSE
+  )
+  rownames(all.votes) <- colnames(all.dat)
   
   for (f in 1:K) {
     train.samples <- folds$subsets[folds$which != f,]
@@ -163,13 +183,19 @@ rf.cv <- function(all.dat, all.labels, all.levels, K = 5, fs.method = "lm", plot
     conf_matrix[1,2] <- conf_matrix[1,2] + results[1,2]
     conf_matrix[2,1] <- conf_matrix[2,1] + results[2,1]
     conf_matrix[2,2] <- conf_matrix[2,2] + results[2,2]
+    
+    votes.rf <- predict(fit.rf, newdata = test.dat, type = "prob")
+    all.votes[rownames(test.dat), "prob0"] <- as.numeric(votes.rf[,1])
+    all.votes[rownames(test.dat), "prob1"] <- as.numeric(votes.rf[,2])
   }
+  
+  rf.auc <- plot.roc(all.votes, all.labels)
   
   rf.sens <- conf_matrix[2,2] / sum(conf_matrix[2,])
   rf.spec <- conf_matrix[1,1] / sum(conf_matrix[1,])
   rf.acc <- (conf_matrix[1,1] + conf_matrix[2,2]) / sum(conf_matrix)
   
-  return(list(acc = rf.acc, sens = rf.sens, spec = rf.spec, feature.list = feature.list))
+  return(list(acc = rf.acc, sens = rf.sens, spec = rf.spec, auc = rf.auc, feature.list = feature.list))
 }
 ```
 
@@ -203,7 +229,7 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 ```{r}
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
 rf.labels.poor <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,0,1), warn_missing = TRUE)
-rf.labels.poor <- factor(rf.labels.poor)
+rf.labels.poor <- factor(rf.labels.poor, levels = c(0,1))
 rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
@@ -212,9 +238,9 @@ rfDat <- rDat[,rownames(rfDes)]
 Run a 5-fold cross-validation for the data:
 ```{r}
 cv.lm.poor <- rf.cv(rfDat, rf.labels.poor, rf.levels, K = 5, fs.method = "lm")
-cv.lm.poor[1:3]
-all.results[["lm.poor"]] <- cv.lm.poor[1:3]
-(common.fts.lm.poor <- summarize.cv.fts(cv.lm.poor[[4]]))
+cv.lm.poor[1:4]
+all.results[["lm.poor"]] <- cv.lm.poor[1:4]
+(common.fts.lm.poor <- summarize.cv.fts(cv.lm.poor[[5]]))
 ```
 
 
@@ -223,9 +249,9 @@ all.results[["lm.poor"]] <- cv.lm.poor[1:3]
 Run a 5-fold cross-validation for the data:
 ```{r}
 cv.corr.poor <- rf.cv(rfDat, rf.labels.poor, rf.levels, K = 5, fs.method = "corr")
-cv.corr.poor[1:3]
-all.results[["corr.poor"]] <- cv.corr.poor[1:3]
-(common.fts.corr.poor <- summarize.cv.fts(cv.corr.poor[[4]]))
+cv.corr.poor[1:4]
+all.results[["corr.poor"]] <- cv.corr.poor[1:4]
+(common.fts.corr.poor <- summarize.cv.fts(cv.corr.poor[[5]]))
 ```
 
 
@@ -235,7 +261,7 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 ```{r}
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
 rf.labels.intermediate <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(0,1,0), warn_missing = TRUE)
-rf.labels.intermediate <- factor(rf.labels.intermediate)
+rf.labels.intermediate <- factor(rf.labels.intermediate, levels = c(0,1))
 rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
@@ -244,18 +270,18 @@ rfDat <- rDat[,rownames(rfDes)]
 Run a 5-fold cross-validation for the data:
 ```{r}
 cv.lm.intermediate <- rf.cv(rfDat, rf.labels.intermediate, rf.levels, K = 5, fs.method = "lm")
-cv.lm.intermediate[1:3]
-all.results[["lm.intermediate"]] <- cv.lm.intermediate[1:3]
-(common.fts.lm.intermediate <- summarize.cv.fts(cv.lm.intermediate[[4]]))
+cv.lm.intermediate[1:4]
+all.results[["lm.intermediate"]] <- cv.lm.intermediate[1:4]
+(common.fts.lm.intermediate <- summarize.cv.fts(cv.lm.intermediate[[5]]))
 ```
 
 
 ## 5) Train RF to predict "Intermediate" cytogenetic risk, now using correlations for feature selection
 ```{r}
 cv.corr.intermediate <- rf.cv(rfDat, rf.labels.intermediate, rf.levels, K = 5, fs.method = "corr")
-cv.corr.intermediate[1:3]
-all.results[["corr.intermediate"]] <- cv.corr.intermediate[1:3]
-(common.fts.corr.intermediate <- summarize.cv.fts(cv.corr.intermediate[[4]]))
+cv.corr.intermediate[1:4]
+all.results[["corr.intermediate"]] <- cv.corr.intermediate[1:4]
+(common.fts.corr.intermediate <- summarize.cv.fts(cv.corr.intermediate[[5]]))
 ```
 
 
@@ -265,7 +291,7 @@ Set up the data. Remove samples where the cytogenetic risk category is not deter
 ```{r}
 rfDes <- rDes[rDes$Cytogenetic_risk != "N.D.",]
 rf.labels.good <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(1,0,0), warn_missing = TRUE)
-rf.labels.good <- factor(rf.labels.good)
+rf.labels.good <- factor(rf.labels.good, levels = c(0,1))
 rf.levels <- mapvalues(rfDes$Cytogenetic_risk, c("Good","Intermediate","Poor"), c(3,2,1), warn_missing = TRUE)
 rf.levels <- factor(rf.levels)
 rfDat <- rDat[,rownames(rfDes)]
@@ -274,18 +300,18 @@ rfDat <- rDat[,rownames(rfDes)]
 Run a 5-fold cross-validation for the data:
 ```{r}
 cv.lm.good <- rf.cv(rfDat, rf.labels.good, rf.levels, K = 5, fs.method = "lm")
-cv.lm.good[1:3]
-all.results[["lm.good"]] <- cv.lm.good[1:3]
-(common.fts.lm.good <- summarize.cv.fts(cv.lm.good[[4]]))
+cv.lm.good[1:4]
+all.results[["lm.good"]] <- cv.lm.good[1:4]
+(common.fts.lm.good <- summarize.cv.fts(cv.lm.good[[5]]))
 ```
 
 
 ## 7) Train RF to predict "Good" cytogenetic risk, use correlations for feature selection
 ```{r}
 cv.corr.good <- rf.cv(rfDat, rf.labels.good, rf.levels, K = 5, fs.method = "corr")
-cv.corr.good[1:3]
-all.results[["corr.good"]] <- cv.corr.good[1:3]
-(common.fts.corr.good <- summarize.cv.fts(cv.corr.good[[4]]))
+cv.corr.good[1:4]
+all.results[["corr.good"]] <- cv.corr.good[1:4]
+(common.fts.corr.good <- summarize.cv.fts(cv.corr.good[[5]]))
 ```
 
 
@@ -294,25 +320,25 @@ all.results[["corr.good"]] <- cv.corr.good[1:3]
 First look at trisomy 8:
 ```{r}
 cv.lm.trisomy8 <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "lm")
-cv.lm.trisomy8[1:3]
-all.results[["lm.trisomy8"]] <- cv.lm.trisomy8[1:3]
-(common.fts.lm.trisomy8 <- summarize.cv.fts(cv.lm.trisomy8[[4]]))
+cv.lm.trisomy8[1:4]
+all.results[["lm.trisomy8"]] <- cv.lm.trisomy8[1:4]
+(common.fts.lm.trisomy8 <- summarize.cv.fts(cv.lm.trisomy8[[5]]))
 ```
 
 Next look at deletions of chromosome 5:
 ```{r}
 cv.lm.del5 <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "lm")
-cv.lm.del5[1:3]
-all.results[["lm.del5"]] <- cv.lm.del5[1:3]
-(common.fts.lm.del5 <- summarize.cv.fts(cv.lm.del5[[4]]))
+cv.lm.del5[1:4]
+all.results[["lm.del5"]] <- cv.lm.del5[1:4]
+(common.fts.lm.del5 <- summarize.cv.fts(cv.lm.del5[[5]]))
 ```
 
 Next look at deletions of chromosome 7:
 ```{r}
 cv.lm.del7 <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "lm")
-cv.lm.del7[1:3]
-all.results[["lm.del7"]] <- cv.lm.del7[1:3]
-(common.fts.lm.del7 <- summarize.cv.fts(cv.lm.del7[[4]]))
+cv.lm.del7[1:4]
+all.results[["lm.del7"]] <- cv.lm.del7[1:4]
+(common.fts.lm.del7 <- summarize.cv.fts(cv.lm.del7[[5]]))
 ```
 
 
@@ -321,25 +347,25 @@ all.results[["lm.del7"]] <- cv.lm.del7[1:3]
 First look at trisomy 8:
 ```{r}
 cv.corr.trisomy8 <- rf.cv(rDat, factor(as.numeric(rDes$trisomy_8)), factor(as.numeric(rDes$trisomy_8)), K = 5, fs.method = "corr")
-cv.corr.trisomy8[1:3]
-all.results[["corr.trisomy8"]] <- cv.corr.trisomy8[1:3]
-(common.fts.corr.trisomy8 <- summarize.cv.fts(cv.corr.trisomy8[[4]]))
+cv.corr.trisomy8[1:4]
+all.results[["corr.trisomy8"]] <- cv.corr.trisomy8[1:4]
+(common.fts.corr.trisomy8 <- summarize.cv.fts(cv.corr.trisomy8[[5]]))
 ```
 
 Next look at deletions of chromosome 5:
 ```{r}
 cv.corr.del5 <- rf.cv(rDat, factor(as.numeric(rDes$del_5)), factor(as.numeric(rDes$del_5)), K = 5, fs.method = "corr")
-cv.corr.del5[1:3]
-all.results[["corr.del5"]] <- cv.corr.del5[1:3]
-(common.fts.corr.del5 <- summarize.cv.fts(cv.corr.del5[[4]]))
+cv.corr.del5[1:4]
+all.results[["corr.del5"]] <- cv.corr.del5[1:4]
+(common.fts.corr.del5 <- summarize.cv.fts(cv.corr.del5[[5]]))
 ```
 
 Next look at deletions of chromosome 7:
 ```{r}
 cv.corr.del7 <- rf.cv(rDat, factor(as.numeric(rDes$del_7)), factor(as.numeric(rDes$del_7)), K = 5, fs.method = "corr")
-cv.corr.del7[1:3]
-all.results[["corr.del7"]] <- cv.corr.del7[1:3]
-(common.fts.corr.del7 <- summarize.cv.fts(cv.corr.del7[[4]]))
+cv.corr.del7[1:4]
+all.results[["corr.del7"]] <- cv.corr.del7[1:4]
+(common.fts.corr.del7 <- summarize.cv.fts(cv.corr.del7[[5]]))
 ```
 
 
@@ -379,11 +405,11 @@ grid.draw(venn.plot)
 ```
 
 
-## 10) Summarize results for all classifiers
+## 11) Summarize results for all classifiers
 ```{r results='asis'}
-all.results.df <- data.frame(matrix(unlist(all.results), ncol = 3, byrow = TRUE))
+all.results.df <- data.frame(matrix(unlist(all.results), ncol = 4, byrow = TRUE))
 rownames(all.results.df) <- names(all.results)
-colnames(all.results.df) <- c("accuracy", "sensitivity", "specificity")
+colnames(all.results.df) <- c("accuracy", "sensitivity", "specificity", "auc")
 all.results.xt <- xtable(all.results.df)
 print(all.results.xt, type = "html")
 ```
