@@ -1,0 +1,856 @@
+SVM Predictions
+========================================================
+
+### Prep Work
+
+**Load RNA Seq data and design, then merge. I will use the read counts data for this analysis.**
+
+```r
+rna_seq_dat <- read.table("../../data/aml.rnaseq.gaf2.0_rpkm_cleaned.txt", sep = "\t", 
+    header = TRUE, check.names = FALSE)
+
+exp_dat <- read.table("../../data/experimental_design_cleaned.txt", sep = "\t", 
+    header = TRUE, row.names = 1)
+
+joined_dat <- cbind(exp_dat, t(rna_seq_dat))
+```
+
+
+**Load libraries.**
+
+```r
+library(plyr)
+```
+
+```
+## Warning: package 'plyr' was built under R version 3.0.3
+```
+
+```r
+library(kernlab)
+library(taRifx)
+```
+
+```
+## Warning: package 'taRifx' was built under R version 3.0.3
+```
+
+```
+## Loading required package: reshape2
+```
+
+```
+## Warning: package 'reshape2' was built under R version 3.0.3
+```
+
+```r
+library(cvTools)
+```
+
+```
+## Loading required package: lattice
+## Loading required package: robustbase
+```
+
+```r
+library(VennDiagram)
+```
+
+```
+## Loading required package: grid
+```
+
+```r
+library(limma)
+library(edgeR)
+```
+
+
+**Helper functions.**
+
+```r
+# Function to select features using linear models input.dat: training data
+# set input.labels: true outcomes for training data
+fs.lm <- function(input.dat, input.labels) {
+    norm.factor <- calcNormFactors(input.dat)
+    design <- model.matrix(~input.labels)[, 1:2]
+    colnames(design) <- c("Intercept", "Label")
+    dat.voomed <- voom(input.dat, design, lib.size = colSums(input.dat) * norm.factor)
+    fit <- lmFit(dat.voomed, design)
+    ebFit <- eBayes(fit)
+    hits <- topTable(ebFit, n = Inf, coef = "Label")
+    # train.features <- hits$ID[1:25] FOR OLDER VERSION OF R
+    train.features <- rownames(hits)[1:25]
+    return(train.features)
+}
+```
+
+
+Part 1: Predicting Cytogenetic Risk
+-------------------------
+
+### Part 1a: Data prep
+
+**First, let's reorder the factor levels for Cytogenetic_risk so they make sense.**
+
+```r
+joined_dat$Cytogenetic_risk <- factor(joined_dat$Cytogenetic_risk, levels(joined_dat$Cytogenetic_risk)[c(4, 
+    2, 1, 3)])
+```
+
+
+**Remove the rows with N.D.**
+
+```r
+dat_filt <- subset(joined_dat, joined_dat$Cytogenetic_risk != "N.D.")
+```
+
+
+**Now, for the SVM, let's make a binary prognosis columns (TRUE for poor).**
+
+```r
+dat_svm <- dat_filt
+dat_svm$prognosis <- mapvalues(dat_svm$Cytogenetic_risk, c("Good", "Intermediate", 
+    "Poor"), c(FALSE, FALSE, TRUE), warn_missing = TRUE)
+```
+
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+
+```r
+prelim <- dat_svm[, grepl(".*calculated", colnames(dat_svm))]
+prelim <- dat_svm[, c(colnames(prelim), "prognosis", "Cytogenetic_risk")]
+```
+
+
+### Part 1b: Predict using just most correlated gene features
+
+**Prepare folds and confusion matrix for cross validation.**
+
+```r
+set.seed(540)
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0, nrow = 2, ncol = 2, dimnames = list(c("truePoor", "trueNotPoor"), 
+    c("predPoor", "predNotPoor")))
+```
+
+
+**Prepare list for top genes.**
+
+```r
+top_genes_per_fold <- list()
+```
+
+
+**Perform cross validation.**
+
+```r
+for (f in 1:5) {
+    
+    # Divide preliminary dataset into train and test sets.
+    prelim_train <- prelim[folds$subsets[folds$which != f, ], ]
+    prelim_test <- prelim[folds$subsets[folds$which == f], ]
+    prelim_test_labels <- prelim_test$prognosis
+    
+    # *** Narrow the feature set by finding the genes most correlated with risk
+    # in the test set ***
+    
+    # Get just gene columns
+    gene_cols <- prelim_train[, grepl(".*calculated", colnames(prelim_train))]
+    
+    # Get correlations
+    gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$Cytogenetic_risk), 
+        gene_cols, method = "spearman")))
+    
+    # Sort
+    gene_corrs_sort <- sort(abs(gene_corrs), f = ~-V1, drop = FALSE)
+    
+    # Grab top 25
+    gene_corrs_top <- gene_corrs_sort[1:25, , drop = FALSE]
+    top_genes_per_fold <- c(top_genes_per_fold, rownames(gene_corrs_top))
+    
+    # *** Do SVM ***
+    
+    # Prepare training and test sets
+    dat_svm_gene_train <- prelim_train[, c(rownames(gene_corrs_top), "prognosis")]
+    dat_svm_gene_test <- prelim_test[, c(rownames(gene_corrs_top), "prognosis")]
+    
+    # Build
+    fit_svm <- ksvm(prognosis ~ ., dat_svm_gene_train)
+    
+    # Predict
+    pred_svm <- predict(fit_svm, newdata = dat_svm_gene_test, type = "response")
+    
+    # Process
+    results <- table(prelim_test_labels, pred_svm)
+    
+    conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
+    conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
+    conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
+    conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+}
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+
+**Process CV results.**
+
+```r
+sens_svm_cor <- conf_matrix[1, 1]/sum(conf_matrix[1, ])
+spec_svm_cor <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
+sink("results_risk.txt")
+cat("Risk, corrs:")
+```
+
+```
+## Risk, corrs:
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(sens_svm_cor)
+```
+
+```
+## 0.4524
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(spec_svm_cor)
+```
+
+```
+## 0.9403
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat("\n")
+```
+
+
+**Explore the genes selected in each fold.**
+
+```r
+fold1 <- top_genes_per_fold[1:25]
+fold2 <- top_genes_per_fold[26:50]
+fold3 <- top_genes_per_fold[51:75]
+fold4 <- top_genes_per_fold[76:100]
+fold5 <- top_genes_per_fold[101:125]
+
+folds <- list(Fold1 = fold1, Fold2 = fold2, Fold3 = fold3, Fold4 = fold4, Fold5 = fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL, force.unique = TRUE, ext.text = FALSE, 
+    margin = 0.1)
+grid.draw(venn_plot)
+```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+
+```r
+
+intersection_cor <- unlist(intersect(fold1, intersect(fold2, intersect(fold3, 
+    intersect(fold4, fold5)))))
+cat(intersection_cor)
+```
+
+```
+## PDE4DIP|9659_calculated PHKA1|5255_calculated SDPR|8436_calculated RECK|8434_calculated IL7|3574_calculated STARD10|10809_calculated
+```
+
+```r
+cat("\n\n")
+```
+
+```r
+sink(file = NULL)
+```
+
+
+### Part 1c: Predict using differentially expressed features (according to linear model analysis)
+
+**Prepare folds and confusion matrix for cross validation.**
+
+```r
+set.seed(540)
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0, nrow = 2, ncol = 2, dimnames = list(c("truePoor", "trueNotPoor"), 
+    c("predPoor", "predNotPoor")))
+```
+
+
+**Prepare list for top genes.**
+
+```r
+selections_per_fold <- list()
+```
+
+
+**Perform cross validation.**
+
+```r
+for (f in 1:5) {
+    
+    # Divide preliminary dataset into train and test sets.
+    prelim_train <- prelim[folds$subsets[folds$which != f, ], ]
+    prelim_test <- prelim[folds$subsets[folds$which == f], ]
+    prelim_test_labels <- prelim_test$prognosis
+    
+    # *** Narrow the feature set by finding the top differentially expressed
+    # genes ***
+    
+    # Get just gene columns
+    gene_cols <- prelim_train[, grepl(".*calculated", colnames(prelim_train))]
+    
+    # Do lm selection
+    selections <- fs.lm(t(gene_cols), prelim_train$prognosis)
+    selections_per_fold <- c(selections_per_fold, selections)
+    
+    # *** Do SVM ***
+    
+    # Prepare training and test sets
+    dat_svm_gene_train <- prelim_train[, c(selections, "prognosis")]
+    dat_svm_gene_test <- prelim_test[, c(selections, "prognosis")]
+    
+    # Build
+    fit_svm <- ksvm(prognosis ~ ., dat_svm_gene_train)
+    
+    # Predict
+    pred_svm <- predict(fit_svm, newdata = dat_svm_gene_test, type = "response")
+    
+    # Process
+    results <- table(prelim_test_labels, pred_svm)
+    
+    conf_matrix[1, 1] <- conf_matrix[1, 1] + results[1, 1]
+    conf_matrix[1, 2] <- conf_matrix[1, 2] + results[1, 2]
+    conf_matrix[2, 1] <- conf_matrix[2, 1] + results[2, 1]
+    conf_matrix[2, 2] <- conf_matrix[2, 2] + results[2, 2]
+}
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+
+**Process CV results.**
+
+```r
+sens_svm_lm <- conf_matrix[1, 1]/sum(conf_matrix[1, ])
+spec_svm_lm <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
+sink("results_risk.txt", append = TRUE)
+cat("Risk, lm:")
+```
+
+```
+## Risk, lm:
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(sens_svm_lm)
+```
+
+```
+## 0.5476
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(spec_svm_lm)
+```
+
+```
+## 0.9552
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat("\n")
+```
+
+
+**Explore the genes selected in each fold.**
+
+```r
+fold1 <- selections_per_fold[1:25]
+fold2 <- selections_per_fold[26:50]
+fold3 <- selections_per_fold[51:75]
+fold4 <- selections_per_fold[76:100]
+fold5 <- selections_per_fold[101:125]
+
+folds <- list(Fold1 = fold1, Fold2 = fold2, Fold3 = fold3, Fold4 = fold4, Fold5 = fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL, force.unique = TRUE, ext.text = FALSE, 
+    margin = 0.1)
+grid.draw(venn_plot)
+```
+
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
+
+```r
+
+intersection_lm <- unlist(intersect(fold1, intersect(fold2, intersect(fold3, 
+    intersect(fold4, fold5)))))
+cat(intersection_lm)
+```
+
+```
+## SCD|6319_calculated STYXL1|51657_calculated PDAP1|11333_calculated LUC7L2|51631_calculated GSTK1|373156_calculated
+```
+
+```r
+cat("\n\n")
+```
+
+```r
+cat(intersect(intersection_cor, intersection_lm))
+cat("\n\n")
+```
+
+```r
+sink(file = NULL)
+```
+
+
+Part 2: Predicting Cytogenetic Features (trisomy_8, del_5, and del_7)
+-------------------------
+
+### Part 2a: Data prep
+
+**Copy the original data and factorize the features columns (trisomy_8/del_5/del_7).**
+
+```r
+dat_svm <- joined_dat
+dat_svm$trisomy_8 <- as.factor(dat_svm$trisomy_8)
+dat_svm$del_5 <- as.factor(dat_svm$del_5)
+dat_svm$del_7 <- as.factor(dat_svm$del_7)
+```
+
+
+**Make prelimary dataset with gene columns + prognosis + cyt risk.**
+
+```r
+prelim <- dat_svm[, grepl(".*calculated", colnames(dat_svm))]
+# prelim$prognosis <- dat_svm$trisomy_8 prelim$prognosis <- dat_svm$del_5
+prelim$prognosis <- dat_svm$del_7
+```
+
+
+### Part 2b: Predict using just most correlated gene features
+
+**Prepare folds and confusion matrix for cross validation.**
+
+```r
+set.seed(540)
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0, nrow = 2, ncol = 2, dimnames = list(c("truePoor", "trueNotPoor"), 
+    c("predPoor", "predNotPoor")))
+```
+
+
+**Prepare list for top genes.**
+
+```r
+top_genes_per_fold <- list()
+```
+
+
+**Perform cross validation.**
+
+```r
+for (f in 1:5) {
+    
+    # Divide preliminary dataset into train and test sets.
+    prelim_train <- prelim[folds$subsets[folds$which != f, ], ]
+    prelim_test <- prelim[folds$subsets[folds$which == f], ]
+    prelim_test_labels <- prelim_test$prognosis
+    
+    # *** Narrow the feature set by finding the genes most correlated with risk
+    # in the test set ***
+    
+    # Get just gene columns
+    gene_cols <- prelim_train[, grepl(".*calculated", colnames(prelim_train))]
+    
+    # Get correlations
+    gene_corrs <- as.data.frame(t(cor(as.numeric(prelim_train$prognosis), gene_cols, 
+        method = "spearman")))
+    
+    # Sort
+    gene_corrs_sort <- sort(gene_corrs, f = ~-V1, drop = FALSE)
+    
+    # Grab top 25
+    gene_corrs_top <- gene_corrs_sort[1:25, , drop = FALSE]
+    top_genes_per_fold <- c(top_genes_per_fold, rownames(gene_corrs_top))
+    
+    # *** Do SVM ***
+    
+    # Prepare training and test sets
+    dat_svm_gene_train <- prelim_train[, c(rownames(gene_corrs_top), "prognosis")]
+    dat_svm_gene_test <- prelim_test[, c(rownames(gene_corrs_top), "prognosis")]
+    
+    # Build
+    fit_svm <- ksvm(prognosis ~ ., dat_svm_gene_train)
+    
+    # Predict
+    pred_svm <- predict(fit_svm, newdata = dat_svm_gene_test, type = "response")
+    
+    # Process
+    results <- table(prelim_test_labels, pred_svm)
+    
+    conf_matrix[1, 1] <- conf_matrix[1, 1] + results[2, 2]
+    conf_matrix[1, 2] <- conf_matrix[1, 2] + results[2, 1]
+    conf_matrix[2, 1] <- conf_matrix[2, 1] + results[1, 2]
+    conf_matrix[2, 2] <- conf_matrix[2, 2] + results[1, 1]
+}
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+```
+## Warning: the standard deviation is zero
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+
+**Process CV results.**
+
+```r
+sens_svm_cor <- conf_matrix[1, 1]/sum(conf_matrix[1, ])
+spec_svm_cor <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
+# sink('results_t8.txt') sink('results_d5.txt')
+sink("results_d7.txt")
+# cat('Trisomy8, corrs:') cat('Del5, corrs:')
+cat("Del7, corrs:")
+```
+
+```
+## Del7, corrs:
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(sens_svm_cor)
+```
+
+```
+## 0.09524
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(spec_svm_cor)
+```
+
+```
+## 0.9747
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat("\n")
+```
+
+
+**Explore the genes selected in each fold.**
+
+```r
+fold1 <- top_genes_per_fold[1:25]
+fold2 <- top_genes_per_fold[26:50]
+fold3 <- top_genes_per_fold[51:75]
+fold4 <- top_genes_per_fold[76:100]
+fold5 <- top_genes_per_fold[101:125]
+
+folds <- list(Fold1 = fold1, Fold2 = fold2, Fold3 = fold3, Fold4 = fold4, Fold5 = fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL, force.unique = TRUE, ext.text = FALSE, 
+    margin = 0.1)
+grid.draw(venn_plot)
+```
+
+![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24.png) 
+
+```r
+
+intersection_cor <- unlist(intersect(fold1, intersect(fold2, intersect(fold3, 
+    intersect(fold4, fold5)))))
+cat(intersection_cor)
+```
+
+```
+## FAM169A|26049_calculated VIP|7432_calculated SLC18A2|6571_calculated AGAP1|116987_calculated OTUD3|23252_calculated ARMCX1|51309_calculated
+```
+
+```r
+cat("\n\n")
+```
+
+```r
+sink(file = NULL)
+```
+
+
+### Part 2c: Predict using differentially expressed features (according to linear model analysis)
+
+**Prepare folds and confusion matrix for cross validation.**
+
+```r
+set.seed(540)
+folds <- cvFolds(nrow(prelim), K = 5)
+conf_matrix <- matrix(0, nrow = 2, ncol = 2, dimnames = list(c("truePoor", "trueNotPoor"), 
+    c("predPoor", "predNotPoor")))
+```
+
+
+**Prepare list for top genes.**
+
+```r
+selections_per_fold <- list()
+```
+
+
+**Perform cross validation.**
+
+```r
+for (f in 1:5) {
+    
+    # Divide preliminary dataset into train and test sets.
+    prelim_train <- prelim[folds$subsets[folds$which != f, ], ]
+    prelim_test <- prelim[folds$subsets[folds$which == f], ]
+    prelim_test_labels <- prelim_test$prognosis
+    
+    # *** Narrow the feature set by finding the top differentially expressed
+    # genes ***
+    
+    # Get just gene columns
+    gene_cols <- prelim_train[, grepl(".*calculated", colnames(prelim_train))]
+    
+    # Do lm selection
+    selections <- fs.lm(t(gene_cols), prelim_train$prognosis)
+    selections_per_fold <- c(selections_per_fold, selections)
+    
+    # *** Do SVM ***
+    
+    # Prepare training and test sets
+    dat_svm_gene_train <- prelim_train[, c(selections, "prognosis")]
+    dat_svm_gene_test <- prelim_test[, c(selections, "prognosis")]
+    
+    # Build
+    fit_svm <- ksvm(prognosis ~ ., dat_svm_gene_train)
+    
+    # Predict
+    pred_svm <- predict(fit_svm, newdata = dat_svm_gene_test, type = "response")
+    
+    # Process
+    results <- table(prelim_test_labels, pred_svm)
+    
+    conf_matrix[1, 1] <- conf_matrix[1, 1] + results[2, 2]
+    conf_matrix[1, 2] <- conf_matrix[1, 2] + results[2, 1]
+    conf_matrix[2, 1] <- conf_matrix[2, 1] + results[1, 2]
+    conf_matrix[2, 2] <- conf_matrix[2, 2] + results[1, 1]
+}
+```
+
+```
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel 
+## Using automatic sigma estimation (sigest) for RBF or laplace kernel
+```
+
+
+**Process CV results.**
+
+```r
+sens_svm_lm <- conf_matrix[1, 1]/sum(conf_matrix[1, ])
+spec_svm_lm <- conf_matrix[2, 2]/sum(conf_matrix[2, ])
+# sink('results_t8.txt',append=TRUE) sink('results_d5.txt',append=TRUE)
+sink("results_d7.txt", append = TRUE)
+# cat('Trisomy8, lm:') cat('Del5, lm:')
+cat("Del7, lm:")
+```
+
+```
+## Del7, lm:
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(sens_svm_lm)
+```
+
+```
+## 0.7143
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat(spec_svm_lm)
+```
+
+```
+## 0.9873
+```
+
+```r
+cat("\n")
+```
+
+```r
+cat("\n")
+```
+
+
+**Explore the genes selected in each fold.**
+
+```r
+fold1 <- selections_per_fold[1:25]
+fold2 <- selections_per_fold[26:50]
+fold3 <- selections_per_fold[51:75]
+fold4 <- selections_per_fold[76:100]
+fold5 <- selections_per_fold[101:125]
+
+folds <- list(Fold1 = fold1, Fold2 = fold2, Fold3 = fold3, Fold4 = fold4, Fold5 = fold5)
+plot.new()
+venn_plot <- venn.diagram(folds, filename = NULL, force.unique = TRUE, ext.text = FALSE, 
+    margin = 0.1)
+grid.draw(venn_plot)
+```
+
+![plot of chunk unnamed-chunk-29](figure/unnamed-chunk-29.png) 
+
+```r
+
+intersection_lm <- unlist(intersect(fold1, intersect(fold2, intersect(fold3, 
+    intersect(fold4, fold5)))))
+cat(intersection_lm)
+```
+
+```
+## LUC7L2|51631_calculated PDAP1|11333_calculated MKRN1|23608_calculated SLC25A13|10165_calculated GATAD1|57798_calculated GSTK1|373156_calculated STYXL1|51657_calculated SUMF2|25870_calculated CASP2|835_calculated
+```
+
+```r
+cat("\n\n")
+```
+
+```r
+cat(intersect(intersection_cor, intersection_lm))
+cat("\n\n")
+```
+
+```r
+sink(file = NULL)
+```
+

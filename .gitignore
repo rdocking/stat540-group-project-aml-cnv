@@ -4,3 +4,5 @@
 # Example code in package build process
 *-Ex.R
 .Rproj.user
+code/svm_exploratory/results_risk.txt
+code/svm_exploratory/results_d7.txt

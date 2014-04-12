@@ -38,7 +38,8 @@ fs.lm <- function(input.dat, input.labels) {
   fit <- lmFit(dat.voomed, design)
   ebFit <- eBayes(fit)
   hits <- topTable(ebFit, n = Inf, coef = "Label")
-  train.features <- hits$ID[1:25]
+  #train.features <- hits$ID[1:25] FOR OLDER VERSION OF R
+  train.features <- rownames(hits)[1:25]
   return(train.features)
 }
 ```

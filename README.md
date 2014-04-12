@@ -23,13 +23,7 @@ Here is a general diagram of our workflow:
 * Poster tables: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/poster/tables)
 
 ### Analysis scripts
-0. Import and clean data: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/code/clinical_data_import)
-1. Linear regression - Cytogenetic risk: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/diff_expr_rna_seq_rpkm.md)
-2. Linear regression - CNA events: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/diff_expr_analysis/Bayly_rna_seq_diff_exp_analysis.md)
-3. SVM (PCA-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/code/pca_exploratory)
-4. SVM (lm and correlation-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/svm_exploratory)
-5. Random forest (lm and correlation-based feature selection): [here](https://github.com/rdocking/stat540-group-project-aml-cnv/blob/master/code/rf_exploratory)
-
+* All code: [here](https://github.com/rdocking/stat540-group-project-aml-cnv/tree/master/code)
 
 ### Bibliography
 1. National Comprehensive Cancer Network (2014). *NCCN Clinical Practice Guidelines in Oncology - Acute Myeloid Leukemia.* Version 2. [NCCN](http://www.nccn.org/default.aspx)
