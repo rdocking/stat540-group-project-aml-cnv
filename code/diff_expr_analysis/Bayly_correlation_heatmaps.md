@@ -1,4 +1,4 @@
-Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+Some Correlation Heatmaps for Differential Expression Analysis using Read Count Data
 ========================================================
 
 > To knit .rmd file, read data files in using "../data"  
@@ -250,4 +250,6 @@ heatmap(cor(hDat[, (HMprDes[order(HMprDes[, "Cytogenetic_risk"]), ]$HmID)]),
     Rowv = NA, margins = c(10, 10), scale = "none", ColSideColors = crCols, 
     symm = TRUE, col = brewer.pal(n = 9, name = "Blues"), main = "Ordered by Cytogenetic_risk")
 ```
+
+<img src="figure/sampleCorr_ArrangeMolcRisk_Heatmap_readCount.png" title="plot of chunk sampleCorr_ArrangeMolcRisk_Heatmap_readCount" alt="plot of chunk sampleCorr_ArrangeMolcRisk_Heatmap_readCount" style="display: block; margin: auto;" />
 

@@ -1,4 +1,4 @@
-Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+Boxplotter for Differential expression analysis for trisomy 8, deletion 5 and deletion 7
 ========================================================
 
 > This code is for plotting hits of interest from the DEA of the 3key deletion genotypes (trisomy 8, del 5 and del 7).
@@ -12,8 +12,8 @@ rDes <- read.table("../data/experimental_design_cleaned.txt",
                            sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
 rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
                           sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
-#rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
-#                         sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
+rDat <- read.table("../data/aml.rnaseq.gaf2.0_read_count_cleaned.txt",
+                         sep = "\t", header = TRUE, row.names = 1) #might need to fix pathname
 ```
 
 Load required libraries:

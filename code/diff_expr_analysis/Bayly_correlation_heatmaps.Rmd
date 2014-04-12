@@ -1,4 +1,4 @@
-Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+Some Correlation Heatmaps for Differential Expression Analysis using Read Count Data
 ========================================================
 
 > To knit .rmd file, read data files in using "../data"  

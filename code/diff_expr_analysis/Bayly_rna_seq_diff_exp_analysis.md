@@ -1,4 +1,4 @@
-Differential expression analysis for trisomy 8, deletion 5 and deletion 7
+Differential expression analysis for trisomy 8, deletion 5 and deletion 7 with RPKM
 ========================================================
 
 > To knit .rmd file, read data files in using "../data"  
@@ -125,14 +125,15 @@ RNA-seq data: there are 20001 transcripts (rows) for 179 patients (columns). Exp
 
 
 
+
 ### Differential expression analysis
 
 I will use `voom` to perform differential expression analysis.
 
 **Deletion**
-Which genes are differentially expressed between trisomy 8, deletion 5, deletion 7?
 
 Which genes are differentially expressed between trisomy 8, deletion 5, deletion 7?
+
 
 ```r
 trisomy8 <- rDes$trisomy_8
